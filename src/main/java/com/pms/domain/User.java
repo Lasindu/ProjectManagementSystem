@@ -25,6 +25,18 @@ public final class User {
     private String website;
     private String bio;
 
+
+
+
+
+
+
+
+
+
+
+
+    //getters and setters
     public String getEmail() {
         return email;
     }

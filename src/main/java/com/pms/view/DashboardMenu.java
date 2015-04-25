@@ -70,7 +70,8 @@ public final class DashboardMenu extends CustomComponent {
     }
 
     private Component buildTitle() {
-        Label logo = new Label("PMS <strong>Dashboard</strong>",
+        //Label logo = new Label("PMS <strong>Dashboard</strong>",
+        Label logo = new Label("Project Management System",
                 ContentMode.HTML);
         logo.setSizeUndefined();
         HorizontalLayout logoWrapper = new HorizontalLayout(logo);

@@ -7,7 +7,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
- * Created by Damitha on 4/1/2015.
+ * Created by Upulie on 4/1/2015.
  */
 public class MemberAssignView extends VerticalLayout implements View {
 

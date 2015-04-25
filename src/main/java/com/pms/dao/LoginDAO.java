@@ -7,18 +7,19 @@ import com.pms.domain.User;
 import java.util.List;
 
 /**
- * Created by Damitha on 4/2/2015.
+ * Created by Upulie on 4/2/2015.
  */
 public class LoginDAO {
 
-
     private SessionFactory sessionFactory;
+
 
     public User authenticateUser(String userName,String password)
     {
         Session session = getSessionFactory().openSession();
         System.out.println("User Name   "+userName);
-        List<User> usersList=session.createQuery(" from User u where u.userName=? and u.password=? ").setParameter(0,userName).setParameter(1, password).list();
+        //List<User> usersList=session.createQuery(" from User u where u.userName=? and u.password=? ").setParameter(0,userName).setParameter(1, password).list();
+        List<User> usersList=session.createQuery(" from User u where u.userName=? ").setParameter(0,userName).list();
         if(usersList.size()>0)
         {
             return usersList.get(0);
@@ -28,6 +29,13 @@ public class LoginDAO {
 
         return null;
     }
+
+
+
+
+
+
+
 
 
 
