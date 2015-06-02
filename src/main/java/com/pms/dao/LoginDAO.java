@@ -16,10 +16,25 @@ public class LoginDAO {
 
     public User authenticateUser(String userName,String password)
     {
-        Session session = getSessionFactory().openSession();
+
+
+        //original code
+/*        Session session = getSessionFactory().openSession();
         System.out.println("User Name   "+userName);
         //List<User> usersList=session.createQuery(" from User u where u.userName=? and u.password=? ").setParameter(0,userName).setParameter(1, password).list();
         List<User> usersList=session.createQuery(" from User u where u.userName=? ").setParameter(0,userName).list();
+        if(usersList.size()>0)
+        {
+            return usersList.get(0);
+
+        }*/
+
+
+
+        Session session = getSessionFactory().openSession();
+        System.out.println("User Name   "+userName);
+        //List<User> usersList=session.createQuery(" from User u where u.userName=? and u.password=? ").setParameter(0,userName).setParameter(1, password).list();
+        List<User> usersList=session.createQuery(" from User u ").list();
         if(usersList.size()>0)
         {
             return usersList.get(0);

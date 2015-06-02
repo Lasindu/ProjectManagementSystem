@@ -57,6 +57,8 @@ public class UserStoryWindow extends Window {
         projectUserStories = project.getProjectUserStories();
 
 
+
+
         addStyleName("profile-window");
         setCaption("New User Story");
         setModal(true);
@@ -72,6 +74,11 @@ public class UserStoryWindow extends Window {
         mainPanel.getContent().setSizeUndefined();
         setContent(mainPanel);
 
+
+
+
+
+
         userStory = new UserStory();
         fieldGroup = new BeanFieldGroup<UserStory>(UserStory.class);
         fieldGroup.bindMemberFields(this);
@@ -80,6 +87,9 @@ public class UserStoryWindow extends Window {
     }
 
     private Component buildUserStory() {
+
+
+
         FormLayout content = new FormLayout();
         content.addStyleName(ValoTheme.FORMLAYOUT_LIGHT);
         content.setCaption("User Story");
