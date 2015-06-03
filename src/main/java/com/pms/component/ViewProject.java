@@ -48,6 +48,7 @@ public class ViewProject extends CustomComponent {
         viewProjectLayout = new VerticalLayout();
         viewProjectLayout.setMargin(true);
         viewProjectLayout.setSpacing(true);
+        viewProjectLayout.setSizeFull();
 
 
         //get project object prom the database
@@ -111,10 +112,18 @@ public class ViewProject extends CustomComponent {
             Button editUserStoryButton=new Button("Edit UserStory");
             Button viewUserStoryButton=new Button("View UserStory");
             viewUserStoryButton.setData(userStory.getProject().getName()+"/"+userStory.getName());
+            editUserStoryButton.setData(userStory);
 
             userStoryTable.addItem(new Object[]{index, userStory.getName(), userStory.getPriority(), userStory.getDescription(), userStory.getDomain(), userStory.getAssignedSprint(), editUserStoryButton, viewUserStoryButton}, index);
 
 
+            editUserStoryButton.addClickListener(new Button.ClickListener() {
+                public void buttonClick(Button.ClickEvent event) {
+
+                    UserStoryWindow.open((UserStory)event.getButton().getData());
+
+                }
+            });
 
             viewUserStoryButton.addClickListener(new Button.ClickListener() {
                 public void buttonClick(Button.ClickEvent event) {
@@ -135,8 +144,8 @@ public class ViewProject extends CustomComponent {
 
 
         //set table height to only for contained rows
-        // int actualRowCount = userStoryTable.size();
-        // userStoryTable.setPageLength(Math.min(actualRowCount, 15));
+/*         int actualRowCount = userStoryTable.size();
+         userStoryTable.setPageLength(Math.min(actualRowCount, 15));*/
         viewProjectLayout.addComponent(userStoryTable);
         viewProjectLayout.setExpandRatio(userStoryTable, 1);
 
@@ -189,7 +198,11 @@ public class ViewProject extends CustomComponent {
         final Button createUserStoryButton = new Button("Create UserStory");
         createUserStoryButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(Button.ClickEvent event) {
-                UserStoryWindow.open(project);
+
+                UserStory userStory = new UserStory();
+                userStory.setName("");
+                userStory.setProject(project);
+                UserStoryWindow.open(userStory);
 
 
             }

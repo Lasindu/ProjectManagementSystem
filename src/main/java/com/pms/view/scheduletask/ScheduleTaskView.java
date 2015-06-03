@@ -106,31 +106,5 @@ public class ScheduleTaskView extends CssLayout implements View {
 
 
 
-    private Component buildNewProject()
-    {
-        VerticalLayout newProjectLayout = new VerticalLayout();
-        newProjectLayout.setCaption("New Project");
-        newProjectLayout.setMargin(true);
-
-        NewProjectComp newProjectComp= new NewProjectComp("");
-        newProjectLayout.addComponent(newProjectComp.initContent());
-
-
-
-        return  newProjectLayout;
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

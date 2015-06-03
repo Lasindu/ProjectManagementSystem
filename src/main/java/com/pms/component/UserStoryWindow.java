@@ -5,6 +5,7 @@ import com.pms.DashboardUI;
 import com.pms.dao.ProjectDAO;
 import com.pms.dao.UserStoryDAO;
 import com.pms.domain.Project;
+import com.pms.domain.User;
 import com.pms.domain.UserStory;
 import com.vaadin.data.Item;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
@@ -12,6 +13,7 @@ import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.fieldgroup.PropertyId;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.Page;
+import com.vaadin.server.Responsive;
 import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
@@ -32,54 +34,68 @@ public class UserStoryWindow extends Window {
     Collection<UserStory> projectUserStories;
 
     private final BeanFieldGroup<UserStory> fieldGroup;
-    private final UserStory userStory;
+    private UserStory userStory;
+    private boolean editmode=false;
 
 
     @PropertyId("name")
     private TextField userStoryName;
     @PropertyId("description")
     private TextArea description;
+    @PropertyId("priority")
     private ComboBox priority;
-    private ListSelect preRequisits;
-    private ListSelect dependancy;
+    private ListSelect preRequisitsList;
+    private ListSelect dependancyList;
     @PropertyId("domain")
     private TextField domain;
     @PropertyId("assignedSprint")
     private TextField assignedSprint;
     @PropertyId("releasedDate")
     private TextField releasedDate;
-    private ComboBox isCr;
+    @PropertyId("isCr")
+    private OptionGroup isCr;
 
 
-    private UserStoryWindow(Project project) {
+    private UserStoryWindow(UserStory userStory) {
 
-        this.project = project;
+
+        this.userStory=userStory;
+        this.project = userStory.getProject();
         projectUserStories = project.getProjectUserStories();
 
-
+        if(!userStory.getName().equals(""))
+        {
+            editmode=true;
+        }
 
 
         addStyleName("profile-window");
-        setCaption("New User Story");
+        Responsive.makeResponsive(this);
+
         setModal(true);
         setCloseShortcut(ShortcutAction.KeyCode.ESCAPE, null);
         setResizable(false);
         setClosable(false);
         setHeight(90.0f, Unit.PERCENTAGE);
 
-        Panel mainPanel = new Panel("");
-        mainPanel.setHeight(90.0f, Unit.PERCENTAGE);
-        mainPanel.setHeightUndefined();
-        mainPanel.setContent(buildUserStory());
-        mainPanel.getContent().setSizeUndefined();
-        setContent(mainPanel);
+        VerticalLayout content = new VerticalLayout();
+        content.setSizeFull();
+        content.setMargin(new MarginInfo(true, false, false, false));
+        setContent(content);
+
+        TabSheet detailsWrapper = new TabSheet();
+        detailsWrapper.setSizeFull();
+        detailsWrapper.addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
+        detailsWrapper.addStyleName(ValoTheme.TABSHEET_ICONS_ON_TOP);
+        detailsWrapper.addStyleName(ValoTheme.TABSHEET_CENTERED_TABS);
+        content.addComponent(detailsWrapper);
+        content.setExpandRatio(detailsWrapper, 1f);
 
 
+        detailsWrapper.addComponent(buildUserStory());
+        content.addComponent(buildFooter());
 
 
-
-
-        userStory = new UserStory();
         fieldGroup = new BeanFieldGroup<UserStory>(UserStory.class);
         fieldGroup.bindMemberFields(this);
         fieldGroup.setItemDataSource(userStory);
@@ -88,19 +104,18 @@ public class UserStoryWindow extends Window {
 
     private Component buildUserStory() {
 
-
-
         FormLayout content = new FormLayout();
         content.addStyleName(ValoTheme.FORMLAYOUT_LIGHT);
         content.setCaption("User Story");
-        content.setSizeFull();
         content.setMargin(new MarginInfo(true, true, true, true));
         content.setSpacing(true);
 
         userStoryName = new TextField("User Story Name");
+        userStoryName.setNullRepresentation("");
         content.addComponent(userStoryName);
 
         description = new TextArea("Description");
+        description.setNullRepresentation("");
         content.addComponent(description);
 
         priority = new ComboBox("Priority");
@@ -111,52 +126,58 @@ public class UserStoryWindow extends Window {
         priority.addItem(5);
         content.addComponent(priority);
 
-        preRequisits = new ListSelect("Pre Requisits");
-        preRequisits.setWidth("400px");
-        preRequisits.setNullSelectionAllowed(true);
+        preRequisitsList = new ListSelect("Pre Requisits");
+        preRequisitsList.setWidth("400px");
+        preRequisitsList.setNullSelectionAllowed(true);
         for (UserStory user_Story : projectUserStories) {
-            preRequisits.addItem(user_Story.getName());
+            preRequisitsList.addItem(user_Story.getName());
         }
-        preRequisits.setMultiSelect(true);
-        preRequisits.setRows(7);
-        content.addComponent(preRequisits);
+        preRequisitsList.setMultiSelect(true);
+        preRequisitsList.setRows(7);
+        content.addComponent(preRequisitsList);
 
 
-        dependancy = new ListSelect("Dependency");
+        dependancyList = new ListSelect("Dependency");
         for (UserStory user_Story : projectUserStories) {
-            dependancy.addItem(user_Story.getName());
+            dependancyList.addItem(user_Story.getName());
         }
-        dependancy.setWidth("400px");
-        dependancy.setNullSelectionAllowed(true);
-        dependancy.setMultiSelect(true);
-        dependancy.setRows(7);
-        content.addComponent(dependancy);
+        dependancyList.setWidth("400px");
+        dependancyList.setNullSelectionAllowed(true);
+        dependancyList.setMultiSelect(true);
+        dependancyList.setRows(7);
+        content.addComponent(dependancyList);
 
 
         domain = new TextField("Domain");
+        domain.setNullRepresentation("");
         content.addComponent(domain);
 
         assignedSprint = new TextField("Assigned Sprint");
+        assignedSprint.setNullRepresentation("");
         content.addComponent(assignedSprint);
 
         releasedDate = new TextField("released Date");
+        releasedDate.setNullRepresentation("");
         content.addComponent(releasedDate);
 
-        isCr = new ComboBox("Is Cr");
-        isCr.addItem("true");
-        isCr.addItem("false");
+        isCr = new OptionGroup("Is Cr");
+        isCr.addItem(Boolean.TRUE);
+        isCr.addItem(Boolean.FALSE);
+        isCr.addStyleName("horizontal");
         content.addComponent(isCr);
 
-        content.addComponent(buildFooter());
+        //content.addComponent(buildFooter());
 
         return content;
 
     }
 
     private Component buildFooter() {
-        HorizontalLayout buttonsLayout = new HorizontalLayout();
-        buttonsLayout.setMargin(true);
-        buttonsLayout.setSpacing(true);
+        HorizontalLayout footer = new HorizontalLayout();
+        footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
+        footer.setWidth(100.0f, Unit.PERCENTAGE);
+        //buttonsLayout.setMargin(true);
+        //buttonsLayout.setSpacing(true);
 
 
         Button cancelButton = new Button("Cancel");
@@ -165,100 +186,121 @@ public class UserStoryWindow extends Window {
             public void buttonClick(Button.ClickEvent event) {
                 close();
 
-
             }
         });
-        Button addNewButton = new Button("Create New User Story");
-        addNewButton.addClickListener(new Button.ClickListener() {
+
+        Button submitButton;
+        if(editmode)
+        {
+            submitButton = new Button("Update User Story");
+        }
+        else
+        {
+            submitButton = new Button("Create New User Story");
+        }
+        //Button submitButton = new Button("Create New User Story");
+        submitButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(Button.ClickEvent event) {
 
-            /*    try {
+                try {
 
 
-                    fieldGroup.commit();*/
-
-                UserStory userStory = new UserStory();
-                //userStory =fieldGroup.getItemDataSource().getBean();
-
-                userStory.setProject(project);
-                userStory.setName(userStoryName.getValue().toString());
-                userStory.setDescription(description.getValue().toString());
-                userStory.setPriority(Integer.parseInt(priority.getValue().toString()));
+                    fieldGroup.commit();
+                    UserStory userStory ;
+                    userStory =fieldGroup.getItemDataSource().getBean();
+                    userStory.setProject(project);
 
 
-                //set dependency for user story
-                StringBuilder dependencyString = new StringBuilder();
-                Set<Item> dependencyValues = (Set<Item>) dependancy.getValue();
-                int size = dependencyValues.size();
-                int index = 1;
-                for (Object v : dependencyValues) {
+                    //set dependency for user story
+                    StringBuilder dependencyString = new StringBuilder();
+                    Set<Item> dependencyValues = (Set<Item>) dependancyList.getValue();
+                    int size = dependencyValues.size();
+                    int index = 1;
+                    for (Object v : dependencyValues) {
 
-                    dependencyString.append(v.toString());
-                    if (index != size)
-                        dependencyString.append(",");
-                    index++;
-                }
-                userStory.setDependancy(dependencyString.toString());
-
-
-                //set pre requist for user story
-                StringBuilder preRequisitString = new StringBuilder();
-                Set<Item> preRequisitsValues = (Set<Item>) preRequisits.getValue();
-                int size2 = preRequisitsValues.size();
-                int index2 = 1;
-                for (Object v : preRequisitsValues) {
-
-                    preRequisitString.append(v.toString());
-                    if (index2 != size2)
-                        preRequisitString.append(",");
-                    index2++;
-                }
-                userStory.setPreRequisits(preRequisitString.toString());
-
-                userStory.setDomain(domain.getValue().toString());
-                userStory.setAssignedSprint(assignedSprint.getValue().toString());
-                userStory.setReleasedDate(releasedDate.getValue().toString());
-
-                if (isCr.getValue().toString().equals("false"))
-                    userStory.setCR(false);
-                else
-                    userStory.setCR(true);
+                        dependencyString.append(v.toString());
+                        if (index != size)
+                            dependencyString.append(",");
+                        index++;
+                    }
+                    userStory.setDependancy(dependencyString.toString());
 
 
-                ProjectDAO projectDAO = (ProjectDAO) DashboardUI.context.getBean("Project");
-                project.getProjectUserStories().add(userStory);
-                projectDAO.updateProject(project);
+                    //set pre requist for user story
+                    StringBuilder preRequisitString = new StringBuilder();
+                    Set<Item> preRequisitsValues = (Set<Item>) preRequisitsList.getValue();
+                    int size2 = preRequisitsValues.size();
+                    int index2 = 1;
+                    for (Object v : preRequisitsValues) {
+
+                        preRequisitString.append(v.toString());
+                        if (index2 != size2)
+                            preRequisitString.append(",");
+                        index2++;
+                    }
+                    userStory.setPreRequisits(preRequisitString.toString());
+
+                    ProjectDAO projectDAO = (ProjectDAO) DashboardUI.context.getBean("Project");
+                    project.getProjectUserStories().add(userStory);
+                    projectDAO.updateProject(project);
+
+                    if(editmode)
+                    {
+                        Notification success = new Notification(
+                                "User Story Updated successfully");
+                        success.setDelayMsec(2000);
+                        success.setStyleName("bar success small");
+                        success.setPosition(Position.BOTTOM_CENTER);
+                        success.show(Page.getCurrent());
+
+                    }
+                    else
+                    {
+                        Notification success = new Notification(
+                                "User Story Created successfully");
+                        success.setDelayMsec(2000);
+                        success.setStyleName("bar success small");
+                        success.setPosition(Position.BOTTOM_CENTER);
+                        success.show(Page.getCurrent());
+
+                    }
 
 
-                Notification success = new Notification(
-                        "User Story Created successfully");
-                success.setDelayMsec(2000);
-                success.setStyleName("bar success small");
-                success.setPosition(Position.BOTTOM_CENTER);
-                success.show(Page.getCurrent());
+                    close();
+                    Page.getCurrent().reload();
 
 
-                close();
-                Page.getCurrent().reload();
-
-            /*    } catch (FieldGroup.CommitException e) {
+                } catch (FieldGroup.CommitException e) {
                     Notification.show("Error while creating User Story",
                             Notification.Type.ERROR_MESSAGE);
-                }*/
+                }
             }
         });
 
 
-        buttonsLayout.addComponent(cancelButton);
-        buttonsLayout.addComponent(addNewButton);
 
-        return buttonsLayout;
+        footer.addComponent(submitButton);
+        footer.addComponent(cancelButton);
+
+        footer.setExpandRatio(cancelButton,1);
+
+        footer.setComponentAlignment(cancelButton, Alignment.TOP_RIGHT);
+        footer.setComponentAlignment(submitButton, Alignment.TOP_RIGHT);
+
+
+        return footer;
 
     }
 
 
-    public static void open(Project project) {
-        Window w = new UserStoryWindow(project);
+
+
+
+
+
+
+    public static void open(UserStory userStory) {
+        Window w = new UserStoryWindow(userStory);
         UI.getCurrent().addWindow(w);
         w.focus();
 

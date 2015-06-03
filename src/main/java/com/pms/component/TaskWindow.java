@@ -7,8 +7,12 @@ import com.pms.domain.Project;
 import com.pms.domain.Task;
 import com.pms.domain.UserStory;
 import com.vaadin.data.Item;
+import com.vaadin.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.data.fieldgroup.FieldGroup;
+import com.vaadin.data.fieldgroup.PropertyId;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.Page;
+import com.vaadin.server.Responsive;
 import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
@@ -27,50 +31,85 @@ public class TaskWindow extends Window {
 
 
 
-    private Task task;
+
     private UserStory userStory;
     private Collection<Task> userStoryTasks;
 
+    private final BeanFieldGroup<Task> fieldGroup;
+    private Task task;
+    private boolean editmode=false;
+
+    @PropertyId("name")
     private TextField name;
+    @PropertyId("description")
     private TextArea description;
+    @PropertyId("priority")
     private ComboBox priority;
+    @PropertyId("severity")
     private ComboBox severity;
-    private ListSelect preRequisits;
-    private ListSelect dependancy;
+   // private ListSelect preRequisitsList;
+    //private ListSelect dependancyList;
+    @PropertyId("memberType")
     private TextField memberType;
+    @PropertyId("estimateTime")
     private TextField estimateTime;
+    @PropertyId("assignedTo")
     private TextField assignedTo;
+    @PropertyId("completeTime")
     private TextField completeTime;
-    private ComboBox isCr;
+    @PropertyId("isCr")
+    private OptionGroup isCr;
 
 
-    private TaskWindow (UserStory userStory)
+    private TaskWindow (Task task)
     {
-        this.userStory=userStory;
+        this.userStory=task.getUserStory();
         userStoryTasks=userStory.getUserStoryTasks();
+        this.task=task;
+
+
+        if(!task.getName().equals(""))
+        {
+            editmode=true;
+        }
 
 
         addStyleName("profile-window");
-        setCaption("New Task");
+        Responsive.makeResponsive(this);
+
         setModal(true);
         setCloseShortcut(ShortcutAction.KeyCode.ESCAPE, null);
         setResizable(false);
         setClosable(false);
         setHeight(90.0f, Unit.PERCENTAGE);
 
-        Panel mainPanel = new Panel("");
-        mainPanel.setHeight(90.0f, Unit.PERCENTAGE);
-        mainPanel.setHeightUndefined();
-        mainPanel.setContent(buildTask());
-        mainPanel.getContent().setSizeUndefined();
-        setContent(mainPanel);
+        VerticalLayout content = new VerticalLayout();
+        content.setSizeFull();
+        content.setMargin(new MarginInfo(true, false, false, false));
+        setContent(content);
+
+        TabSheet detailsWrapper = new TabSheet();
+        detailsWrapper.setSizeFull();
+        detailsWrapper.addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
+        detailsWrapper.addStyleName(ValoTheme.TABSHEET_ICONS_ON_TOP);
+        detailsWrapper.addStyleName(ValoTheme.TABSHEET_CENTERED_TABS);
+        content.addComponent(detailsWrapper);
+        content.setExpandRatio(detailsWrapper, 1f);
+
+
+        detailsWrapper.addComponent(buildTask());
+        content.addComponent(buildFooter());
 
 
 
-
+        fieldGroup = new BeanFieldGroup<Task>(Task.class);
+        fieldGroup.bindMemberFields(this);
+        fieldGroup.setItemDataSource(task);
 
 
     }
+
+
 
     private Component buildTask()
     {
@@ -78,14 +117,15 @@ public class TaskWindow extends Window {
         FormLayout taskForm = new FormLayout();
         taskForm.addStyleName(ValoTheme.FORMLAYOUT_LIGHT);
         taskForm.setCaption("Task");
-        taskForm.setSizeFull();
         taskForm.setMargin(new MarginInfo(true, true, true, true));
         taskForm.setSpacing(true);
 
         name = new TextField("Task Name");
+        name.setNullRepresentation("");
         taskForm.addComponent(name);
 
         description = new TextArea("Task Description");
+        description.setNullRepresentation("");
         taskForm.addComponent(description);
 
         priority = new ComboBox("Priority");
@@ -104,44 +144,47 @@ public class TaskWindow extends Window {
         severity.addItem(5);
         taskForm.addComponent(severity);
 
-        preRequisits = new ListSelect("Pre Requisits");
-        preRequisits.setWidth("400px");
-        preRequisits.setNullSelectionAllowed(true);
+/*        preRequisitsList = new ListSelect("Pre Requisits");
+        preRequisitsList.setWidth("400px");
+        preRequisitsList.setNullSelectionAllowed(true);
         for (Task task : userStoryTasks) {
-            preRequisits.addItem(task.getName());
+            preRequisitsList.addItem(task.getName());
         }
-        preRequisits.setMultiSelect(true);
-        preRequisits.setRows(7);
-        taskForm.addComponent(preRequisits);
+        preRequisitsList.setMultiSelect(true);
+        preRequisitsList.setRows(7);
+        taskForm.addComponent(preRequisitsList);
 
-        dependancy = new ListSelect("Dependancy");
+        dependancyList = new ListSelect("Dependancy");
         for (Task task : userStoryTasks) {
-            dependancy.addItem(task.getName());
+            dependancyList.addItem(task.getName());
         }
-        dependancy.setWidth("400px");
-        dependancy.setNullSelectionAllowed(true);
-        dependancy.setMultiSelect(true);
-        dependancy.setRows(7);
-        taskForm.addComponent(dependancy);
+        dependancyList.setWidth("400px");
+        dependancyList.setNullSelectionAllowed(true);
+        dependancyList.setMultiSelect(true);
+        dependancyList.setRows(7);
+        taskForm.addComponent(dependancyList);*/
 
         memberType= new TextField("Member Type");
+        memberType.setNullRepresentation("");
         taskForm.addComponent(memberType);
 
         estimateTime= new TextField("Estimate Time");
+        estimateTime.setNullRepresentation("");
         taskForm.addComponent(estimateTime);
 
         assignedTo = new TextField("Assinged to");
+        assignedTo.setNullRepresentation("");
         taskForm.addComponent(assignedTo);
 
         completeTime= new TextField("Complete Time");
+        completeTime.setNullRepresentation("");
         taskForm.addComponent(completeTime);
 
-        isCr = new ComboBox("Is CR");
-        isCr.addItem("true");
-        isCr.addItem("false");
+        isCr = new OptionGroup("Is Cr");
+        isCr.addItem(Boolean.TRUE);
+        isCr.addItem(Boolean.FALSE);
+        isCr.addStyleName("horizontal");
         taskForm.addComponent(isCr);
-
-        taskForm.addComponent(buildFooter());
 
 
         return  taskForm;
@@ -149,95 +192,111 @@ public class TaskWindow extends Window {
 
     private Component buildFooter() {
 
-        HorizontalLayout buttonsLayout = new HorizontalLayout();
-        buttonsLayout.setMargin(true);
-        buttonsLayout.setSpacing(true);
+        HorizontalLayout footer = new HorizontalLayout();
+        footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
+        footer.setWidth(100.0f, Unit.PERCENTAGE);
 
 
         Button cancelButton = new Button("Cancel");
 
         cancelButton.addClickListener(new Button.ClickListener() {
-            public void buttonClick(Button.ClickEvent event) {
-                close();
-
-
+            public void buttonClick(Button.ClickEvent event) {close();
             }
         });
-        Button addNewButton = new Button("Create New Task");
-        addNewButton.addClickListener(new Button.ClickListener() {
+
+        Button submitButton;
+        if (editmode)
+        {
+            submitButton = new Button("Update Task");
+        }
+        else
+        {
+            submitButton = new Button("Create New Task");
+
+        }
+
+        submitButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(Button.ClickEvent event) {
 
-            /*    try {
+                try {
 
 
-                    fieldGroup.commit();*/
+                    fieldGroup.commit();
+                    Task task;
+                    task= fieldGroup.getItemDataSource().getBean();
+                    task.setUserStory(userStory);
 
-                task= new Task();
-                task.setName(name.getValue().toString());
-                task.setDescription(description.getValue().toString());
+                    if (editmode)
+                    {
 
-                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                Date date = new Date();
-                task.setDate(dateFormat.format(date).toString());
+                    }
+                    else
+                    {
+                        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                        Date date = new Date();
+                        task.setDate(dateFormat.format(date).toString());
 
-                task.setPriority(Integer.parseInt(priority.getValue().toString()));
-                task.setSeverity(Integer.parseInt(severity.getValue().toString()));
-                task.setMemberType(memberType.getValue().toString());
-                task.setEstimateTime(estimateTime.getValue().toString());
-                task.setAssignedTo(assignedTo.getValue().toString());
-                task.setCompleteTime(completeTime.getValue().toString());
-
-                if (isCr.getValue().toString().equals("false"))
-                    task.setCr(false);
-                else
-                    task.setCr(true);
-
-                task.setUserStory(userStory);
-
-                userStory.getUserStoryTasks().add(task);
-
-                UserStoryDAO userStoryDAO= (UserStoryDAO)DashboardUI.context.getBean("UserStory");
-                userStoryDAO.updateUserStory(userStory);
+                    }
 
 
 
-
-            /*    ProjectDAO projectDAO = (ProjectDAO) DashboardUI.context.getBean("Project");
-                project.getProjectUserStories().add(userStory);
-                projectDAO.updateProject(project);*/
-
-
-                Notification success = new Notification(
-                        "Task Created successfully");
-                success.setDelayMsec(2000);
-                success.setStyleName("bar success small");
-                success.setPosition(Position.BOTTOM_CENTER);
-                success.show(Page.getCurrent());
+                    UserStoryDAO userStoryDAO= (UserStoryDAO)DashboardUI.context.getBean("UserStory");
+                    userStory.getUserStoryTasks().add(task);
+                    userStoryDAO.updateUserStory(userStory);
 
 
-                close();
-                Page.getCurrent().reload();
 
-            /*    } catch (FieldGroup.CommitException e) {
+                    if (editmode)
+                    {
+                        Notification success = new Notification(
+                                "Task Updated successfully");
+                        success.setDelayMsec(2000);
+                        success.setStyleName("bar success small");
+                        success.setPosition(Position.BOTTOM_CENTER);
+                        success.show(Page.getCurrent());
+
+                    }
+                    else
+                    {
+                        Notification success = new Notification(
+                                "Task Created successfully");
+                        success.setDelayMsec(2000);
+                        success.setStyleName("bar success small");
+                        success.setPosition(Position.BOTTOM_CENTER);
+                        success.show(Page.getCurrent());
+
+                    }
+
+                    close();
+                    Page.getCurrent().reload();
+                    
+
+                } catch (FieldGroup.CommitException e) {
                     Notification.show("Error while creating User Story",
                             Notification.Type.ERROR_MESSAGE);
-                }*/
+                }
             }
         });
 
 
-        buttonsLayout.addComponent(cancelButton);
-        buttonsLayout.addComponent(addNewButton);
+        footer.addComponent(submitButton);
+        footer.addComponent(cancelButton);
 
-        return buttonsLayout;
+        footer.setExpandRatio(cancelButton,1);
+
+        footer.setComponentAlignment(cancelButton, Alignment.TOP_RIGHT);
+        footer.setComponentAlignment(submitButton, Alignment.TOP_RIGHT);
+
+
+        return footer;
     }
 
 
 
 
 
-    public static void open(UserStory userStory) {
-        Window w = new TaskWindow(userStory);
+    public static void open(Task task) {
+        Window w = new TaskWindow(task);
         UI.getCurrent().addWindow(w);
         w.focus();
 

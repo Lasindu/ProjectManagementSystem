@@ -74,11 +74,20 @@ public class ViewAllProjects {
 
             Button editProjectButton=new Button("Edit Project");
             Button viewProjectButton=new Button("View Project");
+            editProjectButton.setData(projectList.get(x));
             viewProjectButton.setData(projectList.get(x).getName());
 
             viewProjectTable.addItem(new Object[] {index,projectList.get(x).getName(),projectList.get(x).getClientName(),projectList.get(x).getDescription(),projectList.get(x).getDate(),projectList.get(x).getStartDate(),projectList.get(x).getDeliveredDate(),editProjectButton,viewProjectButton},index);
 
 
+            editProjectButton.addClickListener(new Button.ClickListener() {
+                public void buttonClick(Button.ClickEvent event) {
+
+                    ProjectWindow.open((Project)event.getButton().getData());
+
+
+                }
+            });
 
             viewProjectButton.addClickListener(new Button.ClickListener() {
                 public void buttonClick(Button.ClickEvent event) {
@@ -88,6 +97,7 @@ public class ViewAllProjects {
 
                 }
             });
+
 
         }
 
@@ -139,7 +149,9 @@ public class ViewAllProjects {
         final Button createNewProjectButton = new Button("Create New Project");
         createNewProjectButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(Button.ClickEvent event) {
-                ProjectWindow.open("");
+                Project project= new Project();
+                project.setName("");
+                ProjectWindow.open(project);
 
 
             }

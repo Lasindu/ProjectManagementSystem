@@ -48,6 +48,7 @@ public class ViewUserStory extends CustomComponent {
         //viewUserStoryLayout.setCaption("View Project");
         viewUserStoryLayout.setMargin(true);
         viewUserStoryLayout.setSpacing(true);
+        viewUserStoryLayout.setSizeFull();
 
 
 
@@ -117,18 +118,25 @@ public class ViewUserStory extends CustomComponent {
 
                 Button editTaskButton=new Button("Edit Task");
                 Button viewTaskButton=new Button("View Task");
+
+                editTaskButton.setData(task);
                 viewTaskButton.setData(userStory.getProject().getName()+"/"+userStory.getName()+"/"+task.getTaskId());
 
                 tasksTable.addItem(new Object[] {index,task.getName(),task.getPriority(),task.getSeverity(),task.getMemberType(),task.getEstimateTime(),task.getAssignedTo(),task.getCompleteTime(),editTaskButton,viewTaskButton},index);
 
 
+                editTaskButton.addClickListener(new Button.ClickListener() {
+                    public void buttonClick(Button.ClickEvent event) {
+
+                        TaskWindow.open((Task)event.getButton().getData());
+
+                    }
+                });
 
                 viewTaskButton.addClickListener(new Button.ClickListener() {
                     public void buttonClick(Button.ClickEvent event) {
 
-
                         DashboardUI.getCurrent().getNavigator().navigateTo("Schedule_Task/"+(String)event.getButton().getData());
-
 
                     }
                 });
@@ -197,13 +205,14 @@ public class ViewUserStory extends CustomComponent {
         final Button createTask = new Button("Create New Task");
         createTask.addClickListener(new Button.ClickListener() {
             public void buttonClick(Button.ClickEvent event) {
-                TaskWindow.open(userStory);
 
+                Task task= new Task();
+                task.setName("");
+                task.setUserStory(userStory);
 
-
+                TaskWindow.open(task);
             }
         });
-
 
         return createTask;
     }
