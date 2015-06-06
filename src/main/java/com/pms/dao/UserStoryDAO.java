@@ -1,6 +1,7 @@
 package com.pms.dao;
 
 import com.pms.domain.Project;
+import com.pms.domain.User;
 import com.pms.domain.UserStory;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -24,6 +25,11 @@ public class UserStoryDAO {
         session.save(userStory);
         session.beginTransaction().commit();
         session.close();
+
+    }
+
+    public void removeUserStory(UserStory userStory)
+    {
 
     }
 

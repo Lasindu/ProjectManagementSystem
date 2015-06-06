@@ -19,7 +19,7 @@ public class LoginDAO {
 
 
         //original code
-/*        Session session = getSessionFactory().openSession();
+        Session session = getSessionFactory().openSession();
         System.out.println("User Name   "+userName);
         //List<User> usersList=session.createQuery(" from User u where u.userName=? and u.password=? ").setParameter(0,userName).setParameter(1, password).list();
         List<User> usersList=session.createQuery(" from User u where u.userName=? ").setParameter(0,userName).list();
@@ -27,11 +27,11 @@ public class LoginDAO {
         {
             return usersList.get(0);
 
-        }*/
+        }
 
 
 
-        Session session = getSessionFactory().openSession();
+/*        Session session = getSessionFactory().openSession();
         System.out.println("User Name   "+userName);
         //List<User> usersList=session.createQuery(" from User u where u.userName=? and u.password=? ").setParameter(0,userName).setParameter(1, password).list();
         List<User> usersList=session.createQuery(" from User u ").list();
@@ -39,7 +39,7 @@ public class LoginDAO {
         {
             return usersList.get(0);
 
-        }
+        }*/
 
 
         return null;

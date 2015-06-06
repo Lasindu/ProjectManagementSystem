@@ -143,8 +143,6 @@ public class DemoUI  {
 
 
     public Component init() {
-
-       // syncLocaleAndTimezone();
         ganttListener = null;
         createGantt();
 

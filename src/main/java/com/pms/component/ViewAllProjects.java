@@ -3,16 +3,21 @@ package com.pms.component;
 import com.pms.DashboardUI;
 import com.pms.dao.ProjectDAO;
 import com.pms.domain.Project;
+import com.pms.domain.User;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.event.FieldEvents;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
 import com.vaadin.server.Responsive;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
+import org.vaadin.dialogs.ConfirmDialog;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,6 +28,7 @@ public class ViewAllProjects {
     public  VerticalLayout viewProjectLayout;
     private Table viewProjectTable;
     private Button create;
+    private String userRole;
 
     public ViewAllProjects()
     {
@@ -38,6 +44,16 @@ public class ViewAllProjects {
 
     private void buildViewAllProjects()
     {
+
+
+        User user = (User) VaadinSession.getCurrent().getAttribute(
+                User.class.getName());
+
+        userRole=user.getRole();
+
+
+
+
         viewProjectLayout = new VerticalLayout();
         //viewProjectLayout.setCaption("View Project");
         viewProjectLayout.setMargin(true);
@@ -60,43 +76,103 @@ public class ViewAllProjects {
         viewProjectTable.addContainerProperty("Created Date", String.class, null);
         viewProjectTable.addContainerProperty("Start Date", String.class, null);
         viewProjectTable.addContainerProperty("Delivered Date", String.class, null);
-        viewProjectTable.addContainerProperty("Edit Project", Button.class, null);
+
+        if(userRole.equals("admin")||userRole.equals("pm"))
+        {
+            viewProjectTable.addContainerProperty("Remove Project", Button.class, null);
+            viewProjectTable.addContainerProperty("Edit Project", Button.class, null);
+
+        }
+
         viewProjectTable.addContainerProperty("View Project", Button.class, null);
         viewProjectTable.setSizeFull();
 
-        ProjectDAO projectDAO= (ProjectDAO) DashboardUI.context.getBean("Project");
 
-        List<Project> projectList=projectDAO.getAllProjects();
+
+        ProjectDAO projectDAO= (ProjectDAO) DashboardUI.context.getBean("Project");
+        //List<Project> projectList=projectDAO.getAllProjects();
+        //used session user to get the user projects
+        List<Project> projectList = new ArrayList();
+        projectList.addAll(user.getProjects());
+
 
         for(int x=0;x<projectList.size();x++)
         {
             int index=x+1;
 
-            Button editProjectButton=new Button("Edit Project");
-            Button viewProjectButton=new Button("View Project");
-            editProjectButton.setData(projectList.get(x));
-            viewProjectButton.setData(projectList.get(x).getName());
+            if (userRole.equals("admin")||userRole.equals("pm"))
+            {
+                Button removeProjectButton=new Button("Remove Project");
+                Button editProjectButton=new Button("Edit Project");
+                Button viewProjectButton=new Button("View Project");
+                removeProjectButton.setData(projectList.get(x));
+                editProjectButton.setData(projectList.get(x));
+                viewProjectButton.setData(projectList.get(x).getName());
 
-            viewProjectTable.addItem(new Object[] {index,projectList.get(x).getName(),projectList.get(x).getClientName(),projectList.get(x).getDescription(),projectList.get(x).getDate(),projectList.get(x).getStartDate(),projectList.get(x).getDeliveredDate(),editProjectButton,viewProjectButton},index);
+                viewProjectTable.addItem(new Object[] {index,projectList.get(x).getName(),projectList.get(x).getClientName(),projectList.get(x).getDescription(),projectList.get(x).getDate(),projectList.get(x).getStartDate(),projectList.get(x).getDeliveredDate(),removeProjectButton,editProjectButton,viewProjectButton},index);
+
+                removeProjectButton.addClickListener(new Button.ClickListener() {
+                    public void buttonClick(Button.ClickEvent event) {
+
+                        final Project project=(Project)event.getButton().getData();
+
+                        ConfirmDialog.show(DashboardUI.getCurrent(), "Please Confirm:", "Are you sure you want to delete project named :"+project.getName(),
+                                "I am", "Not quite", new ConfirmDialog.Listener() {
+
+                                    public void onClose(ConfirmDialog dialog) {
+                                        if (dialog.isConfirmed()) {
+                                            // Confirmed to continue
+                                            ProjectDAO projectDAO= (ProjectDAO) DashboardUI.context.getBean("Project");
+                                            projectDAO.removeProject(project);
+                                            Page.getCurrent().reload();
+
+                                        } else {
+                                            // User did not confirm
+
+                                        }
+                                    }
+                                });
+
+                    }
+                });
 
 
-            editProjectButton.addClickListener(new Button.ClickListener() {
-                public void buttonClick(Button.ClickEvent event) {
+                editProjectButton.addClickListener(new Button.ClickListener() {
+                    public void buttonClick(Button.ClickEvent event) {
 
-                    ProjectWindow.open((Project)event.getButton().getData());
-
-
-                }
-            });
-
-            viewProjectButton.addClickListener(new Button.ClickListener() {
-                public void buttonClick(Button.ClickEvent event) {
-
-                    DashboardUI.getCurrent().getNavigator().navigateTo("Schedule_Task/"+(String)event.getButton().getData());
+                        ProjectWindow.open((Project)event.getButton().getData());
 
 
-                }
-            });
+                    }
+                });
+
+                viewProjectButton.addClickListener(new Button.ClickListener() {
+                    public void buttonClick(Button.ClickEvent event) {
+
+                        DashboardUI.getCurrent().getNavigator().navigateTo("Schedule_Task/"+(String)event.getButton().getData());
+
+
+                    }
+                });
+            }
+            else
+            {
+
+                Button viewProjectButton = new Button("View Project");
+                viewProjectButton.setData(projectList.get(x).getName());
+
+                viewProjectTable.addItem(new Object[]{index, projectList.get(x).getName(), projectList.get(x).getClientName(), projectList.get(x).getDescription(), projectList.get(x).getDate(), projectList.get(x).getStartDate(), projectList.get(x).getDeliveredDate(), viewProjectButton}, index);
+
+                viewProjectButton.addClickListener(new Button.ClickListener() {
+                    public void buttonClick(Button.ClickEvent event) {
+
+                        DashboardUI.getCurrent().getNavigator().navigateTo("Schedule_Task/" + (String) event.getButton().getData());
+
+
+                    }
+                });
+
+            }
 
 
         }
@@ -106,10 +182,6 @@ public class ViewAllProjects {
         viewProjectLayout.addComponent(viewProjectTable);
         viewProjectLayout.setExpandRatio(viewProjectTable,1);
 
-
-
-
-        //return  viewProjectLayout;
 
     }
 
@@ -134,12 +206,23 @@ public class ViewAllProjects {
         title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
         header.addComponent(title);
 
-        create = buildCreateReport();
-        HorizontalLayout tools = new HorizontalLayout(buildFilter(),
-                create);
-        tools.setSpacing(true);
-        tools.addStyleName("toolbar");
-        header.addComponent(tools);
+
+        if(userRole.equals("admin")||userRole.equals("pm")) {
+            create = buildCreateReport();
+            HorizontalLayout tools = new HorizontalLayout(buildFilter(),
+                    create);
+            tools.setSpacing(true);
+            tools.addStyleName("toolbar");
+            header.addComponent(tools);
+        }
+        else
+        {
+            HorizontalLayout tools = new HorizontalLayout(buildFilter());
+            tools.setSpacing(true);
+            tools.addStyleName("toolbar");
+            header.addComponent(tools);
+
+        }
 
         return header;
     }

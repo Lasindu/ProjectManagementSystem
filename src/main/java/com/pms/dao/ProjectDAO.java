@@ -24,6 +24,11 @@ public class ProjectDAO {
         session.close();
     }
 
+    public void removeProject(Project project)
+    {
+
+    }
+
 
     public List<Project> getAllProjects()
     {

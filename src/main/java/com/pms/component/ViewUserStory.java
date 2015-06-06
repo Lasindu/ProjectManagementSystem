@@ -1,8 +1,10 @@
 package com.pms.component;
 
 import com.pms.DashboardUI;
+import com.pms.dao.TaskDAO;
 import com.pms.dao.UserStoryDAO;
 import com.pms.domain.Task;
+import com.pms.domain.User;
 import com.pms.domain.UserStory;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
@@ -10,15 +12,19 @@ import com.vaadin.event.FieldEvents;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
 import com.vaadin.server.Responsive;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
+import org.vaadin.dialogs.ConfirmDialog;
 
 /**
  * Created by Damitha on 6/2/2015.
  */
 public class ViewUserStory extends CustomComponent {
 
+    private String userRole;
     public VerticalLayout viewUserStoryLayout;
     private String projectName;
     private String userStoryName;
@@ -44,6 +50,11 @@ public class ViewUserStory extends CustomComponent {
 
     private void buildViewUserStory()
     {
+        User user = (User) VaadinSession.getCurrent().getAttribute(
+                User.class.getName());
+        userRole=user.getRole();
+
+
         viewUserStoryLayout = new VerticalLayout();
         //viewUserStoryLayout.setCaption("View Project");
         viewUserStoryLayout.setMargin(true);
@@ -107,6 +118,13 @@ public class ViewUserStory extends CustomComponent {
             tasksTable.addContainerProperty("Estimate Time", String.class, null);
             tasksTable.addContainerProperty("Assigned To", String.class, null);
             tasksTable.addContainerProperty("Complete Time", String.class, null);
+
+            if (userRole.equals("admin")||userRole.equals("pm")||userRole.equals("architect"))
+            {
+                tasksTable.addContainerProperty("Remove Task", Button.class, null);
+
+            }
+
             tasksTable.addContainerProperty("Edit Task", Button.class, null);
             tasksTable.addContainerProperty("View Task", Button.class, null);
             tasksTable.setSizeFull();
@@ -115,6 +133,61 @@ public class ViewUserStory extends CustomComponent {
             for(Task task:userStory.getUserStoryTasks())
             {
                 index++;
+
+
+                if (userRole.equals("admin")||userRole.equals("pm")||userRole.equals("architect"))
+                {
+                    Button removeTaskButton=new Button("Remove Task");
+                    Button editTaskButton=new Button("Edit Task");
+                    Button viewTaskButton=new Button("View Task");
+
+                    removeTaskButton.setData(task);
+                    editTaskButton.setData(task);
+                    viewTaskButton.setData(userStory.getProject().getName()+"/"+userStory.getName()+"/"+task.getTaskId());
+
+                    tasksTable.addItem(new Object[] {index,task.getName(),task.getPriority(),task.getSeverity(),task.getMemberType(),task.getEstimateTime(),task.getAssignedTo(),task.getCompleteTime(),removeTaskButton,editTaskButton,viewTaskButton},index);
+
+                    removeTaskButton.addClickListener(new Button.ClickListener() {
+                        public void buttonClick(Button.ClickEvent event) {
+
+                            final Task task= (Task)event.getButton().getData();
+                            ConfirmDialog.show(DashboardUI.getCurrent(), "Please Confirm:", "Are you sure you want to delete task named :" + task.getName(),
+                                    "I am", "Not quite", new ConfirmDialog.Listener() {
+
+                                        public void onClose(ConfirmDialog dialog) {
+                                            if (dialog.isConfirmed()) {
+                                                // Confirmed to continue
+                                                TaskDAO taskDAO = (TaskDAO) DashboardUI.context.getBean("Task");
+                                                taskDAO.removeTask(task);
+                                                Page.getCurrent().reload();
+
+                                            } else {
+                                                // User did not confirm
+
+                                            }
+                                        }
+                                    });
+
+                        }
+                    });
+
+                    editTaskButton.addClickListener(new Button.ClickListener() {
+                        public void buttonClick(Button.ClickEvent event) {
+
+                            TaskWindow.open((Task)event.getButton().getData());
+
+                        }
+                    });
+
+                    viewTaskButton.addClickListener(new Button.ClickListener() {
+                        public void buttonClick(Button.ClickEvent event) {
+
+                            DashboardUI.getCurrent().getNavigator().navigateTo("Schedule_Task/"+(String)event.getButton().getData());
+
+                        }
+                    });
+
+                }
 
                 Button editTaskButton=new Button("Edit Task");
                 Button viewTaskButton=new Button("View Task");
@@ -191,12 +264,27 @@ public class ViewUserStory extends CustomComponent {
         title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
         header.addComponent(title);
 
-        create = buildCreateReport();
-        HorizontalLayout tools = new HorizontalLayout(buildFilter(),
-                create);
-        tools.setSpacing(true);
-        tools.addStyleName("toolbar");
-        header.addComponent(tools);
+        if (userRole.equals("admin")||userRole.equals("pm")||userRole.equals("architect"))
+        {
+            create = buildCreateReport();
+            HorizontalLayout tools = new HorizontalLayout(buildFilter(),
+                    create);
+            tools.setSpacing(true);
+            tools.addStyleName("toolbar");
+            header.addComponent(tools);
+
+        }
+        else
+        {
+            create = buildCreateReport();
+            HorizontalLayout tools = new HorizontalLayout(buildFilter());
+            tools.setSpacing(true);
+            tools.addStyleName("toolbar");
+            header.addComponent(tools);
+
+        }
+
+
 
         return header;
     }

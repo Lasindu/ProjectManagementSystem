@@ -2,7 +2,9 @@ package com.pms.component;
 
 import com.pms.DashboardUI;
 import com.pms.dao.ProjectDAO;
+import com.pms.dao.UserStoryDAO;
 import com.pms.domain.Project;
+import com.pms.domain.User;
 import com.pms.domain.UserStory;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
@@ -10,9 +12,12 @@ import com.vaadin.event.FieldEvents;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
 import com.vaadin.server.Responsive;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
+import org.vaadin.dialogs.ConfirmDialog;
 
 import java.util.Collection;
 
@@ -21,6 +26,7 @@ import java.util.Collection;
  */
 public class ViewProject extends CustomComponent {
 
+    private String userRole;
     private Table userStoryTable;
     private String projectName;
     private Button createUserStory;
@@ -45,6 +51,10 @@ public class ViewProject extends CustomComponent {
 
     private void buildViewProject()
     {
+        User user = (User) VaadinSession.getCurrent().getAttribute(
+                User.class.getName());
+        userRole=user.getRole();
+
         viewProjectLayout = new VerticalLayout();
         viewProjectLayout.setMargin(true);
         viewProjectLayout.setSpacing(true);
@@ -97,7 +107,14 @@ public class ViewProject extends CustomComponent {
         userStoryTable.addContainerProperty("Description", String.class, null);
         userStoryTable.addContainerProperty("Domain", String.class, null);
         userStoryTable.addContainerProperty("Assigned Sprint", String.class, null);
-        userStoryTable.addContainerProperty("Edit User Story", Button.class, null);
+
+        if (userRole.equals("admin")||userRole.equals("pm")||userRole.equals("architect"))
+        {
+            userStoryTable.addContainerProperty("Remove User Story", Button.class, null);
+            userStoryTable.addContainerProperty("Edit User Story", Button.class, null);
+
+        }
+
         userStoryTable.addContainerProperty("View User Story", Button.class, null);
         userStoryTable.setSizeFull();
 
@@ -105,39 +122,85 @@ public class ViewProject extends CustomComponent {
 
 
         int index=0;
-        for(UserStory userStory:projectUserStories)
+        for(final UserStory userStory:projectUserStories)
         {
             index++;
 
-            Button editUserStoryButton=new Button("Edit UserStory");
-            Button viewUserStoryButton=new Button("View UserStory");
-            viewUserStoryButton.setData(userStory.getProject().getName()+"/"+userStory.getName());
-            editUserStoryButton.setData(userStory);
+            if (userRole.equals("admin")||userRole.equals("pm")||userRole.equals("architect"))
+            {
+                Button removeUserStoryButton=new Button("Remove  UserStory");
+                Button editUserStoryButton=new Button("Edit UserStory");
+                Button viewUserStoryButton=new Button("View UserStory");
 
-            userStoryTable.addItem(new Object[]{index, userStory.getName(), userStory.getPriority(), userStory.getDescription(), userStory.getDomain(), userStory.getAssignedSprint(), editUserStoryButton, viewUserStoryButton}, index);
+                removeUserStoryButton.setData(userStory);
+                viewUserStoryButton.setData(userStory.getProject().getName()+"/"+userStory.getName());
+                editUserStoryButton.setData(userStory);
 
-
-            editUserStoryButton.addClickListener(new Button.ClickListener() {
-                public void buttonClick(Button.ClickEvent event) {
-
-                    UserStoryWindow.open((UserStory)event.getButton().getData());
-
-                }
-            });
-
-            viewUserStoryButton.addClickListener(new Button.ClickListener() {
-                public void buttonClick(Button.ClickEvent event) {
+                userStoryTable.addItem(new Object[]{index, userStory.getName(), userStory.getPriority(), userStory.getDescription(), userStory.getDomain(), userStory.getAssignedSprint(),removeUserStoryButton, editUserStoryButton, viewUserStoryButton}, index);
 
 
+                removeUserStoryButton.addClickListener(new Button.ClickListener() {
+                    public void buttonClick(Button.ClickEvent event) {
 
-                    //getUI().getNavigator().navigateTo("Schedule_Task/"+projectName+"/"+(String)event.getButton().getData());
-                    System.out.println("#################################################"+(String)event.getButton().getData());
-                   // getUI().getNavigator().navigateTo("Schedule_Task/"+(String)event.getButton().getData());
-                    //System.out.println(getUI().getNavigator().getState());
-                    DashboardUI.getCurrent().getNavigator().navigateTo("Schedule_Task/"+(String)event.getButton().getData());
+                        final UserStory userStory= (UserStory)event.getButton().getData();
+                        ConfirmDialog.show(DashboardUI.getCurrent(), "Please Confirm:", "Are you sure you want to delete userStory named :" + project.getName(),
+                                "I am", "Not quite", new ConfirmDialog.Listener() {
 
-                }
-            });
+                                    public void onClose(ConfirmDialog dialog) {
+                                        if (dialog.isConfirmed()) {
+                                            // Confirmed to continue
+                                            UserStoryDAO userStoryDAO = (UserStoryDAO) DashboardUI.context.getBean("UserStory");
+                                            userStoryDAO.removeUserStory(userStory);
+                                            Page.getCurrent().reload();
+
+                                        } else {
+                                            // User did not confirm
+
+                                        }
+                                    }
+                                });
+
+                    }
+                });
+
+
+                editUserStoryButton.addClickListener(new Button.ClickListener() {
+                    public void buttonClick(Button.ClickEvent event) {
+
+                        UserStoryWindow.open((UserStory)event.getButton().getData());
+
+                    }
+                });
+
+                viewUserStoryButton.addClickListener(new Button.ClickListener() {
+                    public void buttonClick(Button.ClickEvent event) {
+
+                        DashboardUI.getCurrent().getNavigator().navigateTo("Schedule_Task/"+(String)event.getButton().getData());
+
+                    }
+                });
+
+            }
+            else
+            {
+                Button viewUserStoryButton=new Button("View UserStory");
+                viewUserStoryButton.setData(userStory.getProject().getName() + "/" + userStory.getName());
+
+
+                userStoryTable.addItem(new Object[]{index, userStory.getName(), userStory.getPriority(), userStory.getDescription(), userStory.getDomain(), userStory.getAssignedSprint(), viewUserStoryButton}, index);
+
+
+
+                viewUserStoryButton.addClickListener(new Button.ClickListener() {
+                    public void buttonClick(Button.ClickEvent event) {
+
+                        DashboardUI.getCurrent().getNavigator().navigateTo("Schedule_Task/"+(String)event.getButton().getData());
+
+                    }
+                });
+
+            }
+
 
 
         }
@@ -184,12 +247,26 @@ public class ViewProject extends CustomComponent {
         title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
         header.addComponent(title);
 
-        createUserStory = buildCreateUserStory();
-        HorizontalLayout tools = new HorizontalLayout(buildFilter(),
-                createUserStory);
-        tools.setSpacing(true);
-        tools.addStyleName("toolbar");
-        header.addComponent(tools);
+        if(userRole.equals("admin")||userRole.equals("pm")||userRole.equals("architect")) {
+            createUserStory = buildCreateUserStory();
+            HorizontalLayout tools = new HorizontalLayout(buildFilter(),
+                    createUserStory);
+            tools.setSpacing(true);
+            tools.addStyleName("toolbar");
+            header.addComponent(tools);
+        }
+        else
+        {
+
+            createUserStory = buildCreateUserStory();
+            HorizontalLayout tools = new HorizontalLayout(buildFilter());
+            tools.setSpacing(true);
+            tools.addStyleName("toolbar");
+            header.addComponent(tools);
+
+        }
+
+
 
         return header;
     }

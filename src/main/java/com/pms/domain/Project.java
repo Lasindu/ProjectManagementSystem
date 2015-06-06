@@ -27,6 +27,10 @@ public class Project{
     private Collection<UserStory> projectUserStories = new ArrayList<UserStory>();
 
 
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "projects")
+    private Collection<User> users = new ArrayList<User>();
+
+
 
 
 
@@ -36,6 +40,15 @@ public class Project{
 
 
     //getters and setters
+
+    public Collection<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Collection<User> users) {
+        this.users = users;
+    }
+
     public String getClientName() {
         return clientName;
     }

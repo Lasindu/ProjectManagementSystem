@@ -74,7 +74,8 @@ public final class DashboardUI extends UI {
         User user = (User) VaadinSession.getCurrent().getAttribute(
                User.class.getName());
 
-       if (user != null && "admin".equals(user.getRole())) {
+       //if (user != null && "admin".equals(user.getRole())) {
+        if (user != null ) {
 
             // Authenticated user
             setContent(new MainView());
@@ -95,6 +96,7 @@ public final class DashboardUI extends UI {
         User user =loginDAO.authenticateUser(event.getUserName(),event.getPassword());
 
         VaadinSession.getCurrent().setAttribute(User.class.getName(), user);
+        VaadinSession.getCurrent().setAttribute("role", user.getRole());
         updateContent();
     }
 
