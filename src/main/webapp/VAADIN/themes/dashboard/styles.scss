@@ -1,7 +1,44 @@
 // Import all the mixins for this theme
 @import "dashboard";
 
+
+
+
+
+
+@import "../valo/valo";
+@import "addons.scss";
+
+// next line is required if gantt-valo theme used. Check the correct path from addons.scss,
+// gantt-valo.scss is located in the same folder as gantt.scss.
+@import "../../../VAADIN/addons/gantt/gantt-valo.scss";
+
+
+
+
+
+
+
+
+
 .dashboard {
   // Output the actual theme selectors
   @include dashboard;
+
+
+  @include addons;
+  @include gantt-valo;
+}
+
+
+.demo {
+
+  //@include reindeer;
+
+  @include valo;
+  @include addons;
+
+  // next line takes the gantt-valo.scss theme in use
+  @include gantt-valo;
+
 }

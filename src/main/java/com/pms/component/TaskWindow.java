@@ -269,7 +269,7 @@ public class TaskWindow extends Window {
 
                     close();
                     Page.getCurrent().reload();
-                    
+
 
                 } catch (FieldGroup.CommitException e) {
                     Notification.show("Error while creating User Story",

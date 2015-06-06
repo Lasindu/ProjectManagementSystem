@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import com.pms.component.ganttchart.DemoUI;
 import com.vaadin.ui.*;
 import org.tltv.gantt.Gantt;
 import org.tltv.gantt.Gantt.MoveEvent;
@@ -39,7 +40,7 @@ import com.vaadin.ui.Notification.Type;
 /**
  * Created by Upulie on 4/2/2015.
  */
-public class DashboardView  extends HorizontalLayout implements View {
+public class DashboardView  extends Panel implements View {
 
    // private final VerticalLayout root;
     private Gantt gantt;
@@ -53,7 +54,7 @@ public class DashboardView  extends HorizontalLayout implements View {
 
     public DashboardView() {
        // addStyleName(ValoTheme.PANEL_BORDERLESS);
-        setSizeFull();
+        //setSizeFull();
 /*        root = new VerticalLayout();
         root.setSizeFull();
         root.setMargin(true);
@@ -63,13 +64,23 @@ public class DashboardView  extends HorizontalLayout implements View {
         root.addComponent(new Label("Dashboard View"));*/
 
 
-        final VerticalLayout layout = new VerticalLayout();
+        //final VerticalLayout layout = new VerticalLayout();
+        //layout.setStyleName("demoContentLayout");
+        //layout.setSizeFull();
 
 
-        createGantt();
-        layout.addComponent(gantt);
+       // createGantt();
+       // layout.addComponent(gantt);
 
-        addComponent(layout);
+        //addComponent(layout);
+        //layout.setExpandRatio(layout, 1);
+
+
+        DemoUI demoUI = new DemoUI();
+
+
+        setContent(demoUI.init());
+
 
     }
 
@@ -146,11 +157,11 @@ public class DashboardView  extends HorizontalLayout implements View {
         stepWithSubSteps.addSubStep(subStep2);
         stepWithSubSteps.addSubStep(subStep3);
 
-        gantt.addStep(step1);
-        gantt.addStep(step2);
-        gantt.addStep(step3);
-        gantt.addStep(step4);
-        gantt.addStep(stepWithSubSteps);
+        //gantt.addStep(step1);
+       // gantt.addStep(step2);
+       // gantt.addStep(step3);
+       // gantt.addStep(step4);
+       // gantt.addStep(stepWithSubSteps);
 
         String[] colors = new String[]{"11FF11", "33FF33", "55FF55",
                 "77FF77", "99FF99", "BBFFBB", "DDFFDD"};
