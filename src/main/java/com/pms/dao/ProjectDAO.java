@@ -26,6 +26,11 @@ public class ProjectDAO {
 
     public void removeProject(Project project)
     {
+        Session session = getSessionFactory().openSession();
+        session.beginTransaction();
+        session.delete(project);
+        session.getTransaction().commit();
+        session.close();
 
     }
 
@@ -67,9 +72,12 @@ public class ProjectDAO {
             session.close();
             return list.get(0);
         }
-
         else
+        {
+            session.close();
             return null;
+        }
+
 
     }
 

@@ -34,6 +34,11 @@ public class TaskDAO {
 
     public void removeTask(Task task)
     {
+        Session session = getSessionFactory().openSession();
+        session.beginTransaction();
+        session.delete(task);
+        session.getTransaction().commit();
+        session.close();
 
     }
 

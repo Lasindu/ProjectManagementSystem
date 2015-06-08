@@ -2,6 +2,7 @@ package com.pms.component;
 
 import com.pms.DashboardUI;
 import com.pms.dao.ProjectDAO;
+import com.pms.dao.UserDAO;
 import com.pms.domain.Project;
 import com.pms.domain.User;
 import com.vaadin.data.Container;
@@ -18,6 +19,8 @@ import com.vaadin.ui.themes.ValoTheme;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -122,6 +125,21 @@ public class ViewAllProjects {
                                     public void onClose(ConfirmDialog dialog) {
                                         if (dialog.isConfirmed()) {
                                             // Confirmed to continue
+
+
+                                            //remove project form all users // this is only way to remove many to many mapping
+                                            Collection<User> users = project.getUsers();
+
+
+                                            UserDAO userDAO = (UserDAO) DashboardUI.context.getBean("User");
+                                            Iterator iter = users.iterator();
+                                            while (iter.hasNext()) {
+                                                User user= (User)iter.next();
+                                                user.getProjects().remove(project);
+                                                userDAO.updateUser(user);
+                                            }
+
+
                                             ProjectDAO projectDAO= (ProjectDAO) DashboardUI.context.getBean("Project");
                                             projectDAO.removeProject(project);
                                             Page.getCurrent().reload();

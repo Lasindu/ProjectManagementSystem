@@ -1,14 +1,13 @@
 package com.pms.view.dashboard;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import com.pms.component.ganttchart.DemoUI;
+import com.pms.domain.Project;
+import com.pms.domain.User;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.*;
 import org.tltv.gantt.Gantt;
 import org.tltv.gantt.Gantt.MoveEvent;
@@ -40,7 +39,7 @@ import com.vaadin.ui.Notification.Type;
 /**
  * Created by Upulie on 4/2/2015.
  */
-public class DashboardView  extends Panel implements View {
+public class DashboardView  extends CssLayout implements View {
 
    // private final VerticalLayout root;
     private Gantt gantt;
@@ -53,6 +52,42 @@ public class DashboardView  extends Panel implements View {
     }
 
     public DashboardView() {
+        User user = (User) VaadinSession.getCurrent().getAttribute(
+                User.class.getName());
+
+        List<Project> projectList = new ArrayList();
+        projectList.addAll(user.getProjects());
+        setSizeFull();
+        removeAllComponents();
+
+        TabSheet tabs = new TabSheet();
+        tabs.setSizeFull();
+        tabs.addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
+
+       /* for(int x=0;x<projectList.size();x++)
+        {
+            DemoUI demoUI = new DemoUI();
+            VerticalLayout layout= (VerticalLayout) demoUI.init();
+            layout.setCaption(projectList.get(x).getName());
+            //setContent(demoUI.init());
+            tabs.addComponent(layout);
+
+        }*/
+        DemoUI demoUI = new DemoUI();
+        VerticalLayout layout= (VerticalLayout) demoUI.init();
+        layout.setCaption("1111111");
+        //layout.setCaption(projectList.get(x).getName());
+        //setContent(demoUI.init());
+        tabs.addComponent(layout);
+
+        DemoUI demoUI1 = new DemoUI();
+        VerticalLayout layout1= (VerticalLayout) demoUI1.init();
+        layout1.setCaption("dffdfdf");
+        //layout.setCaption(projectList.get(x).getName());
+        //setContent(demoUI.init());
+        tabs.addComponent(layout1);
+
+        addComponent(tabs);
        // addStyleName(ValoTheme.PANEL_BORDERLESS);
         //setSizeFull();
 /*        root = new VerticalLayout();
@@ -76,8 +111,8 @@ public class DashboardView  extends Panel implements View {
         //layout.setExpandRatio(layout, 1);
 
 
-        DemoUI demoUI = new DemoUI();
-        setContent(demoUI.init());
+        //DemoUI demoUI = new DemoUI();
+        //setContent(demoUI.init());
 
 
     }

@@ -2,7 +2,9 @@ package com.pms.component;
 
 import com.pms.DashboardUI;
 import com.pms.dao.ProjectDAO;
+import com.pms.dao.UserDAO;
 import com.pms.domain.Project;
+import com.pms.domain.User;
 import com.pms.domain.UserStory;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
@@ -10,6 +12,7 @@ import com.vaadin.data.fieldgroup.PropertyId;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.Page;
 import com.vaadin.server.Responsive;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
@@ -17,6 +20,8 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -38,9 +43,9 @@ public class ProjectWindow extends Window {
     @PropertyId("date")
     private TextField projectCreatedDate;
     @PropertyId("startDate")
-    private TextField projectStartDate;
+    private PopupDateField   projectStartDate;
     @PropertyId("deliveredDate")
-    private TextField ProjectDeliveredDate;
+    private PopupDateField   ProjectDeliveredDate;
 
 
     private ProjectWindow(Project project)
@@ -132,13 +137,17 @@ public class ProjectWindow extends Window {
 
         projectCreatedDate = new TextField("Created Date");
 
-        projectStartDate = new TextField("Start Date");
-        projectStartDate.setNullRepresentation("");
+        projectStartDate = new PopupDateField  ("Start Date");
+        projectStartDate.setValue(new Date());
+        projectStartDate.setDateFormat("yyyy-MM-dd");
+        //projectStartDate.setNullRepresentation("");
         content.addComponent(projectStartDate);
 
 
-        ProjectDeliveredDate = new TextField("End Date");
-        ProjectDeliveredDate.setNullRepresentation("");
+        ProjectDeliveredDate = new PopupDateField  ("End Date");
+        ProjectDeliveredDate.setValue(new Date());
+        ProjectDeliveredDate.setDateFormat("yyyy-MM-dd");
+        //ProjectDeliveredDate.setNullRepresentation("");
         content.addComponent(ProjectDeliveredDate);
 
 
@@ -203,8 +212,21 @@ public class ProjectWindow extends Window {
                             Date date = new Date();
                             project.setDate(dateFormat.format(date).toString());
 
-                            ProjectDAO projectDAO= (ProjectDAO) DashboardUI.context.getBean("Project");
-                            projectDAO.saveNewProject(project);
+
+
+                            //ProjectDAO projectDAO= (ProjectDAO) DashboardUI.context.getBean("Project");
+                            //projectDAO.saveNewProject(project);
+
+
+                            User user=(User) VaadinSession.getCurrent().getAttribute(
+                                    User.class.getName());
+                            //we have to use this method for create new project because of  many to many mapping
+                            user.getProjects().add(project);
+                            UserDAO userDAO = (UserDAO) DashboardUI.context.getBean("User");
+                            userDAO.updateUser(user);
+
+
+
 
                             Notification success = new Notification(
                                     "Project Created successfully");

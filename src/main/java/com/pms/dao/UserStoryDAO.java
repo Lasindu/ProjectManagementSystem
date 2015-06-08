@@ -30,6 +30,11 @@ public class UserStoryDAO {
 
     public void removeUserStory(UserStory userStory)
     {
+        Session session = getSessionFactory().openSession();
+        session.beginTransaction();
+        session.delete(userStory);
+        session.getTransaction().commit();
+        session.close();
 
     }
 
