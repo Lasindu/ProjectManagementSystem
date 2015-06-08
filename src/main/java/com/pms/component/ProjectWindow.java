@@ -125,6 +125,8 @@ public class ProjectWindow extends Window {
 
         projctName = new TextField("Project Name");
         projctName.setNullRepresentation("");
+        projctName.setRequired(true);
+        projctName.setRequiredError("Please enter a Project Name");
         content.addComponent(projctName);
 
         projctClientName = new TextField("Client Name");
@@ -221,9 +223,11 @@ public class ProjectWindow extends Window {
                             User user=(User) VaadinSession.getCurrent().getAttribute(
                                     User.class.getName());
                             //we have to use this method for create new project because of  many to many mapping
-                            user.getProjects().add(project);
                             UserDAO userDAO = (UserDAO) DashboardUI.context.getBean("User");
-                            userDAO.updateUser(user);
+                            User projectsLoadedUsr=userDAO.loadUserProjects(user);
+                            projectsLoadedUsr.getProjects().add(project);
+
+                            userDAO.updateUser(projectsLoadedUsr);
 
 
 

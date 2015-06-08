@@ -22,6 +22,19 @@ public class UserDAO {
         session.close();
     }
 
+    public User loadUserProjects(User user)
+    {
+        User user1;
+        Session session = getSessionFactory().openSession();
+        session.beginTransaction();
+        user1=(User)session.get(User.class,user.getUserName());
+        int x=user1.getProjects().size();
+        session.getTransaction().commit();
+        session.close();
+
+        return user1;
+    }
+
 
 
 

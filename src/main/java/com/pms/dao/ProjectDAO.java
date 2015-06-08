@@ -1,6 +1,7 @@
 package com.pms.dao;
 
 import com.pms.domain.Project;
+import com.pms.domain.User;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -31,6 +32,23 @@ public class ProjectDAO {
         session.delete(project);
         session.getTransaction().commit();
         session.close();
+
+    }
+
+    public Project loadProjectUsers(Project project)
+    {
+        Project project1;
+        Session session = getSessionFactory().openSession();
+        session.beginTransaction();
+        project1=(Project)session.get(Project.class,project.getProjectId());
+        int x=project1.getUsers().size();
+        for(User user: project1.getUsers())
+        {
+            int y=user.getProjects().size();
+        }
+        session.getTransaction().commit();
+        session.close();
+        return project1;
 
     }
 

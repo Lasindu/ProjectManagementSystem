@@ -28,13 +28,12 @@ public class LoginDAO {
         //following code for retrieve project users of project otherwise will give error when try to delete projects
         if(usersList.size()>0)
         {
-            int x = usersList.get(0).getProjects().size();
+            //int x = usersList.get(0).getProjects().size();
 
-            for(Project project: usersList.get(0).getProjects())
+ /*           for(Project project: usersList.get(0).getProjects())
             {
                 int y=project.getUsers().size();
-            }
-           // int y= usersList.get(0).getProjects().;
+            }*/
             session.close();
             return usersList.get(0);
 

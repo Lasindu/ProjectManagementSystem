@@ -92,11 +92,11 @@ public class ViewAllProjects {
 
 
 
-        ProjectDAO projectDAO= (ProjectDAO) DashboardUI.context.getBean("Project");
-        //List<Project> projectList=projectDAO.getAllProjects();
+        UserDAO userDAO = (UserDAO) DashboardUI.context.getBean("User");
         //used session user to get the user projects
         List<Project> projectList = new ArrayList();
-        projectList.addAll(user.getProjects());
+        User projectsLoadedUser= userDAO.loadUserProjects(user);
+        projectList.addAll(projectsLoadedUser.getProjects());
 
 
         for(int x=0;x<projectList.size();x++)
@@ -128,19 +128,27 @@ public class ViewAllProjects {
 
 
                                             //remove project form all users // this is only way to remove many to many mapping
-                                            Collection<User> users = project.getUsers();
+
+                                            ProjectDAO projectDAO= (ProjectDAO) DashboardUI.context.getBean("Project");
+
+                                            //have to load project users because of lazy retrival object then while creating new project it will not add to local session
+                                            //so if delete project when same session project creation then it will give exeption to solve that need to load project users
+                                            Project  usersLoadedProject = projectDAO.loadProjectUsers(project);
+
+
+                                            Collection<User> users = usersLoadedProject.getUsers();
 
 
                                             UserDAO userDAO = (UserDAO) DashboardUI.context.getBean("User");
                                             Iterator iter = users.iterator();
                                             while (iter.hasNext()) {
                                                 User user= (User)iter.next();
-                                                user.getProjects().remove(project);
+                                                user.getProjects().remove(usersLoadedProject);
                                                 userDAO.updateUser(user);
                                             }
 
 
-                                            ProjectDAO projectDAO= (ProjectDAO) DashboardUI.context.getBean("Project");
+
                                             projectDAO.removeProject(project);
                                             Page.getCurrent().reload();
 

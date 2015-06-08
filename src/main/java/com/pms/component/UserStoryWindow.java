@@ -51,7 +51,7 @@ public class UserStoryWindow extends Window {
     @PropertyId("assignedSprint")
     private TextField assignedSprint;
     @PropertyId("releasedDate")
-    private TextField releasedDate;
+    private PopupDateField releasedDate;
     @PropertyId("isCr")
     private OptionGroup isCr;
 
@@ -156,8 +156,10 @@ public class UserStoryWindow extends Window {
         assignedSprint.setNullRepresentation("");
         content.addComponent(assignedSprint);
 
-        releasedDate = new TextField("released Date");
-        releasedDate.setNullRepresentation("");
+        releasedDate = new PopupDateField("released Date");
+        releasedDate.setValue(new Date());
+        releasedDate.setDateFormat("yyyy-MM-dd");
+        //releasedDate.setNullRepresentation("");
         content.addComponent(releasedDate);
 
         isCr = new OptionGroup("Is Cr");
