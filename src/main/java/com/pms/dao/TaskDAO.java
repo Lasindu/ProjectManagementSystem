@@ -20,8 +20,8 @@ public class TaskDAO {
     public Task getTaskByTaskId(int id)
     {
         Session session = getSessionFactory().openSession();
-        String SQL_QUERY = "from Task as task  where task.id=id ";
-        Query query = session.createQuery(SQL_QUERY);
+        String HQL_QUERY = "from Task as task  where task.id=id ";
+        Query query = session.createQuery(HQL_QUERY);
         List<Task> list = ((org.hibernate.Query) query).list();
 
         if(list.size()>0)

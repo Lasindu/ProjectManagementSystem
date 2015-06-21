@@ -56,8 +56,8 @@ public class ProjectDAO {
     public List<Project> getAllProjects()
     {
         Session session = getSessionFactory().openSession();
-        String SQL_QUERY = "from Project";
-        Query query = session.createQuery(SQL_QUERY);
+        String HQL_QUERY = "from Project";
+        Query query = session.createQuery(HQL_QUERY);
         List<Project> list = ((org.hibernate.Query) query).list();
         session.close();
 
@@ -79,8 +79,8 @@ public class ProjectDAO {
     public Project getProjectFromProjectName(String projectName)
     {
         Session session = getSessionFactory().openSession();
-        String SQL_QUERY = "from Project as project  where project.name='" + projectName + "'";
-        Query query = session.createQuery(SQL_QUERY);
+        String HQL_QUERY = "from Project as project  where project.name='" + projectName + "'";
+        Query query = session.createQuery(HQL_QUERY);
         List<Project> list = ((org.hibernate.Query) query).list();
 
 

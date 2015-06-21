@@ -44,8 +44,7 @@ public class UserStoryWindow extends Window {
     private TextArea description;
     @PropertyId("priority")
     private ComboBox priority;
-    private ListSelect preRequisitsList;
-    private ListSelect dependancyList;
+    private OptionGroup preRequisitsList;
     @PropertyId("domain")
     private TextField domain;
     @PropertyId("assignedSprint")
@@ -126,26 +125,37 @@ public class UserStoryWindow extends Window {
         priority.addItem(5);
         content.addComponent(priority);
 
-        preRequisitsList = new ListSelect("Pre Requisits");
+
+
+
+        preRequisitsList = new OptionGroup("Pre Requisits");
         preRequisitsList.setWidth("400px");
         preRequisitsList.setNullSelectionAllowed(true);
         for (UserStory user_Story : projectUserStories) {
+
             preRequisitsList.addItem(user_Story.getName());
+
         }
         preRequisitsList.setMultiSelect(true);
-        preRequisitsList.setRows(7);
-        content.addComponent(preRequisitsList);
 
 
-        dependancyList = new ListSelect("Dependency");
-        for (UserStory user_Story : projectUserStories) {
-            dependancyList.addItem(user_Story.getName());
+        Panel preRequestPanel = new Panel("");
+        preRequestPanel.setHeight("100px");
+        preRequestPanel.setContent(preRequisitsList);
+        VerticalLayout preRequistLayout= new VerticalLayout();
+        preRequistLayout.setCaption("Pre Requisits");
+        preRequistLayout.addComponent(preRequestPanel);
+        content.addComponent(preRequistLayout);
+
+        if(editmode)
+        {
+            String[] preRquisitList= userStory.getPreRequisits().split(",");
+
+            for(String preRequistit:preRquisitList)
+            {
+                preRequisitsList.select(preRequistit);
+            }
         }
-        dependancyList.setWidth("400px");
-        dependancyList.setNullSelectionAllowed(true);
-        dependancyList.setMultiSelect(true);
-        dependancyList.setRows(7);
-        content.addComponent(dependancyList);
 
 
         domain = new TextField("Domain");
@@ -183,13 +193,13 @@ public class UserStoryWindow extends Window {
 
 
         Button cancelButton = new Button("Cancel");
-
         cancelButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(Button.ClickEvent event) {
                 close();
 
             }
         });
+
 
         Button submitButton;
         if(editmode)
@@ -206,6 +216,8 @@ public class UserStoryWindow extends Window {
 
                 try {
 
+                    ProjectDAO projectDAO = (ProjectDAO)DashboardUI.context.getBean("Project");
+                    UserStoryDAO userStoryDAO =(UserStoryDAO)DashboardUI.context.getBean("UserStory");
 
                     fieldGroup.commit();
                     UserStory userStory ;
@@ -213,19 +225,39 @@ public class UserStoryWindow extends Window {
                     userStory.setProject(project);
 
 
-                    //set dependency for user story
-                    StringBuilder dependencyString = new StringBuilder();
-                    Set<Item> dependencyValues = (Set<Item>) dependancyList.getValue();
-                    int size = dependencyValues.size();
-                    int index = 1;
-                    for (Object v : dependencyValues) {
+                    //when user edit prerequist need to update those edited prerquisit dependency
+                    if (editmode)
+                    {
+                        String[] preRequistListBeforEdit=userStory.getPreRequisits().split(",");
 
-                        dependencyString.append(v.toString());
-                        if (index != size)
-                            dependencyString.append(",");
-                        index++;
+                        for(String preReqsuist:preRequistListBeforEdit)
+                        {
+                            if(!preRequisitsList.isSelected(preReqsuist))
+                            {
+                                for (UserStory userStory1 : project.getProjectUserStories()) {
+                                    if (userStory1.getName().equals(preReqsuist)) {
+                                        userStory1.setDependancy(userStory1.getDependancy().replace(userStory.getName(),""));
+                                        if(userStory1.getDependancy().contains(",,"))
+                                        {
+                                            userStory1.setDependancy(userStory1.getDependancy().replace(",,",","));
+                                        }
+                                        if(userStory1.getDependancy().endsWith(","))
+                                        {
+                                            userStory1.setDependancy(userStory1.getDependancy().substring(0,userStory1.getDependancy().length()-1));
+                                        }
+
+                                        userStoryDAO.updateUserStory(userStory1);
+                                        break;
+                                    }
+                                }
+
+
+                            }
+                        }
+
+
                     }
-                    userStory.setDependancy(dependencyString.toString());
+
 
 
                     //set pre requist for user story
@@ -239,10 +271,42 @@ public class UserStoryWindow extends Window {
                         if (index2 != size2)
                             preRequisitString.append(",");
                         index2++;
+
+
+
+
+                        //following section manually set dependency in other user stories if this user story depend on them
+                        for (UserStory userStory1 : project.getProjectUserStories()) {
+                            if(userStory1.getName().equals(v.toString()))
+                            {
+                                if(userStory1.getDependancy().isEmpty())
+                                {
+                                    userStory1.setDependancy(userStory.getName());
+                                }
+                                else
+                                {
+                                    StringBuilder dependencyString1 = new StringBuilder();
+                                    dependencyString1.append(userStory1.getDependancy());
+                                    dependencyString1.append(','+userStory.getName());
+
+                                    userStory1.setDependancy(dependencyString1.toString());
+
+                                }
+
+                                userStoryDAO.updateUserStory(userStory1);
+
+
+                            }
+                        }
+
+
+
+
+
                     }
                     userStory.setPreRequisits(preRequisitString.toString());
 
-                    ProjectDAO projectDAO = (ProjectDAO) DashboardUI.context.getBean("Project");
+
                     project.getProjectUserStories().add(userStory);
                     projectDAO.updateProject(project);
 

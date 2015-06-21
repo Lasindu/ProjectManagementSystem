@@ -4,10 +4,16 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Calendar;
 
+import com.pms.DashboardUI;
 import com.pms.component.ganttchart.DemoUI;
+import com.pms.component.ganttchart.GanttChart;
+import com.pms.dao.UserDAO;
 import com.pms.domain.Project;
 import com.pms.domain.User;
+import com.pms.view.LoginView;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
 import org.tltv.gantt.Gantt;
 import org.tltv.gantt.Gantt.MoveEvent;
@@ -39,12 +45,8 @@ import com.vaadin.ui.Notification.Type;
 /**
  * Created by Upulie on 4/2/2015.
  */
-public class DashboardView  extends CssLayout implements View {
+public class DashboardView  extends VerticalLayout implements View {
 
-   // private final VerticalLayout root;
-    private Gantt gantt;
-    private SimpleDateFormat dateFormat = new SimpleDateFormat(
-            "MMM dd HH:mm:ss zzz yyyy");
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent viewChangeEvent) {
@@ -55,66 +57,103 @@ public class DashboardView  extends CssLayout implements View {
         User user = (User) VaadinSession.getCurrent().getAttribute(
                 User.class.getName());
 
-        List<Project> projectList = new ArrayList();
-        projectList.addAll(user.getProjects());
+
+        UserDAO userDAO = (UserDAO) DashboardUI.context.getBean("User");
+        //used session user to get the user projects
+        final List<Project> projectList = new ArrayList();
+        User projectsLoadedUser= userDAO.loadUserProjects(user);
+        projectList.addAll(projectsLoadedUser.getProjects());
+
+
+
+
+
+        final VerticalLayout mainLayout= new VerticalLayout();
+        mainLayout.setSpacing(true);
+        mainLayout.setMargin(new MarginInfo(true,false,false,false));
+        //mainLayout.setMargin(true);
+
+        Label title = new Label("Dashboard");
+        title.setSizeUndefined();
+        title.addStyleName(ValoTheme.LABEL_H1);
+        title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
+
+        mainLayout.addComponent(title);
+
+
         setSizeFull();
-        removeAllComponents();
 
-        TabSheet tabs = new TabSheet();
+/*        TabSheet tabs = new TabSheet();
         tabs.setSizeFull();
-        tabs.addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
+        tabs.addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);*/
 
-       /* for(int x=0;x<projectList.size();x++)
+
+
+        MenuBar menuBar = new MenuBar();
+        mainLayout.addComponent(menuBar);
+        final VerticalLayout layout = new VerticalLayout();
+        mainLayout.addComponent(layout);
+
+        for(int x=0;x<projectList.size();x++)
         {
-            DemoUI demoUI = new DemoUI();
-            VerticalLayout layout= (VerticalLayout) demoUI.init();
-            layout.setCaption(projectList.get(x).getName());
-            //setContent(demoUI.init());
-            tabs.addComponent(layout);
+            final Project project=projectList.get(x);
+
+            if (x==0)
+            {
+                layout.addComponent(buildGanntChart(project));
+            }
+            menuBar.addItem(projectList.get(x).getName(), new Command() {
+
+                @Override
+                public void menuSelected(MenuItem selectedItem) {
+                    layout.removeAllComponents();
+                    layout.addComponent(buildGanntChart(project));
+
+                }
+            });
+        }
+
+
+
+
+
+
+
+
+
+
+   /*     for(int x=0;x<projectList.size();x++)
+        {
+            //GanttChart ganttChart = new GanttChart();
+            VerticalLayout layout1 = new VerticalLayout();
+            layout1.setCaption(projectList.get(x).getName());
+            //layout1.addComponent(buildGanntChart(projectList.get(x)));
+            tabs.addTab(layout1);
 
         }*/
-        DemoUI demoUI = new DemoUI();
-        VerticalLayout layout= (VerticalLayout) demoUI.init();
-        layout.setCaption("1111111");
-        //layout.setCaption(projectList.get(x).getName());
-        //setContent(demoUI.init());
-        tabs.addComponent(layout);
-
-        DemoUI demoUI1 = new DemoUI();
-        VerticalLayout layout1= (VerticalLayout) demoUI1.init();
-        layout1.setCaption("dffdfdf");
-        //layout.setCaption(projectList.get(x).getName());
-        //setContent(demoUI.init());
-        tabs.addComponent(layout1);
-
-        addComponent(tabs);
-       // addStyleName(ValoTheme.PANEL_BORDERLESS);
-        //setSizeFull();
-/*        root = new VerticalLayout();
-        root.setSizeFull();
-        root.setMargin(true);
-        root.addStyleName("dashboard-view");
-        // addComponent(root);
-
-        root.addComponent(new Label("Dashboard View"));*/
 
 
-        //final VerticalLayout layout = new VerticalLayout();
-        //layout.setStyleName("demoContentLayout");
-        //layout.setSizeFull();
 
 
-       // createGantt();
-       // layout.addComponent(gantt);
 
-        //addComponent(layout);
-        //layout.setExpandRatio(layout, 1);
+       // mainLayout.addComponent(tabs);
+        addComponent(mainLayout);
 
-
-        //DemoUI demoUI = new DemoUI();
-        //setContent(demoUI.init());
 
 
     }
 
+    private Component buildGanntChart(Project project)
+    {
+        GanttChart ganttChart = new GanttChart();
+        VerticalLayout layout = new VerticalLayout();
+//        layout.setCaption(project.getName());
+        layout.addComponent(ganttChart.init(project));
+        return layout;
+
+    }
+
 }
+
+
+

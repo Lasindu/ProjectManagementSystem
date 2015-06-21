@@ -19,7 +19,9 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.vaadin.dialogs.ConfirmDialog;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by Damitha on 6/2/2015.
@@ -143,14 +145,55 @@ public class ViewProject extends CustomComponent {
                     public void buttonClick(Button.ClickEvent event) {
 
                         final UserStory userStory= (UserStory)event.getButton().getData();
-                        ConfirmDialog.show(DashboardUI.getCurrent(), "Please Confirm:", "Are you sure you want to delete userStory named :" + project.getName(),
+                        ConfirmDialog.show(DashboardUI.getCurrent(), "Please Confirm:", "Are you sure you want to delete userStory named :" + userStory.getName(),
                                 "I am", "Not quite", new ConfirmDialog.Listener() {
 
                                     public void onClose(ConfirmDialog dialog) {
                                         if (dialog.isConfirmed()) {
+
                                             // Confirmed to continue
+
+
                                             UserStoryDAO userStoryDAO = (UserStoryDAO) DashboardUI.context.getBean("UserStory");
+
+
+                                            //remove dependency manually
+                                            for (UserStory userStory1 : userStory.getProject().getProjectUserStories()) {
+
+                                                if(userStory1.getDependancy()!= null)
+                                                {
+                                                    String[] userStoryDependencyStrings= userStory1.getDependancy().split(",");
+
+                                                    for(String dependency:userStoryDependencyStrings)
+                                                    {
+                                                        if(dependency.contains(userStory.getName()))
+                                                        {
+                                                            userStory1.setDependancy(userStory1.getDependancy().replace(userStory.getName(),""));
+
+                                                            if(userStory1.getDependancy().contains(",,"))
+                                                            {
+                                                                userStory1.setDependancy(userStory1.getDependancy().replace(",,",","));
+                                                            }
+                                                            if(userStory1.getDependancy().endsWith(","))
+                                                            {
+                                                                userStory1.setDependancy(userStory1.getDependancy().substring(0,userStory1.getDependancy().length()-1));
+                                                            }
+
+                                                            userStoryDAO.updateUserStory(userStory1);
+                                                        }
+
+                                                    }
+
+                                                }
+
+                                            }
+
+
                                             userStoryDAO.removeUserStory(userStory);
+
+
+
+
                                             Page.getCurrent().reload();
 
                                         } else {
@@ -167,7 +210,7 @@ public class ViewProject extends CustomComponent {
                 editUserStoryButton.addClickListener(new Button.ClickListener() {
                     public void buttonClick(Button.ClickEvent event) {
 
-                        UserStoryWindow.open((UserStory)event.getButton().getData());
+                        UserStoryWindow.open((UserStory) event.getButton().getData());
 
                     }
                 });
@@ -194,7 +237,7 @@ public class ViewProject extends CustomComponent {
                 viewUserStoryButton.addClickListener(new Button.ClickListener() {
                     public void buttonClick(Button.ClickEvent event) {
 
-                        DashboardUI.getCurrent().getNavigator().navigateTo("Schedule_Task/"+(String)event.getButton().getData());
+                        DashboardUI.getCurrent().getNavigator().navigateTo("Schedule_Task/" + (String) event.getButton().getData());
 
                     }
                 });

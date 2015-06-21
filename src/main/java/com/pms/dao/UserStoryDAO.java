@@ -41,8 +41,8 @@ public class UserStoryDAO {
     public UserStory getUserStoryFormProjectNameAndUserStoryName(String projectName,String userStoryName)
     {
         Session session = getSessionFactory().openSession();
-        String SQL_QUERY = "from Project as project  where project.name='" + projectName + "'";
-        Query query = session.createQuery(SQL_QUERY);
+        String HQL_QUERY = "from Project as project  where project.name='" + projectName + "'";
+        Query query = session.createQuery(HQL_QUERY);
         List<Project> list = ((org.hibernate.Query) query).list();
 
 
@@ -81,6 +81,22 @@ public class UserStoryDAO {
         session.close();
 
 
+    }
+
+
+    public Collection<UserStory> getAllUserSeriesOfProject(Project project)
+    {
+        Session session = getSessionFactory().openSession();
+        session.beginTransaction();
+        Project project1=(Project)session.get(Project.class,project.getProjectId());
+        int x= project1.getProjectUserStories().size();
+        session.getTransaction().commit();
+        session.close();
+
+        if(x>0)
+            return project1.getProjectUserStories();
+        else
+        return null;
     }
 
 

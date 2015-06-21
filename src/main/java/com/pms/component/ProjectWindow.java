@@ -9,6 +9,8 @@ import com.pms.domain.UserStory;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.fieldgroup.PropertyId;
+import com.vaadin.data.validator.NullValidator;
+import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.Page;
 import com.vaadin.server.Responsive;
@@ -92,25 +94,6 @@ public class ProjectWindow extends Window {
 
 
 
-
-
-
-  /*      addStyleName("profile-window");
-        setCaption("New Project");
-        setModal(true);
-        setCloseShortcut(ShortcutAction.KeyCode.ESCAPE, null);
-        setResizable(false);
-        setClosable(false);
-        setHeight(90.0f, Unit.PERCENTAGE);
-
-        Panel mainPanel = new Panel("");
-        mainPanel.setHeight(90.0f, Unit.PERCENTAGE);
-        mainPanel.setHeightUndefined();
-        mainPanel.setContent(buildProject());
-        mainPanel.getContent().setSizeUndefined();
-        setContent(mainPanel);
-*/
-
     }
 
 
@@ -125,8 +108,11 @@ public class ProjectWindow extends Window {
 
         projctName = new TextField("Project Name");
         projctName.setNullRepresentation("");
+
         projctName.setRequired(true);
-        projctName.setRequiredError("Please enter a Project Name");
+        projctName.setRequiredError("Project Name is Required");
+        //projctName.addValidator(new StringLengthValidator("Length Error",2,100,false));
+        //projctName.setRequiredError("Please enter a Project Name");
         content.addComponent(projctName);
 
         projctClientName = new TextField("Client Name");
@@ -142,14 +128,12 @@ public class ProjectWindow extends Window {
         projectStartDate = new PopupDateField  ("Start Date");
         projectStartDate.setValue(new Date());
         projectStartDate.setDateFormat("yyyy-MM-dd");
-        //projectStartDate.setNullRepresentation("");
         content.addComponent(projectStartDate);
 
 
         ProjectDeliveredDate = new PopupDateField  ("End Date");
         ProjectDeliveredDate.setValue(new Date());
         ProjectDeliveredDate.setDateFormat("yyyy-MM-dd");
-        //ProjectDeliveredDate.setNullRepresentation("");
         content.addComponent(ProjectDeliveredDate);
 
 

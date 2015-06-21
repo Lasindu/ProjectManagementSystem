@@ -16,6 +16,10 @@
 package com.pms.component.ganttchart;
 
 import com.pms.DashboardUI;
+import com.pms.dao.UserStoryDAO;
+import com.pms.domain.Project;
+import com.pms.domain.User;
+import com.pms.domain.UserStory;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.annotations.VaadinServletConfiguration;
@@ -50,7 +54,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Calendar;
 
-public class DemoUI  {
+public class GanttChart  {
 
     private Gantt gantt;
 
@@ -108,8 +112,7 @@ public class DemoUI  {
 
         @Override
         public void valueChange(ValueChangeEvent event) {
-            org.tltv.gantt.client.shared.Resolution res = (org
-                    .tltv.gantt.client.shared.Resolution) event
+            org.tltv.gantt.client.shared.Resolution res = (org.tltv.gantt.client.shared.Resolution) event
                     .getProperty().getValue();
             if (validateResolutionChange(res)) {
                 gantt.setResolution(res);
@@ -143,9 +146,9 @@ public class DemoUI  {
     };
 
 
-    public Component init() {
+    public Component init(Project project) {
         ganttListener = null;
-        createGantt();
+        createGantt(project);
 
         MenuBar menu = controlsMenuBar();
         Panel controls = createControls();
@@ -162,7 +165,7 @@ public class DemoUI  {
         final VerticalLayout layout = new VerticalLayout();
         layout.setStyleName("demoContentLayout");
         layout.setSizeFull();
-        layout.addComponent(menu);
+        //layout.addComponent(menu);
         layout.addComponent(controls);
         layout.addComponent(wrapper);
         layout.setExpandRatio(wrapper, 1);
@@ -170,10 +173,12 @@ public class DemoUI  {
         return  layout;
     }
 
-    private void createGantt() {
+    private void createGantt(Project project) {
+
+
         gantt = new Gantt();
         gantt.setWidth(100, Sizeable.Unit.PERCENTAGE);
-        gantt.setHeight(500, Sizeable.Unit.PIXELS);
+        gantt.setHeight(400, Sizeable.Unit.PIXELS);
         gantt.setResizableSteps(true);
         gantt.setMovableSteps(true);
         gantt.addAttachListener(ganttAttachListener);
@@ -182,8 +187,130 @@ public class DemoUI  {
         gantt.setStartDate(cal.getTime());
         cal.add(Calendar.YEAR, 1);
         gantt.setEndDate(cal.getTime());
-
         cal.setTime(new Date());
+
+
+
+
+
+
+
+        UserStoryDAO userStoryDAO= (UserStoryDAO)DashboardUI.context.getBean("UserStory");
+        Collection<UserStory> allUserStories = userStoryDAO.getAllUserSeriesOfProject(project);
+
+        List<UserStory> highestPriorityUserStories = new ArrayList<UserStory>();
+
+        UserStory highestPriorityUserStory = new UserStory();
+        UserStory nextHighestPriorityUserStory= new UserStory();
+
+
+        for(UserStory userStory : allUserStories)
+        {
+            if(userStory.getPriority()==1)
+                highestPriorityUserStories.add(userStory);
+
+        }
+
+        if (highestPriorityUserStories.size()<2)
+        {
+            if (highestPriorityUserStories.size()==1)
+                highestPriorityUserStory=highestPriorityUserStories.get(0);
+
+            for(UserStory userStory : allUserStories)
+            {
+                if(userStory.getPriority()==2)
+                    highestPriorityUserStories.add(userStory);
+
+            }
+
+        }
+
+        if (highestPriorityUserStories.size()<2)
+        {
+            if (highestPriorityUserStories.size()==1)
+                highestPriorityUserStory=highestPriorityUserStories.get(0);
+
+            for(UserStory userStory : allUserStories)
+            {
+                if(userStory.getPriority()==3)
+                    highestPriorityUserStories.add(userStory);
+
+            }
+
+        }
+
+        if (highestPriorityUserStories.size()<2)
+        {
+            if (highestPriorityUserStories.size()==1)
+                highestPriorityUserStory=highestPriorityUserStories.get(0);
+
+            for(UserStory userStory : allUserStories)
+            {
+                if(userStory.getPriority()==4)
+                    highestPriorityUserStories.add(userStory);
+
+            }
+
+        }
+
+
+
+
+
+        if (!(highestPriorityUserStory==null))
+        {
+            if (highestPriorityUserStories.size()==2)
+            {
+                nextHighestPriorityUserStory=highestPriorityUserStories.get(1);
+                //finish the algo
+
+            }
+            else
+            {
+                if(highestPriorityUserStories.size()>2)
+                    ;
+                //need to follow algorithm for rest of others
+            }
+
+        }
+        else
+        {
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         Step step1 = new Step("First step");
         step1.setDescription("Description tooltip");
         step1.setStartDate(cal.getTime().getTime());
@@ -248,6 +375,7 @@ public class DemoUI  {
         gantt.addStep(step4);
         gantt.addStep(stepWithSubSteps);
 
+
         String[] colors = new String[] { "11FF11", "33FF33", "55FF55",
                 "77FF77", "99FF99", "BBFFBB", "DDFFDD" };
 
@@ -279,8 +407,8 @@ public class DemoUI  {
                 dateFormat.setTimeZone(gantt.getTimeZone());
 
                 Notification.show("Moved " + event.getStep().getCaption()
-                        + " to Start Date: " + dateFormat.format(start)
-                        + " End Date: " + dateFormat.format(end),
+                                + " to Start Date: " + dateFormat.format(start)
+                                + " End Date: " + dateFormat.format(end),
                         Type.TRAY_NOTIFICATION);
             }
         });
@@ -295,8 +423,8 @@ public class DemoUI  {
                 dateFormat.setTimeZone(gantt.getTimeZone());
 
                 Notification.show("Resized " + event.getStep().getCaption()
-                        + " to Start Date: " + dateFormat.format(start)
-                        + " End Date: " + dateFormat.format(end),
+                                + " to Start Date: " + dateFormat.format(start)
+                                + " End Date: " + dateFormat.format(end),
                         Type.TRAY_NOTIFICATION);
             }
         });
@@ -394,12 +522,13 @@ public class DemoUI  {
         controls.addComponent(start);
         controls.addComponent(end);
         controls.addComponent(reso);
-        controls.addComponent(localeSelect);
-        controls.addComponent(timezoneSelect);
+        //controls.addComponent(localeSelect);
+        //controls.addComponent(timezoneSelect);
         controls.addComponent(heightAndUnit);
         controls.addComponent(widthAndUnit);
-        controls.addComponent(createStep);
-        controls.setComponentAlignment(createStep, Alignment.MIDDLE_LEFT);
+        //controls.addComponent(createStep);
+        // controls.setComponentAlignment(createStep, Alignment.MIDDLE_LEFT);
+        //controls.setComponentAlignment(widthAndUnit, Alignment.MIDDLE_LEFT);
 
         return panel;
     }
@@ -425,7 +554,7 @@ public class DemoUI  {
         long max = 5 * 12 * 4 * 7 * 24 * 3600000L;
         if (res == org.tltv.gantt.client.shared.Resolution.Hour
                 && (gantt.getEndDate().getTime() - gantt.getStartDate()
-                        .getTime()) > max) {
+                .getTime()) > max) {
 
             // revert to previous resolution
             setResolution(gantt.getResolution());
@@ -709,7 +838,7 @@ public class DemoUI  {
             }
 
             private SubStep addSubStep(final NativeSelect parentStepSelect,
-                    AbstractStep dataSource) {
+                                       AbstractStep dataSource) {
                 SubStep subStep = new SubStep();
                 subStep.setCaption(dataSource.getCaption());
                 subStep.setCaptionMode(dataSource.getCaptionMode());

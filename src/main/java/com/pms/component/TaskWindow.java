@@ -47,7 +47,7 @@ public class TaskWindow extends Window {
     private ComboBox priority;
     @PropertyId("severity")
     private ComboBox severity;
-   // private ListSelect preRequisitsList;
+    private ListSelect preRequisitsList;
     //private ListSelect dependancyList;
     @PropertyId("memberType")
     private TextField memberType;
@@ -144,7 +144,7 @@ public class TaskWindow extends Window {
         severity.addItem(5);
         taskForm.addComponent(severity);
 
-/*        preRequisitsList = new ListSelect("Pre Requisits");
+        preRequisitsList = new ListSelect("Pre Requisits");
         preRequisitsList.setWidth("400px");
         preRequisitsList.setNullSelectionAllowed(true);
         for (Task task : userStoryTasks) {
@@ -154,7 +154,7 @@ public class TaskWindow extends Window {
         preRequisitsList.setRows(7);
         taskForm.addComponent(preRequisitsList);
 
-        dependancyList = new ListSelect("Dependancy");
+   /*     dependancyList = new ListSelect("Dependancy");
         for (Task task : userStoryTasks) {
             dependancyList.addItem(task.getName());
         }
