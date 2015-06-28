@@ -95,9 +95,19 @@ public final class DashboardUI extends UI {
         LoginDAO loginDAO=(LoginDAO)DashboardUI.context.getBean("UserLogin");
         User user =loginDAO.authenticateUser(event.getUserName(),event.getPassword());
 
-        VaadinSession.getCurrent().setAttribute(User.class.getName(), user);
-        VaadinSession.getCurrent().setAttribute("role", user.getRole());
-        updateContent();
+        if(user!=null)
+        {
+            VaadinSession.getCurrent().setAttribute(User.class.getName(), user);
+            VaadinSession.getCurrent().setAttribute("role", user.getRole());
+            updateContent();
+
+        }
+        else
+        {
+            setContent(new LoginView());
+            addStyleName("loginview");
+        }
+
     }
 
     @Subscribe

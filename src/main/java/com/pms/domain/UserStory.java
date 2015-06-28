@@ -24,6 +24,7 @@ public class UserStory {
     private String domain;
     private String assignedSprint;
     private String releasedDate;
+    private String state;
     private boolean CR;
 
 
@@ -149,8 +150,11 @@ public class UserStory {
         this.CR = CR;
     }
 
+    public String getState() {
+        return state;
+    }
 
-
-
-
+    public void setState(String state) {
+        this.state = state;
+    }
 }

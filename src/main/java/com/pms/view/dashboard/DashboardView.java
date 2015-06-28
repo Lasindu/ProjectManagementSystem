@@ -7,6 +7,7 @@ import java.util.Calendar;
 import com.pms.DashboardUI;
 import com.pms.component.ganttchart.DemoUI;
 import com.pms.component.ganttchart.GanttChart;
+import com.pms.component.ganttchart.UserStoryGanntChart;
 import com.pms.dao.UserDAO;
 import com.pms.domain.Project;
 import com.pms.domain.User;
@@ -145,7 +146,8 @@ public class DashboardView  extends VerticalLayout implements View {
 
     private Component buildGanntChart(Project project)
     {
-        GanttChart ganttChart = new GanttChart();
+        //GanttChart ganttChart = new GanttChart();
+        UserStoryGanntChart ganttChart = new UserStoryGanntChart();
         VerticalLayout layout = new VerticalLayout();
 //        layout.setCaption(project.getName());
         layout.addComponent(ganttChart.init(project));

@@ -108,6 +108,8 @@ public class ViewAllProjects {
                 Button removeProjectButton=new Button("Remove Project");
                 Button editProjectButton=new Button("Edit Project");
                 Button viewProjectButton=new Button("View Project");
+
+
                 removeProjectButton.setData(projectList.get(x));
                 editProjectButton.setData(projectList.get(x));
                 viewProjectButton.setData(projectList.get(x).getName());
