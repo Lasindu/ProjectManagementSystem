@@ -5,7 +5,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 /**
- * Created by Damitha on 6/7/2015.
+ * Created by Upulie on 6/7/2015.
  */
 public class UserDAO {
 

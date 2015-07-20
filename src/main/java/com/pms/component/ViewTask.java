@@ -9,7 +9,7 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
- * Created by Damitha on 6/2/2015.
+ * Created by Upulie on 6/2/2015.
  */
 public class ViewTask extends CustomComponent {
 

@@ -9,7 +9,7 @@ import com.pms.domain.UserStory;
 import java.util.*;
 
 /**
- * Created by Damitha on 6/28/2015.
+ * Created by Upulie on 6/28/2015.
  */
 public class PrioritizeUserStories {
 
@@ -187,6 +187,8 @@ public class PrioritizeUserStories {
 
         List<UserStory> allPrerequisitdAllocatedList= new ArrayList<UserStory>();
 
+        //total userstory count
+
         int newSortedCount=sortedUserStoryCount+userStories.size();
 
         while (sortedUserStoryCount!=newSortedCount)
@@ -309,20 +311,24 @@ public class PrioritizeUserStories {
 
     private void sort_UserStories_HasDependency(List<UserStory> userStories)
     {
+        //this map contains userstories and their dependecies highest priority one
         Map withDependencyPriority = new HashMap<UserStory,Integer>();
 
         for(UserStory userStory:userStories) {
 
-            int highestPriority = 0;
+            int dependencyHighestPriority = 0;
 
             String[] dependencies = userStory.getDependancy().split(",");
 
-            for (String dependency : dependencies) {
-                UserStory userStory1 = userStoryDAO.getUserStoryFormProjectNameAndUserStoryName(userStory.getProject().getName(), dependency);
-                if (userStory1.getPriority() > highestPriority)
-                    highestPriority = userStory1.getPriority();
+            for (String dependencyName : dependencies) {
+                UserStory userStory1 = userStoryDAO.getUserStoryFormProjectNameAndUserStoryName(userStory.getProject().getName(), dependencyName);
+
+                if(dependencyHighestPriority==0)
+                    dependencyHighestPriority=userStory1.getPriority();
+                else if(userStory1.getPriority() < dependencyHighestPriority)
+                    dependencyHighestPriority = userStory1.getPriority();
             }
-            withDependencyPriority.put(userStory, highestPriority);
+            withDependencyPriority.put(userStory, dependencyHighestPriority);
         }
 
         withDependencyPriority=PrioritizeUserStories.sortUserStory(withDependencyPriority);
@@ -331,7 +337,7 @@ public class PrioritizeUserStories {
 
 
         int priority=1;
-        List<UserStory> UserSotyies_HasSameDependencyPriority = new ArrayList<UserStory>();
+        //List<UserStory> UserSotyies_HasSameDependencyPriority = new ArrayList<UserStory>();
         Iterator it1 = withDependencyPriority.entrySet().iterator();
 
 
@@ -344,7 +350,7 @@ public class PrioritizeUserStories {
 
             if((Integer)pair.getValue()==priority)
             {
-                UserSotyies_HasSameDependencyPriority.add((UserStory)pair.getKey());
+               // UserSotyies_HasSameDependencyPriority.add((UserStory)pair.getKey());
 
                 int totalTaskTime=0;
 
@@ -356,25 +362,6 @@ public class PrioritizeUserStories {
                     totalTaskTime=totalTaskTime+Integer.parseInt(task.getEstimateTime());
                 }
                 userStory_WithTotalTaskTime.put(((UserStory)pair.getKey()),totalTaskTime);
-
-            }
-
-            else if(it1.toString().isEmpty())
-            {
-                userStory_WithTotalTaskTime=PrioritizeUserStories.sortUserStory(userStory_WithTotalTaskTime);
-
-                Iterator it3 = userStory_WithTotalTaskTime.entrySet().iterator();
-                while (it3.hasNext()) {
-                    {
-                        Map.Entry pair1 = (Map.Entry)it3.next();
-                        //System.out.println(pair.getKey() + " = " + pair.getValue());
-                        sortedUserStoryCount+=1;
-                        sortedUserStoryMap.put(sortedUserStoryCount,pair1.getKey());
-                        it3.remove();
-
-                    }
-                }
-
 
             }
 
@@ -406,10 +393,32 @@ public class PrioritizeUserStories {
                 }
 
                 userStory_WithTotalTaskTime=new HashMap<UserStory,Integer>();
+
                 priority=(Integer)pair.getValue();
                 userStory_WithTotalTaskTime.put(((UserStory)pair.getKey()),totalTaskTime);
 
             }
+
+            if(it1.toString().isEmpty())
+            {
+                userStory_WithTotalTaskTime=PrioritizeUserStories.sortUserStory(userStory_WithTotalTaskTime);
+
+                Iterator it3 = userStory_WithTotalTaskTime.entrySet().iterator();
+                while (it3.hasNext()) {
+                    {
+                        Map.Entry pair1 = (Map.Entry)it3.next();
+                        //System.out.println(pair.getKey() + " = " + pair.getValue());
+                        sortedUserStoryCount+=1;
+                        sortedUserStoryMap.put(sortedUserStoryCount,pair1.getKey());
+                        it3.remove();
+
+                    }
+                }
+
+
+            }
+
+
 
 
         }

@@ -20,7 +20,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import org.vaadin.dialogs.ConfirmDialog;
 
 /**
- * Created by Damitha on 6/2/2015.
+ * Created by Upulie on 6/2/2015.
  */
 public class ViewUserStory extends CustomComponent {
 

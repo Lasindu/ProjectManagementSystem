@@ -5,9 +5,7 @@ import java.util.*;
 import java.util.Calendar;
 
 import com.pms.DashboardUI;
-import com.pms.component.ganttchart.DemoUI;
-import com.pms.component.ganttchart.GanttChart;
-import com.pms.component.ganttchart.UserStoryGanntChart;
+import com.pms.component.ganttchart.*;
 import com.pms.dao.UserDAO;
 import com.pms.domain.Project;
 import com.pms.domain.User;
@@ -25,7 +23,6 @@ import org.tltv.gantt.client.shared.SubStep;
 
 import com.pms.component.ganttchart.util.UriFragmentWrapperFactory;
 import com.pms.component.ganttchart.util.Util;
-import com.pms.component.ganttchart.GanttListener;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -147,10 +144,13 @@ public class DashboardView  extends VerticalLayout implements View {
     private Component buildGanntChart(Project project)
     {
         //GanttChart ganttChart = new GanttChart();
-        UserStoryGanntChart ganttChart = new UserStoryGanntChart();
+        //UserStoryGanntChart ganttChart = new UserStoryGanntChart();
         VerticalLayout layout = new VerticalLayout();
 //        layout.setCaption(project.getName());
-        layout.addComponent(ganttChart.init(project));
+       // layout.addComponent(ganttChart.init(project));
+        PrioritizeUserStories prioritizeUserStories= new PrioritizeUserStories();
+        Map userStorieMap = prioritizeUserStories.prioritize(project);
+
         return layout;
 
     }

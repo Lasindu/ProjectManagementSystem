@@ -9,7 +9,7 @@ import org.hibernate.SessionFactory;
 import java.util.List;
 
 /**
- * Created by Damitha on 6/2/2015.
+ * Created by Upulie on 6/2/2015.
  */
 public class TaskDAO {
 
