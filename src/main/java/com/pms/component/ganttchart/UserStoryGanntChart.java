@@ -171,6 +171,9 @@ public class UserStoryGanntChart  {
         layout.addComponent(wrapper);
         layout.setExpandRatio(wrapper, 1);
 
+
+        controls.setVisible(false);
+
         return  layout;
     }
 
@@ -183,13 +186,27 @@ public class UserStoryGanntChart  {
         gantt.setResizableSteps(true);
         gantt.setMovableSteps(true);
         gantt.addAttachListener(ganttAttachListener);
+
+
         Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
+
+        Date date = new Date();
+        date.setYear(2015);
+        date.setMonth(1);
+        date.setDate(1);
+
+        cal.setTime(date);
         gantt.setStartDate(cal.getTime());
         cal.add(Calendar.YEAR, 1);
         gantt.setEndDate(cal.getTime());
-        cal.setTime(new Date());
+        cal.setTime(date);
 
+
+
+        gantt.setYearsVisible(false);
+        gantt.setMonthsVisible(false);
+
+        gantt.setResolution(org.tltv.gantt.client.shared.Resolution.Week);
 
 
 
@@ -227,7 +244,7 @@ public class UserStoryGanntChart  {
                 Step step1 = new Step(((UserStory)pair.getValue()).getName());
                 step1.setDescription("Description tooltip");
                 step1.setStartDate(cal.getTime().getTime());
-                cal.add(Calendar.MONTH, 2);
+                cal.add(Calendar.MONTH, 1);
                 step1.setEndDate(cal.getTime().getTime());
                 gantt.addStep(step1);
                 previosStep=step1;
@@ -236,7 +253,7 @@ public class UserStoryGanntChart  {
             {
                 Step newStep = new Step(((UserStory)pair.getValue()).getName());
                 newStep.setStartDate(previosStep.getEndDate());
-                cal.add(Calendar.MONTH, 2);
+                cal.add(Calendar.MONTH, 1);
                 newStep.setEndDate(cal.getTime().getTime());
                 newStep.setPredecessor(previosStep);
                 gantt.addStep(newStep);
@@ -338,6 +355,7 @@ public class UserStoryGanntChart  {
         reso.addItem(org.tltv.gantt.client.shared.Resolution.Day);
         reso.addItem(org.tltv.gantt.client.shared.Resolution.Week);
         reso.setValue(gantt.getResolution());
+        //reso.setValue(org.tltv.gantt.client.shared.Resolution.Week);
         reso.setImmediate(true);
         reso.addValueChangeListener(resolutionValueChangeListener);
 

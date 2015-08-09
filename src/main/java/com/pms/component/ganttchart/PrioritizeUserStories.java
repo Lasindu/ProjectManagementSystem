@@ -127,10 +127,11 @@ public class PrioritizeUserStories {
 
         for(UserStory userStory:userStories)
         {
-            if(userStory.getPreRequisits()!= null && userStory.getPreRequisits().isEmpty())
-                noPreRequist.add(userStory);
-            else
+            if(userStory.getPreRequisits()!= null && !userStory.getPreRequisits().isEmpty())
                 hasPreRequist.add(userStory);
+
+            else
+                noPreRequist.add(userStory);
 
         }
 
@@ -142,9 +143,10 @@ public class PrioritizeUserStories {
         for(UserStory userStory:noPreRequist)
         {
             if(userStory.getDependancy() != null &&  !userStory.getDependancy().isEmpty())
-                noPreRequisit_NoDependency.add(userStory);
-            else
                 noPreRequisit_hasDependency.add(userStory);
+            else
+                noPreRequisit_NoDependency.add(userStory);
+
 
         }
 
