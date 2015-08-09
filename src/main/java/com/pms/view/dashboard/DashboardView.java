@@ -144,12 +144,14 @@ public class DashboardView  extends VerticalLayout implements View {
     private Component buildGanntChart(Project project)
     {
         //GanttChart ganttChart = new GanttChart();
-        //UserStoryGanntChart ganttChart = new UserStoryGanntChart();
+        UserStoryGanntChart ganttChart = new UserStoryGanntChart();
+
+
         VerticalLayout layout = new VerticalLayout();
 //        layout.setCaption(project.getName());
-       // layout.addComponent(ganttChart.init(project));
-        PrioritizeUserStories prioritizeUserStories= new PrioritizeUserStories();
-        Map userStorieMap = prioritizeUserStories.prioritize(project);
+        layout.addComponent(ganttChart.init(project));
+      //  PrioritizeUserStories prioritizeUserStories= new PrioritizeUserStories();
+      //  Map userStorieMap = prioritizeUserStories.prioritize(project);
 
         return layout;
 

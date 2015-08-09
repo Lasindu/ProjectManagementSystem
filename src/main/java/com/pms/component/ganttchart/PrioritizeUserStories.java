@@ -115,10 +115,10 @@ public class PrioritizeUserStories {
         }
 
 
-
-
         return sortedUserStoryMap;
     }
+
+
 
     private void userStoriesCheckPreRequistCheckDependency( List<UserStory> userStories)
     {
@@ -127,7 +127,7 @@ public class PrioritizeUserStories {
 
         for(UserStory userStory:userStories)
         {
-            if(userStory.getPreRequisits().isEmpty())
+            if(userStory.getPreRequisits()!= null && userStory.getPreRequisits().isEmpty())
                 noPreRequist.add(userStory);
             else
                 hasPreRequist.add(userStory);
@@ -141,7 +141,7 @@ public class PrioritizeUserStories {
 
         for(UserStory userStory:noPreRequist)
         {
-            if(userStory.getDependancy().isEmpty())
+            if(userStory.getDependancy() != null &&  !userStory.getDependancy().isEmpty())
                 noPreRequisit_NoDependency.add(userStory);
             else
                 noPreRequisit_hasDependency.add(userStory);
@@ -191,10 +191,19 @@ public class PrioritizeUserStories {
 
         int newSortedCount=sortedUserStoryCount+userStories.size();
 
+        int whileLoopCount=0;
+
         while (sortedUserStoryCount!=newSortedCount)
         {
+            if(whileLoopCount>userStories.size())
+                break;
 
-            System.out.println("inside has prerequist while loop   allocated user story count"+sortedUserStoryCount);
+
+            whileLoopCount +=1;
+
+
+
+            System.out.println("inside has prerequisite while loop allocated user story count"+sortedUserStoryCount);
 
             for(UserStory userStory:userStories)
             {
@@ -202,29 +211,35 @@ public class PrioritizeUserStories {
                 if(checkInSortedList(userStory.getName()))
                     break;
 
+                String preRequistNameList=userStory.getPreRequisits();
 
-                String[]  preReqistiList= userStory.getPreRequisits().split(",");
-
-
-                boolean allallocated=true;
-                for(String preRequist:preReqistiList)
+                if(preRequistNameList !=null &&!preRequistNameList.isEmpty())
                 {
-                    UserStory userStory1=userStoryDAO.getUserStoryFormProjectNameAndUserStoryName(userStory.getProject().getName(), preRequist);
+                    String[]  preReqistiList= preRequistNameList.split(",");
 
-                   // if(!userStory1.getState().equals("allocated"))
-                    if(!checkInSortedList(userStory1.getName()))
+
+                    boolean allallocated=true;
+                    for(String preRequist:preReqistiList)
                     {
-                        allallocated=false;
-                        break;
+                        UserStory userStory1=userStoryDAO.getUserStoryFormProjectNameAndUserStoryName(userStory.getProject().getName(), preRequist);
+
+                        // if(!userStory1.getState().equals("allocated"))
+                        if(!checkInSortedList(userStory1.getName()))
+                        {
+                            allallocated=false;
+                            break;
+                        }
+
+                    }
+
+                    if (allallocated)
+                    {
+                        allPrerequisitdAllocatedList.add(userStory);
+
                     }
 
                 }
 
-                if (allallocated)
-                {
-                    allPrerequisitdAllocatedList.add(userStory);
-
-                }
 
             }
 
@@ -232,7 +247,7 @@ public class PrioritizeUserStories {
             List<UserStory> hasPreRequisit_hasDependency = new ArrayList<UserStory>();
             for(UserStory userStory:allPrerequisitdAllocatedList)
             {
-                if(userStory.getDependancy().isEmpty())
+                if(userStory.getDependancy()==null || userStory.getDependancy().isEmpty())
                     hasPreRequisit_NoDependency.add(userStory);
                 else
                     hasPreRequisit_hasDependency.add(userStory);
@@ -318,16 +333,22 @@ public class PrioritizeUserStories {
 
             int dependencyHighestPriority = 0;
 
-            String[] dependencies = userStory.getDependancy().split(",");
+            String dependencyNameList=userStory.getDependancy();
+            if(dependencyNameList!=null && !dependencyNameList.isEmpty())
+            {
+                String[] dependencies = userStory.getDependancy().split(",");
 
-            for (String dependencyName : dependencies) {
-                UserStory userStory1 = userStoryDAO.getUserStoryFormProjectNameAndUserStoryName(userStory.getProject().getName(), dependencyName);
+                for (String dependencyName : dependencies) {
+                    UserStory userStory1 = userStoryDAO.getUserStoryFormProjectNameAndUserStoryName(userStory.getProject().getName(), dependencyName);
 
-                if(dependencyHighestPriority==0)
-                    dependencyHighestPriority=userStory1.getPriority();
-                else if(userStory1.getPriority() < dependencyHighestPriority)
-                    dependencyHighestPriority = userStory1.getPriority();
+                    if(dependencyHighestPriority==0)
+                        dependencyHighestPriority=userStory1.getPriority();
+                    else if(userStory1.getPriority() < dependencyHighestPriority)
+                        dependencyHighestPriority = userStory1.getPriority();
+                }
+
             }
+
             withDependencyPriority.put(userStory, dependencyHighestPriority);
         }
 
@@ -355,7 +376,7 @@ public class PrioritizeUserStories {
                 int totalTaskTime=0;
 
 
-                Collection<Task> userStoryTasks=((UserStory)pair.getKey()).getUserStoryTasks();
+                Collection<Task> userStoryTasks=  userStoryDAO.getUserStoryTaskList(((UserStory)pair.getKey()));
 
                 for(Task task:userStoryTasks)
                 {
@@ -378,7 +399,7 @@ public class PrioritizeUserStories {
                         sortedUserStoryMap.put(sortedUserStoryCount,pair1.getKey());
                         it3.remove();
 
-                    }
+                }
                 }
 
 

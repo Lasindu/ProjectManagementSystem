@@ -157,7 +157,78 @@ public class ViewProject extends CustomComponent {
                                             UserStoryDAO userStoryDAO = (UserStoryDAO) DashboardUI.context.getBean("UserStory");
 
 
-                                            //remove dependency manually
+                                            //remove dependency
+                                           String dependencyNameList = userStory.getDependancy();
+
+                                            if(dependencyNameList!= null && !dependencyNameList.isEmpty() )
+                                            for(String userStoryName: dependencyNameList.split(","))
+                                            {
+                                                UserStory tempUserStory=userStoryDAO.getUserStoryFormProjectNameAndUserStoryName(userStory.getProject().getName(),userStoryName);
+
+                                                tempUserStory.setPreRequisits(tempUserStory.getPreRequisits().replace(userStory.getName(),""));
+
+                                                if(tempUserStory.getPreRequisits()!= null && !tempUserStory.getPreRequisits().isEmpty())
+                                                {
+                                                    if(tempUserStory.getPreRequisits().startsWith(",,"))
+                                                    {
+                                                        tempUserStory.setPreRequisits(tempUserStory.getPreRequisits().replace(",,", ""));
+                                                    }
+                                                    else if(tempUserStory.getPreRequisits().contains(",,"))
+                                                    {
+                                                        tempUserStory.setPreRequisits(tempUserStory.getPreRequisits().replace(",,", ","));
+                                                    }
+                                                    else if(tempUserStory.getPreRequisits().endsWith(","))
+                                                    {
+                                                        tempUserStory.setPreRequisits(tempUserStory.getPreRequisits().substring(0, tempUserStory.getPreRequisits().length() - 1));
+                                                    }
+
+                                                    if(tempUserStory.getPreRequisits().isEmpty())
+                                                        tempUserStory.setPreRequisits(null);
+
+                                                }
+
+
+
+                                                userStoryDAO.updateUserStory(tempUserStory);
+                                            }
+
+                                            //remove prerequist
+                                            String prerequiestNameList = userStory.getPreRequisits();
+
+                                            if(prerequiestNameList!= null && !prerequiestNameList.isEmpty())
+                                                for(String userStoryName : prerequiestNameList.split(","))
+                                                {
+                                                    UserStory tempUserStory = userStoryDAO.getUserStoryFormProjectNameAndUserStoryName(userStory.getProject().getName(),userStoryName);
+
+                                                    tempUserStory.setDependancy(tempUserStory.getDependancy().replace(userStory.getName(), ""));
+
+                                                    if(tempUserStory.getDependancy()!= null && !tempUserStory.getDependancy().isEmpty()) {
+
+                                                        if(tempUserStory.getDependancy().startsWith(",,"))
+                                                        {
+                                                            tempUserStory.setPreRequisits(tempUserStory.getPreRequisits().replace(",,", ""));
+                                                        }
+
+                                                        else if (tempUserStory.getDependancy().contains(",,")) {
+                                                            tempUserStory.setDependancy(tempUserStory.getDependancy().replace(",,", ","));
+                                                        }
+                                                        else if (tempUserStory.getDependancy().endsWith(",")) {
+                                                            tempUserStory.setDependancy(tempUserStory.getDependancy().substring(0, tempUserStory.getDependancy().length() - 1));
+                                                        }
+
+                                                        if(tempUserStory.getDependancy().isEmpty())
+                                                            tempUserStory.setDependancy(null);
+                                                    }
+
+                                                    userStoryDAO.updateUserStory(tempUserStory);
+                                                }
+
+
+
+
+
+
+                                           /* //remove dependency manually
                                             for (UserStory userStory1 : userStory.getProject().getProjectUserStories()) {
 
                                                 if(userStory1.getDependancy()!= null)
@@ -187,7 +258,7 @@ public class ViewProject extends CustomComponent {
                                                 }
 
                                             }
-
+*/
 
                                             userStoryDAO.removeUserStory(userStory);
 
@@ -218,20 +289,17 @@ public class ViewProject extends CustomComponent {
                 viewUserStoryButton.addClickListener(new Button.ClickListener() {
                     public void buttonClick(Button.ClickEvent event) {
 
-                        DashboardUI.getCurrent().getNavigator().navigateTo("Schedule_Task/"+(String)event.getButton().getData());
+                        DashboardUI.getCurrent().getNavigator().navigateTo("Schedule_Task/" + (String) event.getButton().getData());
 
                     }
                 });
 
-            }
-            else
-            {
+            } else {
                 Button viewUserStoryButton=new Button("View UserStory");
                 viewUserStoryButton.setData(userStory.getProject().getName() + "/" + userStory.getName());
 
 
                 userStoryTable.addItem(new Object[]{index, userStory.getName(), userStory.getPriority(), userStory.getDescription(), userStory.getDomain(), userStory.getAssignedSprint(), viewUserStoryButton}, index);
-
 
 
                 viewUserStoryButton.addClickListener(new Button.ClickListener() {
