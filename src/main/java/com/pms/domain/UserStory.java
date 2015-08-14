@@ -26,6 +26,7 @@ public class UserStory {
     private String releasedDate;
     private String state;
     private boolean CR;
+    private int sequenceNo;
 
 
 
@@ -46,6 +47,16 @@ public class UserStory {
 
 
     //getters and setters
+
+
+    public int getSequenceNo() {
+        return sequenceNo;
+    }
+
+    public void setSequenceNo(int sequenceNo) {
+        this.sequenceNo = sequenceNo;
+    }
+
     public Project getProject() {
         return project;
     }
