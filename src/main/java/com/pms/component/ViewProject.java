@@ -226,45 +226,7 @@ public class ViewProject extends CustomComponent {
 
 
 
-
-
-                                           /* //remove dependency manually
-                                            for (UserStory userStory1 : userStory.getProject().getProjectUserStories()) {
-
-                                                if(userStory1.getDependancy()!= null)
-                                                {
-                                                    String[] userStoryDependencyStrings= userStory1.getDependancy().split(",");
-
-                                                    for(String dependency:userStoryDependencyStrings)
-                                                    {
-                                                        if(dependency.contains(userStory.getName()))
-                                                        {
-                                                            userStory1.setDependancy(userStory1.getDependancy().replace(userStory.getName(),""));
-
-                                                            if(userStory1.getDependancy().contains(",,"))
-                                                            {
-                                                                userStory1.setDependancy(userStory1.getDependancy().replace(",,",","));
-                                                            }
-                                                            if(userStory1.getDependancy().endsWith(","))
-                                                            {
-                                                                userStory1.setDependancy(userStory1.getDependancy().substring(0,userStory1.getDependancy().length()-1));
-                                                            }
-
-                                                            userStoryDAO.updateUserStory(userStory1);
-                                                        }
-
-                                                    }
-
-                                                }
-
-                                            }
-*/
-
                                             userStoryDAO.removeUserStory(userStory);
-
-
-
-
                                             Page.getCurrent().reload();
 
                                         } else {

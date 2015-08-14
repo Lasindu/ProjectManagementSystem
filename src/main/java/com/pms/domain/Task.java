@@ -19,6 +19,8 @@ public class Task {
     private String date;
     private int priority;
     private int severity;
+    private String preRequisits;
+    private String dependancy;
     private String memberType;
     private String estimateTime;
     private String assignedTo;
@@ -39,6 +41,22 @@ public class Task {
 
 
     //getters and setters
+
+    public String getPreRequisits() {
+        return preRequisits;
+    }
+
+    public void setPreRequisits(String preRequisits) {
+        this.preRequisits = preRequisits;
+    }
+
+    public String getDependancy() {
+        return dependancy;
+    }
+
+    public void setDependancy(String dependancy) {
+        this.dependancy = dependancy;
+    }
 
     public int getTaskId() {
         return taskId;

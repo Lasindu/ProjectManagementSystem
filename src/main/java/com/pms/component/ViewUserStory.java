@@ -158,6 +158,83 @@ public class ViewUserStory extends CustomComponent {
                                             if (dialog.isConfirmed()) {
                                                 // Confirmed to continue
                                                 TaskDAO taskDAO = (TaskDAO) DashboardUI.context.getBean("Task");
+
+
+
+
+                                                //remove dependency
+                                                String dependencyNameList = task.getDependancy();
+
+                                                if(dependencyNameList!= null && !dependencyNameList.isEmpty() )
+                                                    for(String taskName: dependencyNameList.split(","))
+                                                    {
+                                                        Task tempTask=taskDAO.getTaskFromUserStroyNameAndTaskName(userStory.getName(),taskName);
+
+                                                        tempTask.setPreRequisits(tempTask.getPreRequisits().replace(task.getName(),""));
+
+                                                        if(tempTask.getPreRequisits()!= null && !tempTask.getPreRequisits().isEmpty())
+                                                        {
+                                                            if(tempTask.getPreRequisits().startsWith(",,"))
+                                                            {
+                                                                tempTask.setPreRequisits(tempTask.getPreRequisits().replace(",,", ""));
+                                                            }
+                                                            else if(tempTask.getPreRequisits().contains(",,"))
+                                                            {
+                                                                tempTask.setPreRequisits(tempTask.getPreRequisits().replace(",,", ","));
+                                                            }
+                                                            else if(tempTask.getPreRequisits().endsWith(","))
+                                                            {
+                                                                tempTask.setPreRequisits(tempTask.getPreRequisits().substring(0, tempTask.getPreRequisits().length() - 1));
+                                                            }
+
+                                                            if(tempTask.getPreRequisits().isEmpty())
+                                                                tempTask.setPreRequisits(null);
+
+                                                        }
+
+
+
+                                                        taskDAO.updateTask(tempTask);
+                                                    }
+
+
+
+                                                //remove prerequist
+                                                String prerequiestNameList = task.getPreRequisits();
+
+                                                if(prerequiestNameList!= null && !prerequiestNameList.isEmpty())
+                                                    for(String taskName : prerequiestNameList.split(","))
+                                                    {
+                                                        Task tempTask = taskDAO.getTaskFromUserStroyNameAndTaskName(userStory.getName(),taskName);
+
+                                                        tempTask.setDependancy(tempTask.getDependancy().replace(task.getName(), ""));
+
+                                                        if(tempTask.getDependancy()!= null && !tempTask.getDependancy().isEmpty()) {
+
+                                                            if(tempTask.getDependancy().startsWith(",,"))
+                                                            {
+                                                                tempTask.setPreRequisits(tempTask.getPreRequisits().replace(",,", ""));
+                                                            }
+
+                                                            else if (tempTask.getDependancy().contains(",,")) {
+                                                                tempTask.setDependancy(tempTask.getDependancy().replace(",,", ","));
+                                                            }
+                                                            else if (tempTask.getDependancy().endsWith(",")) {
+                                                                tempTask.setDependancy(tempTask.getDependancy().substring(0, tempTask.getDependancy().length() - 1));
+                                                            }
+
+                                                            if(tempTask.getDependancy().isEmpty())
+                                                                tempTask.setDependancy(null);
+                                                        }
+
+                                                        taskDAO.updateTask(tempTask);
+                                                    }
+
+
+
+
+
+
                                                 taskDAO.removeTask(task);
                                                 Page.getCurrent().reload();
 
@@ -182,7 +259,7 @@ public class ViewUserStory extends CustomComponent {
                     viewTaskButton.addClickListener(new Button.ClickListener() {
                         public void buttonClick(Button.ClickEvent event) {
 
-                            DashboardUI.getCurrent().getNavigator().navigateTo("Schedule_Task/"+(String)event.getButton().getData());
+                            DashboardUI.getCurrent().getNavigator().navigateTo("Schedule_Task/" + (String) event.getButton().getData());
 
                         }
                     });

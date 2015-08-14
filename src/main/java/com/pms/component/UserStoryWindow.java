@@ -155,6 +155,9 @@ public class UserStoryWindow extends Window {
             {
                 preRequisitsList.select(preRequistit);
             }
+
+            userStoryName.setReadOnly(true);
+
         }
 
 
