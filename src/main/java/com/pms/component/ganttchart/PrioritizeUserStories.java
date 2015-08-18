@@ -217,7 +217,7 @@ public class PrioritizeUserStories {
             for (UserStory userStory : userStories) {
 
                 if (checkInSortedList(userStory.getName()))
-                    break;
+                    continue;
 
                 String preRequistNameList = userStory.getPreRequisits();
 
@@ -301,7 +301,7 @@ public class PrioritizeUserStories {
 
         }
 
-        noDependency_WithTime = PrioritizeUserStories.sortUserStoryMapAccendingOrder(noDependency_WithTime);
+        noDependency_WithTime = PrioritizeUserStories.sortUserStoryMapDesendingOrder(noDependency_WithTime);
 
         Iterator it = noDependency_WithTime.entrySet().iterator();
         while (it.hasNext()) {
@@ -366,17 +366,20 @@ public class PrioritizeUserStories {
 
 
 
+
         //for each highets prority level
         for (int x = 1; x <= 5; x++) {
             //this user temp userstory list contains user stories which contrains same highet dependency prority
             List<UserStory> tempUserStoryList = new ArrayList<UserStory>();
             Iterator iterator = userStoryWithDependencyHighestPriority.entrySet().iterator();
 
-            if (iterator.hasNext()) {
+            while (iterator.hasNext()) {
                 Map.Entry pair = (Map.Entry) iterator.next();
 
                 if ((Integer) pair.getValue() == x)
                     tempUserStoryList.add((UserStory) pair.getKey());
+
+                //iterator.remove();
             }
 
 
@@ -619,7 +622,8 @@ public class PrioritizeUserStories {
         Collections.sort(list, new Comparator<Map.Entry<UserStory, Integer>>() {
             public int compare(Map.Entry<UserStory, Integer> o1,
                                Map.Entry<UserStory, Integer> o2) {
-                return (o1.getValue()).compareTo(o2.getValue());
+                //return (o1.getValue()).compareTo(o2.getValue());
+                return (o2.getValue()).compareTo(o1.getValue());
             }
         });
 
