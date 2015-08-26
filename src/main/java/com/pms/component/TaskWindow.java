@@ -159,6 +159,9 @@ public class TaskWindow extends Window {
         taskForm.addComponent(preRequistLayout);
 
         if (editmode) {
+
+            preRequisitsList.removeItem(task.getName());
+
             String[] preRquisitList = task.getPreRequisits().split(",");
 
             for (String preRequistit : preRquisitList) {

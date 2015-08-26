@@ -149,6 +149,9 @@ public class UserStoryWindow extends Window {
 
         if(editmode)
         {
+            //remove current userStory name appier in the prerequist list
+            preRequisitsList.removeItem(userStory.getName());
+
             String[] preRquisitList= userStory.getPreRequisits().split(",");
 
             for(String preRequistit:preRquisitList)
