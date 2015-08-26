@@ -9,7 +9,7 @@ import com.pms.domain.UserStory;
 import java.util.*;
 
 /**
- * Created by Damitha on 8/25/2015.
+ * Created by Upulie on 8/25/2015.
  */
 public class PrioritizeTasks {
 
