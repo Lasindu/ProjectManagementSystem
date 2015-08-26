@@ -31,14 +31,12 @@ import java.util.Set;
 public class TaskWindow extends Window {
 
 
-
-
     UserStory userStory;
     private Collection<Task> userStoryTasks;
 
     private final BeanFieldGroup<Task> fieldGroup;
     private Task task;
-    private boolean editmode=false;
+    private boolean editmode = false;
 
     @PropertyId("name")
     private TextField name;
@@ -62,16 +60,14 @@ public class TaskWindow extends Window {
     private OptionGroup isCr;
 
 
-    private TaskWindow (Task task)
-    {
-        this.userStory=task.getUserStory();
-        userStoryTasks=userStory.getUserStoryTasks();
-        this.task=task;
+    private TaskWindow(Task task) {
+        this.userStory = task.getUserStory();
+        userStoryTasks = userStory.getUserStoryTasks();
+        this.task = task;
 
 
-        if(!task.getName().equals(""))
-        {
-            editmode=true;
+        if (!task.getName().equals("")) {
+            editmode = true;
         }
 
 
@@ -102,7 +98,6 @@ public class TaskWindow extends Window {
         content.addComponent(buildFooter());
 
 
-
         fieldGroup = new BeanFieldGroup<Task>(Task.class);
         fieldGroup.bindMemberFields(this);
         fieldGroup.setItemDataSource(task);
@@ -111,9 +106,7 @@ public class TaskWindow extends Window {
     }
 
 
-
-    private Component buildTask()
-    {
+    private Component buildTask() {
 
         FormLayout taskForm = new FormLayout();
         taskForm.addStyleName(ValoTheme.FORMLAYOUT_LIGHT);
@@ -146,7 +139,6 @@ public class TaskWindow extends Window {
         taskForm.addComponent(severity);
 
 
-
         preRequisitsList = new OptionGroup("Pre Requisits");
         preRequisitsList.setWidth("400px");
         preRequisitsList.setNullSelectionAllowed(true);
@@ -161,17 +153,15 @@ public class TaskWindow extends Window {
         Panel preRequestPanel = new Panel("");
         preRequestPanel.setHeight("100px");
         preRequestPanel.setContent(preRequisitsList);
-        VerticalLayout preRequistLayout= new VerticalLayout();
+        VerticalLayout preRequistLayout = new VerticalLayout();
         preRequistLayout.setCaption("Pre Requisits");
         preRequistLayout.addComponent(preRequestPanel);
         taskForm.addComponent(preRequistLayout);
 
-        if(editmode)
-        {
-            String[] preRquisitList= task.getPreRequisits().split(",");
+        if (editmode) {
+            String[] preRquisitList = task.getPreRequisits().split(",");
 
-            for(String preRequistit:preRquisitList)
-            {
+            for (String preRequistit : preRquisitList) {
                 preRequisitsList.select(preRequistit);
             }
 
@@ -180,12 +170,11 @@ public class TaskWindow extends Window {
         }
 
 
-
-        memberType= new TextField("Member Type");
+        memberType = new TextField("Member Type");
         memberType.setNullRepresentation("");
         taskForm.addComponent(memberType);
 
-        estimateTime= new TextField("Estimate Time");
+        estimateTime = new TextField("Estimate Time");
         estimateTime.setNullRepresentation("");
         taskForm.addComponent(estimateTime);
 
@@ -193,7 +182,7 @@ public class TaskWindow extends Window {
         assignedTo.setNullRepresentation("");
         taskForm.addComponent(assignedTo);
 
-        completeTime= new TextField("Complete Time");
+        completeTime = new TextField("Complete Time");
         completeTime.setNullRepresentation("");
         taskForm.addComponent(completeTime);
 
@@ -204,7 +193,7 @@ public class TaskWindow extends Window {
         taskForm.addComponent(isCr);
 
 
-        return  taskForm;
+        return taskForm;
     }
 
     private Component buildFooter() {
@@ -217,17 +206,15 @@ public class TaskWindow extends Window {
         Button cancelButton = new Button("Cancel");
 
         cancelButton.addClickListener(new Button.ClickListener() {
-            public void buttonClick(Button.ClickEvent event) {close();
+            public void buttonClick(Button.ClickEvent event) {
+                close();
             }
         });
 
         Button submitButton;
-        if (editmode)
-        {
+        if (editmode) {
             submitButton = new Button("Update Task");
-        }
-        else
-        {
+        } else {
             submitButton = new Button("Create New Task");
 
         }
@@ -239,24 +226,55 @@ public class TaskWindow extends Window {
 
 
                     fieldGroup.commit();
-                    Task task;
-                    task= fieldGroup.getItemDataSource().getBean();
-                    task.setUserStory(userStory);
+                    Task newTask;
+                    newTask = fieldGroup.getItemDataSource().getBean();
+                    newTask.setUserStory(userStory);
 
-                    if (editmode)
-                    {
+                    if (editmode) {
+                        TaskDAO taskDAO = (TaskDAO) DashboardUI.context.getBean("Task");
+                        String[] preRequistListBeforEdit = task.getPreRequisits().split(",");
 
-                    }
-                    else
-                    {
+                        for (String preReqsuist : preRequistListBeforEdit) {
+                            if (!preRequisitsList.isSelected(preReqsuist)) {
+                                for (Task task1 : userStoryTasks) {
+                                    if (task1.getName().equals(preReqsuist)) {
+                                        task1.setDependancy(task1.getDependancy().replace(task.getName(), ""));
+
+
+                                        if (task1.getDependancy() != null && !task1.getDependancy().isEmpty()) {
+                                            if (task1.getDependancy().startsWith(",")) {
+                                                task1.setDependancy(task1.getDependancy().substring(1, task1.getDependancy().length()));
+                                            } else if (task1.getDependancy().contains(",,")) {
+                                                task1.setDependancy(task1.getDependancy().replace(",,", ","));
+                                            } else if (task1.getDependancy().endsWith(",")) {
+                                                task1.setDependancy(task1.getDependancy().substring(0, task1.getDependancy().length() - 1));
+                                            }
+
+                                            if (task1.getDependancy().isEmpty()) {
+                                                task1.setDependancy(null);
+                                            }
+
+
+                                        }
+
+
+                                        taskDAO.updateTask(task1);
+                                        break;
+                                    }
+                                }
+
+
+                            }
+                        }
+
+                    } else {
                         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                         Date date = new Date();
-                        task.setDate(dateFormat.format(date).toString());
+                        newTask.setDate(dateFormat.format(date).toString());
 
                     }
 
                     TaskDAO taskDAO = (TaskDAO) DashboardUI.context.getBean("Task");
-
 
 
                     //set prereuist for tasks
@@ -272,21 +290,15 @@ public class TaskWindow extends Window {
                         index2++;
 
 
-
-
                         //following section manually set dependency in other user stories if this user story depend on them
                         for (Task task1 : userStory.getUserStoryTasks()) {
-                            if(task1.getName().equals(v.toString()))
-                            {
-                                if(task1.getDependancy()==null || task1.getDependancy().isEmpty())
-                                {
-                                    task1.setDependancy(task.getName());
-                                }
-                                else
-                                {
+                            if (task1.getName().equals(v.toString())) {
+                                if (task1.getDependancy() == null || task1.getDependancy().isEmpty()) {
+                                    task1.setDependancy(newTask.getName());
+                                } else {
                                     StringBuilder dependencyString1 = new StringBuilder();
                                     dependencyString1.append(task1.getDependancy());
-                                    dependencyString1.append(','+task.getName());
+                                    dependencyString1.append(',' + newTask.getName());
 
                                     task1.setDependancy(dependencyString1.toString());
 
@@ -299,23 +311,16 @@ public class TaskWindow extends Window {
                         }
 
 
-
-
-
                     }
-                    task.setPreRequisits(preRequisitString.toString());
+                    newTask.setPreRequisits(preRequisitString.toString());
 
 
-
-
-                    UserStoryDAO userStoryDAO= (UserStoryDAO)DashboardUI.context.getBean("UserStory");
-                    userStory.getUserStoryTasks().add(task);
+                    UserStoryDAO userStoryDAO = (UserStoryDAO) DashboardUI.context.getBean("UserStory");
+                    userStory.getUserStoryTasks().add(newTask);
                     userStoryDAO.updateUserStory(userStory);
 
 
-
-                    if (editmode)
-                    {
+                    if (editmode) {
                         Notification success = new Notification(
                                 "Task Updated successfully");
                         success.setDelayMsec(2000);
@@ -323,9 +328,7 @@ public class TaskWindow extends Window {
                         success.setPosition(Position.BOTTOM_CENTER);
                         success.show(Page.getCurrent());
 
-                    }
-                    else
-                    {
+                    } else {
                         Notification success = new Notification(
                                 "Task Created successfully");
                         success.setDelayMsec(2000);
@@ -350,7 +353,7 @@ public class TaskWindow extends Window {
         footer.addComponent(submitButton);
         footer.addComponent(cancelButton);
 
-        footer.setExpandRatio(cancelButton,1);
+        footer.setExpandRatio(cancelButton, 1);
 
         footer.setComponentAlignment(cancelButton, Alignment.TOP_RIGHT);
         footer.setComponentAlignment(submitButton, Alignment.TOP_RIGHT);
@@ -358,9 +361,6 @@ public class TaskWindow extends Window {
 
         return footer;
     }
-
-
-
 
 
     public static void open(Task task) {
