@@ -169,9 +169,9 @@ public class ViewProject extends CustomComponent {
 
                                                 if(tempUserStory.getPreRequisits()!= null && !tempUserStory.getPreRequisits().isEmpty())
                                                 {
-                                                    if(tempUserStory.getPreRequisits().startsWith(",,"))
+                                                    if(tempUserStory.getPreRequisits().startsWith(","))
                                                     {
-                                                        tempUserStory.setPreRequisits(tempUserStory.getPreRequisits().replace(",,", ""));
+                                                        tempUserStory.setPreRequisits(tempUserStory.getDependancy().substring(1, tempUserStory.getDependancy().length()));
                                                     }
                                                     else if(tempUserStory.getPreRequisits().contains(",,"))
                                                     {
@@ -204,9 +204,9 @@ public class ViewProject extends CustomComponent {
 
                                                     if(tempUserStory.getDependancy()!= null && !tempUserStory.getDependancy().isEmpty()) {
 
-                                                        if(tempUserStory.getDependancy().startsWith(",,"))
+                                                        if(tempUserStory.getDependancy().startsWith(","))
                                                         {
-                                                            tempUserStory.setPreRequisits(tempUserStory.getPreRequisits().replace(",,", ""));
+                                                            tempUserStory.setPreRequisits(tempUserStory.getDependancy().substring(1, tempUserStory.getDependancy().length()));
                                                         }
 
                                                         else if (tempUserStory.getDependancy().contains(",,")) {

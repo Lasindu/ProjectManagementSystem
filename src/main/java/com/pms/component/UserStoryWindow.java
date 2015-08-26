@@ -223,9 +223,9 @@ public class UserStoryWindow extends Window {
                     UserStoryDAO userStoryDAO =(UserStoryDAO)DashboardUI.context.getBean("UserStory");
 
                     fieldGroup.commit();
-                    UserStory userStory ;
-                    userStory =fieldGroup.getItemDataSource().getBean();
-                    userStory.setProject(project);
+                    UserStory newUserStory ;
+                    newUserStory =fieldGroup.getItemDataSource().getBean();
+                    newUserStory.setProject(project);
 
 
                     //when user edit prerequist need to update those edited prerquisit dependency
@@ -239,14 +239,14 @@ public class UserStoryWindow extends Window {
                             {
                                 for (UserStory userStory1 : project.getProjectUserStories()) {
                                     if (userStory1.getName().equals(preReqsuist)) {
-                                        userStory1.setDependancy(userStory1.getDependancy().replace(userStory.getName(),""));
+                                        userStory1.setDependancy(userStory1.getDependancy().replace(newUserStory.getName(), ""));
 
 
                                         if(userStory1.getDependancy()!=null && !userStory1.getDependancy().isEmpty())
                                         {
-                                            if(userStory1.getDependancy().startsWith(",,"))
+                                            if(userStory1.getDependancy().startsWith(","))
                                             {
-                                                userStory1.setDependancy(userStory1.getDependancy().replace(",,",""));
+                                                userStory1.setDependancy(userStory1.getDependancy().substring(1, userStory1.getDependancy().length()));
                                             }
 
                                             else if(userStory1.getDependancy().contains(",,"))
@@ -303,13 +303,13 @@ public class UserStoryWindow extends Window {
                             {
                                 if(userStory1.getDependancy()==null || userStory1.getDependancy().isEmpty())
                                 {
-                                    userStory1.setDependancy(userStory.getName());
+                                    userStory1.setDependancy(newUserStory.getName());
                                 }
                                 else
                                 {
                                     StringBuilder dependencyString1 = new StringBuilder();
                                     dependencyString1.append(userStory1.getDependancy());
-                                    dependencyString1.append(','+userStory.getName());
+                                    dependencyString1.append(',' + newUserStory.getName());
 
                                     userStory1.setDependancy(dependencyString1.toString());
 
@@ -326,10 +326,10 @@ public class UserStoryWindow extends Window {
 
 
                     }
-                    userStory.setPreRequisits(preRequisitString.toString());
+                    newUserStory.setPreRequisits(preRequisitString.toString());
 
 
-                    project.getProjectUserStories().add(userStory);
+                    project.getProjectUserStories().add(newUserStory);
                     projectDAO.updateProject(project);
 
                     if(editmode)

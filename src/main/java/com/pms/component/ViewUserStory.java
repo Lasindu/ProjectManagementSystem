@@ -176,7 +176,7 @@ public class ViewUserStory extends CustomComponent {
                                                         {
                                                             if(tempTask.getPreRequisits().startsWith(",,"))
                                                             {
-                                                                tempTask.setPreRequisits(tempTask.getPreRequisits().replace(",,", ""));
+                                                                tempTask.setPreRequisits(tempTask.getDependancy().substring(1, tempTask.getDependancy().length()));
                                                             }
                                                             else if(tempTask.getPreRequisits().contains(",,"))
                                                             {
@@ -211,9 +211,9 @@ public class ViewUserStory extends CustomComponent {
 
                                                         if(tempTask.getDependancy()!= null && !tempTask.getDependancy().isEmpty()) {
 
-                                                            if(tempTask.getDependancy().startsWith(",,"))
+                                                            if(tempTask.getDependancy().startsWith(","))
                                                             {
-                                                                tempTask.setPreRequisits(tempTask.getPreRequisits().replace(",,", ""));
+                                                                tempTask.setPreRequisits(tempTask.getDependancy().substring(1, tempTask.getDependancy().length()));
                                                             }
 
                                                             else if (tempTask.getDependancy().contains(",,")) {
