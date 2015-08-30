@@ -1,45 +1,25 @@
 package com.pms.view.dashboard;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.Calendar;
 
 import com.pms.DashboardUI;
 import com.pms.component.ganttchart.*;
+import com.pms.component.ganttchart.scheduletask.TaskGanntChart;
+import com.pms.component.ganttchart.scheduletask.UserStoryGanntChart;
 import com.pms.dao.UserDAO;
+import com.pms.dao.UserStoryDAO;
 import com.pms.domain.Project;
 import com.pms.domain.User;
-import com.pms.view.LoginView;
+import com.pms.domain.UserStory;
 import com.vaadin.data.Property;
-import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
-import org.tltv.gantt.Gantt;
-import org.tltv.gantt.Gantt.MoveEvent;
-import org.tltv.gantt.Gantt.ResizeEvent;
-import org.tltv.gantt.client.shared.AbstractStep;
-import org.tltv.gantt.client.shared.Step;
-import org.tltv.gantt.client.shared.SubStep;
-
-import com.pms.component.ganttchart.util.UriFragmentWrapperFactory;
-import com.pms.component.ganttchart.util.Util;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.data.fieldgroup.FieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.util.converter.DateToLongConverter;
-import com.vaadin.shared.ui.datefield.Resolution;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.MenuBar.Command;
-import com.vaadin.ui.MenuBar.MenuItem;
-import com.vaadin.ui.Notification.Type;
 
 /**
  * Created by Upulie on 4/2/2015.
@@ -128,8 +108,12 @@ public class DashboardView  extends VerticalLayout implements View {
                                 layout.addComponent(buildGanntChart(project));
                             else
                             {
-                                GanttChart ganttChart = new GanttChart();
-                                layout.addComponent(ganttChart.init(project));
+                                //GanttChart ganttChart = new GanttChart();
+                                TaskGanntChart ganntChart = new TaskGanntChart();
+                                List<UserStory> userStories= new ArrayList<UserStory>();
+                                UserStoryDAO userStoryDAO =(UserStoryDAO)DashboardUI.context.getBean("UserStory");
+                                userStories.addAll(userStoryDAO.getAllUserSeriesOfProject(project));
+                                layout.addComponent(ganntChart.init(userStories.get(0)));
 
                             }
                             break;

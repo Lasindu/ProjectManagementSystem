@@ -30,9 +30,11 @@ public class TableGanttLayout extends HorizontalLayout implements GanttListener 
                 .add(".v-table-table tr:first-child td.v-table-cell-content { height: 37px; }");
 
         ganttTable = createTableForGantt();
-
         addComponent(ganttTable);
+        setExpandRatio(ganttTable,1.0f);
         addComponent(gantt);
+        setExpandRatio(gantt,5.0f);
+
     }
 
     private Table createTableForGantt() {
