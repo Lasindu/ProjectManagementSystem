@@ -588,6 +588,7 @@ public class PrioritizeUserStories {
     }
 
 
+    //1,2,3,4,5
     private static Map<UserStory, Integer> sortUserStoryMapAccendingOrder(Map<UserStory, Integer> unsortMap) {
 
         // Convert Map to List
@@ -611,7 +612,7 @@ public class PrioritizeUserStories {
         return sortedMap;
     }
 
-
+   // 99,98,97,96
     private static Map<UserStory, Integer> sortUserStoryMapDesendingOrder(Map<UserStory, Integer> unsortMap) {
 
         // Convert Map to List

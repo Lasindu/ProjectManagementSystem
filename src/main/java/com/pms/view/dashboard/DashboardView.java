@@ -111,6 +111,7 @@ public class DashboardView  extends VerticalLayout implements View {
                                 //GanttChart ganttChart = new GanttChart();
                                 TaskGanntChart ganntChart = new TaskGanntChart();
                                 List<UserStory> userStories= new ArrayList<UserStory>();
+
                                 UserStoryDAO userStoryDAO =(UserStoryDAO)DashboardUI.context.getBean("UserStory");
                                 userStories.addAll(userStoryDAO.getAllUserSeriesOfProject(project));
                                 layout.addComponent(ganntChart.init(userStories.get(0)));
@@ -148,8 +149,13 @@ public class DashboardView  extends VerticalLayout implements View {
                                     layout.addComponent(buildGanntChart(project));
                                 else
                                 {
-                                    GanttChart ganttChart = new GanttChart();
-                                    layout.addComponent(ganttChart.init(project));
+                                    //GanttChart ganttChart = new GanttChart();
+                                    TaskGanntChart ganntChart = new TaskGanntChart();
+                                    List<UserStory> userStories= new ArrayList<UserStory>();
+
+                                    UserStoryDAO userStoryDAO =(UserStoryDAO)DashboardUI.context.getBean("UserStory");
+                                    userStories.addAll(userStoryDAO.getAllUserSeriesOfProject(project));
+                                    layout.addComponent(ganntChart.init(userStories.get(0)));
 
                                 }
 

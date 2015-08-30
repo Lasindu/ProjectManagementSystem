@@ -199,7 +199,7 @@ public class TaskGanntChart  {
 
 
 
-        UserStoryDAO userStoryDAO =(UserStoryDAO)DashboardUI.context.getBean("UserStory");
+    /*    UserStoryDAO userStoryDAO =(UserStoryDAO)DashboardUI.context.getBean("UserStory");
 
         List<Task> taskList = new ArrayList<Task>();
         taskList.addAll(userStoryDAO.getUserStoryTaskList(userStory));
@@ -289,8 +289,46 @@ public class TaskGanntChart  {
 
 
         }
+*/
 
 
+        PrioritizeTasks prioritizeTasks = new PrioritizeTasks();
+       Map taskMap = prioritizeTasks.prioritize(userStory);
+
+        Step previosStep=null;
+
+        System.out.println(taskMap.toString());
+        Iterator it = taskMap.entrySet().iterator();
+        while (it.hasNext()) {
+
+            Map.Entry pair = (Map.Entry)it.next();
+            //System.out.println(pair.getKey() + " = " + pair.getValue());
+            it.remove();
+
+            if(previosStep==null)
+            {
+                Step step1 = new Step(((Task)pair.getValue()).getName());
+                step1.setDescription("Description tooltip");
+                step1.setStartDate(cal.getTime().getTime());
+                cal.add(Calendar.MONTH, 1);
+                step1.setEndDate(cal.getTime().getTime());
+                gantt.addStep(step1);
+                previosStep=step1;
+            }
+            else
+            {
+                Step newStep = new Step(((Task)pair.getValue()).getName());
+                newStep.setStartDate(previosStep.getEndDate());
+                cal.add(Calendar.MONTH, 1);
+                newStep.setEndDate(cal.getTime().getTime());
+                newStep.setPredecessor(previosStep);
+                gantt.addStep(newStep);
+
+                previosStep=newStep;
+
+            }
+
+        }
 
 
 
