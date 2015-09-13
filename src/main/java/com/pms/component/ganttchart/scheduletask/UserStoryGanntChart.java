@@ -189,9 +189,13 @@ public class UserStoryGanntChart  {
         date.setMonth(1);
         date.setDate(1);
 
+
+       // date.setTime(0);
+
         cal.setTime(date);
+        cal.set(Calendar.HOUR,0);
         gantt.setStartDate(cal.getTime());
-        cal.add(Calendar.YEAR, 1);
+        cal.add(Calendar.DATE, 25);
         gantt.setEndDate(cal.getTime());
         cal.setTime(date);
 
@@ -200,7 +204,10 @@ public class UserStoryGanntChart  {
         gantt.setYearsVisible(false);
         gantt.setMonthsVisible(false);
 
-        gantt.setResolution(org.tltv.gantt.client.shared.Resolution.Week);
+
+
+        gantt.setResolution(org.tltv.gantt.client.shared.Resolution.Day);
+        gantt.setReadOnly(true);
 
 
 
@@ -237,9 +244,9 @@ public class UserStoryGanntChart  {
             {
                 Step step1 = new Step(((UserStory)pair.getValue()).getName());
                 step1.setDescription("Description tooltip");
-                step1.setStartDate(cal.getTime().getTime());
-                cal.add(Calendar.MONTH, 1);
-                step1.setEndDate(cal.getTime().getTime());
+                step1.setStartDate(cal.getTime());
+                cal.add(Calendar.DATE, 1);
+                step1.setEndDate(cal.getTime());
                 gantt.addStep(step1);
                 previosStep=step1;
             }
@@ -247,8 +254,8 @@ public class UserStoryGanntChart  {
             {
                 Step newStep = new Step(((UserStory)pair.getValue()).getName());
                 newStep.setStartDate(previosStep.getEndDate());
-                cal.add(Calendar.MONTH, 1);
-                newStep.setEndDate(cal.getTime().getTime());
+                cal.add(Calendar.DATE, 1);
+                newStep.setEndDate(cal.getTime());
                 newStep.setPredecessor(previosStep);
                 gantt.addStep(newStep);
 

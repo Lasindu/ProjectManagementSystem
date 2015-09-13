@@ -116,6 +116,7 @@ public class TaskWindow extends Window {
 
         name = new TextField("Task Name");
         name.setNullRepresentation("");
+        name.setRequired(true);
         taskForm.addComponent(name);
 
         description = new TextArea("Task Description");
@@ -128,6 +129,7 @@ public class TaskWindow extends Window {
         priority.addItem(3);
         priority.addItem(4);
         priority.addItem(5);
+        priority.setRequired(true);
         taskForm.addComponent(priority);
 
         severity = new ComboBox("Severity");
@@ -179,6 +181,7 @@ public class TaskWindow extends Window {
 
         estimateTime = new TextField("Estimate Time");
         estimateTime.setNullRepresentation("");
+        estimateTime.setRequired(true);
         taskForm.addComponent(estimateTime);
 
         assignedTo = new TextField("Assinged to");
@@ -346,7 +349,7 @@ public class TaskWindow extends Window {
 
 
                 } catch (FieldGroup.CommitException e) {
-                    Notification.show("Error while creating User Story",
+                    Notification.show("Error while creating Task please check required fields",
                             Notification.Type.ERROR_MESSAGE);
                 }
             }

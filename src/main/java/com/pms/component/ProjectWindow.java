@@ -216,8 +216,7 @@ public class ProjectWindow extends Window {
 
 
 
-                            Notification success = new Notification(
-                                    "Project Created successfully");
+                            Notification success = new Notification("Project Created successfully");
                             success.setDelayMsec(2000);
                             success.setStyleName("bar success small");
                             success.setPosition(Position.BOTTOM_CENTER);
@@ -227,10 +226,11 @@ public class ProjectWindow extends Window {
 
 
                         // getUI().getNavigator().navigateTo("/");
+
                         Page.getCurrent().reload();
 
                     } catch (FieldGroup.CommitException e) {
-                        Notification.show("Error while creating project",
+                        Notification.show("Error while creating project please check required fields",
                                 Notification.Type.ERROR_MESSAGE);
                     }
 

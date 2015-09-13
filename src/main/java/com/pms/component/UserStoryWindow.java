@@ -111,6 +111,7 @@ public class UserStoryWindow extends Window {
 
         userStoryName = new TextField("User Story Name");
         userStoryName.setNullRepresentation("");
+        userStoryName.setRequired(true);
         content.addComponent(userStoryName);
 
         description = new TextArea("Description");
@@ -123,6 +124,7 @@ public class UserStoryWindow extends Window {
         priority.addItem(3);
         priority.addItem(4);
         priority.addItem(5);
+        priority.setRequired(true);
         content.addComponent(priority);
 
 
@@ -362,7 +364,7 @@ public class UserStoryWindow extends Window {
 
 
                 } catch (FieldGroup.CommitException e) {
-                    Notification.show("Error while creating User Story",
+                    Notification.show("Error while creating User Story please check required fields",
                             Notification.Type.ERROR_MESSAGE);
                 }
             }
