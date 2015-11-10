@@ -51,6 +51,8 @@ public class UserStoryGanntChart  {
 
     private Gantt gantt;
 
+    private Project project;
+
     private NativeSelect localeSelect;
     private NativeSelect reso;
 
@@ -140,6 +142,9 @@ public class UserStoryGanntChart  {
 
 
     public Component init(Project project) {
+
+        this.project = project;
+
         ganttListener = null;
         createGantt(project);
 
@@ -608,6 +613,7 @@ public class UserStoryGanntChart  {
         final Collection<Component> hidden = new ArrayList<Component>();
 
         BeanItem<AbstractStep> item = new BeanItem<AbstractStep>(step);
+
 
         final FieldGroup group = new FieldGroup(item);
         group.setBuffered(true);

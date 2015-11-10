@@ -222,9 +222,9 @@ public final class DashboardMenu extends CustomComponent {
     public void updateNotificationsCount(
             final NotificationsCountUpdatedEvent event) {
        //# int unreadNotificationsCount = DashboardUI.getDataProvider().getUnreadNotificationsCount();
-        int unreadNotificationsCount = 5;
-        notificationsBadge.setValue(String.valueOf(unreadNotificationsCount));
-        notificationsBadge.setVisible(unreadNotificationsCount > 0);
+       // int unreadNotificationsCount = 5;
+       // notificationsBadge.setValue(String.valueOf(unreadNotificationsCount));
+       // notificationsBadge.setVisible(unreadNotificationsCount > 0);
     }
 
     @Subscribe
