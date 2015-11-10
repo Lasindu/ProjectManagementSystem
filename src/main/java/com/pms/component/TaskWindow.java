@@ -285,6 +285,33 @@ public class TaskWindow extends Window {
                     TaskDAO taskDAO = (TaskDAO) DashboardUI.context.getBean("Task");
 
 
+
+
+                    //Check New UserStory Priority with Prerequisite Priority
+                    int taskPriority =Integer.parseInt(priority.getValue().toString());
+
+                    Set<Item> preRequisitsValues1 = (Set<Item>) preRequisitsList.getValue();
+
+                    for (Object v : preRequisitsValues1) {
+
+                        String preRequistName = v.toString();
+                        Task task1 = taskDAO.getTaskFromUserStroyNameAndTaskName(userStory.getName(), preRequistName);
+
+                        if(taskPriority < task1.getPriority())
+                        {
+                            Notification notification = new Notification("Your Selected Priority is Incorrect ",
+                                    "<br/>You have Prerequisit that has low prority than this Task",
+                                    Notification.Type.ERROR_MESSAGE,true);
+
+                            notification.show(Page.getCurrent());
+                            return;
+
+                        }
+
+
+                    }
+
+
                     //set prereuist for tasks
                     StringBuilder preRequisitString = new StringBuilder();
                     Set<Item> preRequisitsValues = (Set<Item>) preRequisitsList.getValue();

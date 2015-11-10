@@ -290,6 +290,34 @@ public class UserStoryWindow extends Window {
 
                     }
 
+                    //Check New UserStory Priority with Prerequisite Priority
+                    int userStoryPriority =Integer.parseInt(priority.getValue().toString());
+
+                    Set<Item> preRequisitsValues1 = (Set<Item>) preRequisitsList.getValue();
+
+                    for (Object v : preRequisitsValues1) {
+
+                        String preRequistName = v.toString();
+                        UserStory preRequistuserStory = userStoryDAO.getUserStoryFormProjectNameAndUserStoryName(project.getName(), preRequistName);
+
+                        if(userStoryPriority < preRequistuserStory.getPriority())
+                        {
+                            Notification notification = new Notification("Your Selected Priority is Incorrect ",
+                                                        "<br/>You have Prerequisit that has low prority than this UserStory",
+                                    Notification.Type.ERROR_MESSAGE,true);
+
+                            notification.show(Page.getCurrent());
+                            return;
+
+                        }
+
+
+                    }
+
+
+
+
+
 
 
                     //set pre requist for user story
@@ -297,12 +325,14 @@ public class UserStoryWindow extends Window {
                     Set<Item> preRequisitsValues = (Set<Item>) preRequisitsList.getValue();
                     int size2 = preRequisitsValues.size();
                     int index2 = 1;
+
                     for (Object v : preRequisitsValues) {
 
                         preRequisitString.append(v.toString());
                         if (index2 != size2)
                             preRequisitString.append(",");
                         index2++;
+
 
 
 
