@@ -346,8 +346,12 @@ public class ViewUserStory extends CustomComponent {
         if (userRole.equals("admin")||userRole.equals("pm")||userRole.equals("architect"))
         {
             create = buildCreateReport();
-            HorizontalLayout tools = new HorizontalLayout(buildFilter(),
-                    create);
+            HorizontalLayout tools;
+            if(userStory.getState().equals("done"))
+                tools = new HorizontalLayout(buildFilter());
+            else
+                tools = new HorizontalLayout(buildFilter(), create);
+
             tools.setSpacing(true);
             tools.addStyleName("toolbar");
             header.addComponent(tools);
