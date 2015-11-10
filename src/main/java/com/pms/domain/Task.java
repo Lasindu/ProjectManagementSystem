@@ -27,6 +27,7 @@ public class Task {
     private String completeTime;
     private boolean isCr;
     private String state;
+    private String skills;
 
     @ManyToOne()
     @JoinColumn(name="userStoryId")
@@ -42,6 +43,14 @@ public class Task {
 
 
     //getters and setters
+
+    public String getSkills() {
+        return skills;
+    }
+
+    public void setSkills(String skills) {
+        this.skills = skills;
+    }
 
     public String getState() {
         return state;
