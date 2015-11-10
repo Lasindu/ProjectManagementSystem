@@ -99,6 +99,8 @@ public class ViewUserStory extends CustomComponent {
             viewUserStoryLayout.addComponent(assignedSprint);
             Label releasedDate= new Label("Released Date :   "+userStory.getReleasedDate());
             viewUserStoryLayout.addComponent(releasedDate);
+            Label state= new Label("UserStory State :   "+userStory.getState());
+            viewUserStoryLayout.addComponent(state);
 
 
 

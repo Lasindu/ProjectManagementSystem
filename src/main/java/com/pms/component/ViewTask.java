@@ -76,6 +76,8 @@ public class ViewTask extends CustomComponent {
             viewTaskLayout.addComponent(completeTime);
             Label isCr= new Label("Is Cr :"+task.isCr());
             viewTaskLayout.addComponent(isCr);
+            Label state= new Label("Task State:"+task.getState());
+            viewTaskLayout.addComponent(state);
 
 
 

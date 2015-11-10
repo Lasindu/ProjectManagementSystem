@@ -230,36 +230,47 @@ public class UserStoryGanntChart  {
         PrioritizeUserStories prioritizeUserStories= new PrioritizeUserStories();
         Map userStorieMap = prioritizeUserStories.prioritize(project);
 
-        Step previosStep=null;
+        Step previosStep = null;
 
         System.out.println(userStorieMap.toString());
         Iterator it = userStorieMap.entrySet().iterator();
         while (it.hasNext()) {
 
             Map.Entry pair = (Map.Entry)it.next();
+            UserStory userStory=(UserStory)pair.getValue();
             //System.out.println(pair.getKey() + " = " + pair.getValue());
             it.remove();
 
-            if(previosStep==null)
+
+            Step step1 = new Step(((UserStory)pair.getValue()).getName());
+            step1.setDescription("Description tooltip");
+            step1.setStartDate(cal.getTime());
+            cal.add(Calendar.DATE, 1);
+            step1.setEndDate(cal.getTime());
+
+            if(userStory.getState().equals("#F5A9F2"))
             {
-                Step step1 = new Step(((UserStory)pair.getValue()).getName());
-                step1.setDescription("Description tooltip");
-                step1.setStartDate(cal.getTime());
-                cal.add(Calendar.DATE, 1);
-                step1.setEndDate(cal.getTime());
+                step1.setBackgroundColor("#0040FF");
+            }
+            else if(userStory.getState().equals("working"))
+            {
+                step1.setBackgroundColor("#00FF40");
+            }
+            else if(userStory.getState().equals("done"))
+            {
+                step1.setBackgroundColor("#FF00FF");
+            }
+
+            if(previosStep == null)
+            {
                 gantt.addStep(step1);
                 previosStep=step1;
             }
             else
             {
-                Step newStep = new Step(((UserStory)pair.getValue()).getName());
-                newStep.setStartDate(previosStep.getEndDate());
-                cal.add(Calendar.DATE, 1);
-                newStep.setEndDate(cal.getTime());
-                newStep.setPredecessor(previosStep);
-                gantt.addStep(newStep);
-
-                previosStep=newStep;
+                step1.setPredecessor(previosStep);
+                gantt.addStep(step1);
+                previosStep=step1;
 
             }
 

@@ -26,6 +26,7 @@ public class Task {
     private String assignedTo;
     private String completeTime;
     private boolean isCr;
+    private String state;
 
     @ManyToOne()
     @JoinColumn(name="userStoryId")
@@ -42,6 +43,12 @@ public class Task {
 
     //getters and setters
 
+    public String getState() {
+        return state;
+    }
+    public void setState(String state) {
+        this.state = state;
+    }
     public String getPreRequisits() {
         return preRequisits;
     }

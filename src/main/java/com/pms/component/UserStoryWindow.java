@@ -284,6 +284,11 @@ public class UserStoryWindow extends Window {
 
 
                     }
+                    else
+                    {
+                        newUserStory.setState("initial");
+
+                    }
 
 
 

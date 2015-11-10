@@ -148,9 +148,9 @@ public class TaskGanntChart  {
     };
 
 
-    public Component init(UserStory userStory) {
+    public Component init(Project project) {
         ganttListener = null;
-        createGantt(userStory);
+        createGantt(project);
 
         MenuBar menu = controlsMenuBar();
         Panel controls = createControls();
@@ -181,7 +181,7 @@ public class TaskGanntChart  {
         return  layout;
     }
 
-    private void createGantt(UserStory userStory) {
+    private void createGantt(Project project) {
 
 
         gantt = new Gantt();
@@ -291,9 +291,16 @@ public class TaskGanntChart  {
         }
 */
 
+        //this prioritize task because otherwise working userstory can be null
+        PrioritizeUserStories prioritizeUserStories= new PrioritizeUserStories();
+        Map userStorieMap = prioritizeUserStories.prioritize(project);
 
         PrioritizeTasks prioritizeTasks = new PrioritizeTasks();
-       Map taskMap = prioritizeTasks.prioritize(userStory);
+
+        UserStoryDAO userStoryDAO = (UserStoryDAO) DashboardUI.context.getBean("UserStory");
+        UserStory userStory=userStoryDAO.getCurrentWorkingUserStory(project);
+
+        Map taskMap = prioritizeTasks.prioritize(userStory);
 
         Step previosStep=null;
 
@@ -305,26 +312,39 @@ public class TaskGanntChart  {
             //System.out.println(pair.getKey() + " = " + pair.getValue());
             it.remove();
 
+            Task task1 =(Task)pair.getValue();
+
+            Step step1 = new Step(task1.getName());
+            step1.setDescription("Description tooltip");
+            step1.setStartDate(cal.getTime().getTime());
+            cal.add(Calendar.MONTH, 1);
+            step1.setEndDate(cal.getTime().getTime());
+
+            //Change color of background according to state of task
+            if(task1.getState().equals("#F5A9F2"))
+            {
+                step1.setBackgroundColor("#0040FF");
+            }
+            else if(task1.getState().equals("working"))
+            {
+                step1.setBackgroundColor("#00FF40");
+            }
+            else if(task1.getState().equals("done"))
+            {
+                step1.setBackgroundColor("#FF00FF");
+            }
+
             if(previosStep==null)
             {
-                Step step1 = new Step(((Task)pair.getValue()).getName());
-                step1.setDescription("Description tooltip");
-                step1.setStartDate(cal.getTime().getTime());
-                cal.add(Calendar.MONTH, 1);
-                step1.setEndDate(cal.getTime().getTime());
                 gantt.addStep(step1);
                 previosStep=step1;
             }
             else
             {
-                Step newStep = new Step(((Task)pair.getValue()).getName());
-                newStep.setStartDate(previosStep.getEndDate());
-                cal.add(Calendar.MONTH, 1);
-                newStep.setEndDate(cal.getTime().getTime());
-                newStep.setPredecessor(previosStep);
-                gantt.addStep(newStep);
+                step1.setPredecessor(previosStep);
+                gantt.addStep(step1);
 
-                previosStep=newStep;
+                previosStep=step1;
 
             }
 

@@ -135,7 +135,38 @@ public class PrioritizeUserStories {
         }
 
 
+
+        //this method used to update state initial to working
+        stateUpdate();
+
         return sortedUserStoryMap;
+    }
+
+
+
+    //check the state of the user story and update state if update is necessary
+    private void stateUpdate() {
+        Iterator it = sortedUserStoryMap.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            //System.out.println(pair.getKey() + " = " + pair.getValue());
+            //it.remove();
+
+            UserStory userStory=(UserStory)pair.getValue();
+
+            if(userStory.getState().equals("working"))
+            {
+                break;
+            }
+            else if(userStory.getState().equals("initial"))
+            {
+                userStory.setState("working");
+                userStoryDAO.updateUserStory(userStory);
+                sortedUserStoryMap.put(pair.getKey(),userStory);
+                break;
+            }
+        }
+
     }
 
 

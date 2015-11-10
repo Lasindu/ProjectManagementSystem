@@ -114,6 +114,30 @@ public class UserStoryDAO {
         return null;
     }
 
+    public UserStory getCurrentWorkingUserStory(Project project)
+    {
+        Session session = getSessionFactory().openSession();
+        session.beginTransaction();
+        Project project1=(Project)session.get(Project.class,project.getProjectId());
+        int x= project1.getProjectUserStories().size();
+        session.getTransaction().commit();
+        session.close();
+
+        if(x>0)
+        {
+            Collection<UserStory> userStories = project1.getProjectUserStories();
+            for(UserStory userStory:userStories)
+            {
+                if(userStory.getState().equals("working"))
+                    return userStory;
+            }
+
+        }
+
+
+        return null;
+    }
+
 
 
 

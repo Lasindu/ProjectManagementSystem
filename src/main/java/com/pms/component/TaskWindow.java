@@ -278,6 +278,8 @@ public class TaskWindow extends Window {
                         Date date = new Date();
                         newTask.setDate(dateFormat.format(date).toString());
 
+                        newTask.setState("initial");
+
                     }
 
                     TaskDAO taskDAO = (TaskDAO) DashboardUI.context.getBean("Task");
