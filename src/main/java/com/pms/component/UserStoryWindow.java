@@ -8,6 +8,7 @@ import com.pms.domain.Project;
 import com.pms.domain.User;
 import com.pms.domain.UserStory;
 import com.vaadin.data.Item;
+import com.vaadin.data.Property;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.fieldgroup.PropertyId;
@@ -18,6 +19,7 @@ import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
+import org.vaadin.dialogs.ConfirmDialog;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -35,11 +37,14 @@ public class UserStoryWindow extends Window {
 
     private final BeanFieldGroup<UserStory> fieldGroup;
     private UserStory userStory;
-    private boolean editmode=false;
+    private String oldUserStoryState;
+    private boolean editmode = false;
 
 
     @PropertyId("name")
     private TextField userStoryName;
+    @PropertyId("state")
+    private ComboBox state;
     @PropertyId("description")
     private TextArea description;
     @PropertyId("priority")
@@ -58,13 +63,13 @@ public class UserStoryWindow extends Window {
     private UserStoryWindow(UserStory userStory) {
 
 
-        this.userStory=userStory;
+        this.userStory = userStory;
+        this.oldUserStoryState = userStory.getState();
         this.project = userStory.getProject();
         projectUserStories = project.getProjectUserStories();
 
-        if(!userStory.getName().equals(""))
-        {
-            editmode=true;
+        if (!userStory.getName().equals("")) {
+            editmode = true;
         }
 
 
@@ -114,6 +119,105 @@ public class UserStoryWindow extends Window {
         userStoryName.setRequired(true);
         content.addComponent(userStoryName);
 
+        if (editmode) {
+            state = new ComboBox("State");
+            state.addItem("initial");
+            state.addItem("working");
+            state.addItem("done");
+
+            content.addComponent(state);
+
+            //State Change Handle
+            state.addListener(new Property.ValueChangeListener() {
+                public void valueChange(Property.ValueChangeEvent event) {
+                    if (state.getValue().toString().equals("initial") && !oldUserStoryState.equals("initial")) {
+                        ConfirmDialog.show(DashboardUI.getCurrent(), "Please Confirm:", "Are you sure you want to update " + userStory.getName() + " State To \"Initial\" :",
+                                "I am", "Not quite", new ConfirmDialog.Listener() {
+                                    public void onClose(ConfirmDialog dialog) {
+                                        if (dialog.isConfirmed()) {
+                                        } else {
+                                            state.setValue(oldUserStoryState);
+                                            return;
+
+                                        }
+                                    }
+
+                                });
+
+                    } else if (state.getValue().toString().equals("working") && !(oldUserStoryState.equals("working"))) {
+                        if (oldUserStoryState.equals("initial")) {
+                            Notification notification = new Notification("Error", "You cannot change initial state UserStory to working State Manually",
+                                    Notification.Type.ERROR_MESSAGE, true);
+                            notification.show(Page.getCurrent());
+
+                            //set old state without binding value
+                            state.setValue(oldUserStoryState);
+                            return;
+                        } else {
+                            ConfirmDialog.show(DashboardUI.getCurrent(), "Please Confirm:", "Are you sure you want to update " + userStory.getName() + " State To \"Working\" :",
+                                    "I am", "Not quite", new ConfirmDialog.Listener() {
+
+                                        public void onClose(ConfirmDialog dialog) {
+                                            if (dialog.isConfirmed()) {
+                                                for (UserStory userStory1 : project.getProjectUserStories()) {
+                                                    if (userStory1.getState().equals("working")) {
+                                                        userStory1.setState("initial");
+                                                        UserStoryDAO userStoryDAO = (UserStoryDAO) DashboardUI.context.getBean("UserStory");
+                                                        userStoryDAO.updateUserStory(userStory1);
+                                                    }
+                                                }
+
+                                            } else {
+                                                state.setValue(oldUserStoryState);
+                                                return;
+                                            }
+                                        }
+
+                                    });
+                        }
+
+                    } else if (state.getValue().toString().equals("done") && !oldUserStoryState.equals("done")) {
+
+                        if (oldUserStoryState.equals("initial")) {
+                            Notification notification = new Notification("Error", "You cannot change initial state UserStory to done",
+                                    Notification.Type.ERROR_MESSAGE, true);
+                            notification.show(Page.getCurrent());
+                            state.setValue(oldUserStoryState);
+                            return;
+                        } else if (oldUserStoryState.equals("working")) {
+                            ConfirmDialog.show(UI.getCurrent(), "Please Confirm:", "Are you sure you want to update  " + userStory.getName() + " State To Done :",
+                                    "I am", "Not quite", new ConfirmDialog.Listener() {
+
+                                        public void onClose(ConfirmDialog dialog) {
+                                            if (dialog.isConfirmed()) {
+                                                int doneUserStoryCount = 0;
+                                                for (UserStory userStory1 : project.getProjectUserStories()) {
+                                                    if (userStory1.getState().equals("done"))
+                                                        doneUserStoryCount++;
+
+                                                }
+                                                userStory.setSequenceNo(doneUserStoryCount + 1);
+
+                                            } else {
+                                                state.setValue(oldUserStoryState);
+                                                return;
+
+                                            }
+                                        }
+
+                                    });
+
+                        }
+
+
+                    }
+
+
+                }
+
+            });
+        }
+
         description = new TextArea("Description");
         description.setNullRepresentation("");
         content.addComponent(description);
@@ -126,8 +230,6 @@ public class UserStoryWindow extends Window {
         priority.addItem(5);
         priority.setRequired(true);
         content.addComponent(priority);
-
-
 
 
         preRequisitsList = new OptionGroup("Pre Requisits");
@@ -144,20 +246,18 @@ public class UserStoryWindow extends Window {
         Panel preRequestPanel = new Panel("");
         preRequestPanel.setHeight("100px");
         preRequestPanel.setContent(preRequisitsList);
-        VerticalLayout preRequistLayout= new VerticalLayout();
+        VerticalLayout preRequistLayout = new VerticalLayout();
         preRequistLayout.setCaption("Pre Requisits");
         preRequistLayout.addComponent(preRequestPanel);
         content.addComponent(preRequistLayout);
 
-        if(editmode)
-        {
+        if (editmode) {
             //remove current userStory name appier in the prerequist list
             preRequisitsList.removeItem(userStory.getName());
 
-            String[] preRquisitList= userStory.getPreRequisits().split(",");
+            String[] preRquisitList = userStory.getPreRequisits().split(",");
 
-            for(String preRequistit:preRquisitList)
-            {
+            for (String preRequistit : preRquisitList) {
                 preRequisitsList.select(preRequistit);
             }
 
@@ -210,12 +310,9 @@ public class UserStoryWindow extends Window {
 
 
         Button submitButton;
-        if(editmode)
-        {
+        if (editmode) {
             submitButton = new Button("Update User Story");
-        }
-        else
-        {
+        } else {
             submitButton = new Button("Create New User Story");
         }
         //Button submitButton = new Button("Create New User Story");
@@ -224,50 +321,38 @@ public class UserStoryWindow extends Window {
 
                 try {
 
-                    ProjectDAO projectDAO = (ProjectDAO)DashboardUI.context.getBean("Project");
-                    UserStoryDAO userStoryDAO =(UserStoryDAO)DashboardUI.context.getBean("UserStory");
+                    ProjectDAO projectDAO = (ProjectDAO) DashboardUI.context.getBean("Project");
+                    final UserStoryDAO userStoryDAO = (UserStoryDAO) DashboardUI.context.getBean("UserStory");
 
                     fieldGroup.commit();
-                    UserStory newUserStory ;
-                    newUserStory =fieldGroup.getItemDataSource().getBean();
+                    final UserStory newUserStory;
+                    newUserStory = fieldGroup.getItemDataSource().getBean();
                     newUserStory.setProject(project);
 
 
                     //when user edit prerequist need to update those edited prerquisit dependency
-                    if (editmode)
-                    {
-                        String[] preRequistListBeforEdit=userStory.getPreRequisits().split(",");
+                    if (editmode) {
+                        String[] preRequistListBeforEdit = userStory.getPreRequisits().split(",");
 
-                        for(String preReqsuist:preRequistListBeforEdit)
-                        {
-                            if(!preRequisitsList.isSelected(preReqsuist))
-                            {
+                        for (String preReqsuist : preRequistListBeforEdit) {
+                            if (!preRequisitsList.isSelected(preReqsuist)) {
                                 for (UserStory userStory1 : project.getProjectUserStories()) {
                                     if (userStory1.getName().equals(preReqsuist)) {
                                         userStory1.setDependancy(userStory1.getDependancy().replace(newUserStory.getName(), ""));
 
 
-                                        if(userStory1.getDependancy()!=null && !userStory1.getDependancy().isEmpty())
-                                        {
-                                            if(userStory1.getDependancy().startsWith(","))
-                                            {
+                                        if (userStory1.getDependancy() != null && !userStory1.getDependancy().isEmpty()) {
+                                            if (userStory1.getDependancy().startsWith(",")) {
                                                 userStory1.setDependancy(userStory1.getDependancy().substring(1, userStory1.getDependancy().length()));
+                                            } else if (userStory1.getDependancy().contains(",,")) {
+                                                userStory1.setDependancy(userStory1.getDependancy().replace(",,", ","));
+                                            } else if (userStory1.getDependancy().endsWith(",")) {
+                                                userStory1.setDependancy(userStory1.getDependancy().substring(0, userStory1.getDependancy().length() - 1));
                                             }
 
-                                            else if(userStory1.getDependancy().contains(",,"))
-                                            {
-                                                userStory1.setDependancy(userStory1.getDependancy().replace(",,",","));
-                                            }
-                                            else if(userStory1.getDependancy().endsWith(","))
-                                            {
-                                                userStory1.setDependancy(userStory1.getDependancy().substring(0,userStory1.getDependancy().length()-1));
-                                            }
-
-                                            if(userStory1.getDependancy().isEmpty())
-                                            {
+                                            if (userStory1.getDependancy().isEmpty()) {
                                                 userStory1.setDependancy(null);
                                             }
-
 
 
                                         }
@@ -283,15 +368,13 @@ public class UserStoryWindow extends Window {
                         }
 
 
-                    }
-                    else
-                    {
+                    } else {
                         newUserStory.setState("initial");
 
                     }
 
                     //Check New UserStory Priority with Prerequisite Priority
-                    int userStoryPriority =Integer.parseInt(priority.getValue().toString());
+                    int userStoryPriority = Integer.parseInt(priority.getValue().toString());
 
                     Set<Item> preRequisitsValues1 = (Set<Item>) preRequisitsList.getValue();
 
@@ -300,11 +383,10 @@ public class UserStoryWindow extends Window {
                         String preRequistName = v.toString();
                         UserStory preRequistuserStory = userStoryDAO.getUserStoryFormProjectNameAndUserStoryName(project.getName(), preRequistName);
 
-                        if(userStoryPriority < preRequistuserStory.getPriority())
-                        {
+                        if (userStoryPriority < preRequistuserStory.getPriority()) {
                             Notification notification = new Notification("Your Selected Priority is Incorrect ",
-                                                        "<br/>You have Prerequisit that has low prority than this UserStory",
-                                    Notification.Type.ERROR_MESSAGE,true);
+                                    "<br/>You have Prerequisit that has low prority than this UserStory",
+                                    Notification.Type.ERROR_MESSAGE, true);
 
                             notification.show(Page.getCurrent());
                             return;
@@ -313,11 +395,6 @@ public class UserStoryWindow extends Window {
 
 
                     }
-
-
-
-
-
 
 
                     //set pre requist for user story
@@ -334,19 +411,12 @@ public class UserStoryWindow extends Window {
                         index2++;
 
 
-
-
-
                         //following section manually set dependency in other user stories if this user story depend on them
                         for (UserStory userStory1 : project.getProjectUserStories()) {
-                            if(userStory1.getName().equals(v.toString()))
-                            {
-                                if(userStory1.getDependancy()==null || userStory1.getDependancy().isEmpty())
-                                {
+                            if (userStory1.getName().equals(v.toString())) {
+                                if (userStory1.getDependancy() == null || userStory1.getDependancy().isEmpty()) {
                                     userStory1.setDependancy(newUserStory.getName());
-                                }
-                                else
-                                {
+                                } else {
                                     StringBuilder dependencyString1 = new StringBuilder();
                                     dependencyString1.append(userStory1.getDependancy());
                                     dependencyString1.append(',' + newUserStory.getName());
@@ -362,9 +432,6 @@ public class UserStoryWindow extends Window {
                         }
 
 
-
-
-
                     }
                     newUserStory.setPreRequisits(preRequisitString.toString());
 
@@ -372,8 +439,7 @@ public class UserStoryWindow extends Window {
                     project.getProjectUserStories().add(newUserStory);
                     projectDAO.updateProject(project);
 
-                    if(editmode)
-                    {
+                    if (editmode) {
                         Notification success = new Notification(
                                 "User Story Updated successfully");
                         success.setDelayMsec(2000);
@@ -381,9 +447,7 @@ public class UserStoryWindow extends Window {
                         success.setPosition(Position.BOTTOM_CENTER);
                         success.show(Page.getCurrent());
 
-                    }
-                    else
-                    {
+                    } else {
                         Notification success = new Notification(
                                 "User Story Created successfully");
                         success.setDelayMsec(2000);
@@ -406,11 +470,10 @@ public class UserStoryWindow extends Window {
         });
 
 
-
         footer.addComponent(submitButton);
         footer.addComponent(cancelButton);
 
-        footer.setExpandRatio(cancelButton,1);
+        footer.setExpandRatio(cancelButton, 1);
 
         footer.setComponentAlignment(cancelButton, Alignment.TOP_RIGHT);
         footer.setComponentAlignment(submitButton, Alignment.TOP_RIGHT);
@@ -419,12 +482,6 @@ public class UserStoryWindow extends Window {
         return footer;
 
     }
-
-
-
-
-
-
 
 
     public static void open(UserStory userStory) {
