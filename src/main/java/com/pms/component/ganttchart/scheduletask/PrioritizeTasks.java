@@ -32,14 +32,14 @@ public class PrioritizeTasks {
         taskDAO = (TaskDAO) DashboardUI.context.getBean("Task");
         allTasks = userStoryDAO.getUserStoryTaskList(userStory);
 
-        List<Task> allTasks = new ArrayList<Task>();
-        allTasks.addAll(allTasks);
+        List<Task> allTasksList = new ArrayList<Task>();
+        allTasksList.addAll(allTasks);
 
         //this NotDoneTaskList only Contains  tasks in initial state
         List<Task> notDoneTaskList = new ArrayList<Task>();
        // notDoneTaskList.addAll(allTasks);
 
-        for(Task task1:allTasks)
+        for(Task task1:allTasksList)
         {
             if(task1.getState().equals("initial"))
                  notDoneTaskList.add(task1);

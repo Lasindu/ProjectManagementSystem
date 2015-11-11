@@ -17,6 +17,7 @@ package com.pms.component.ganttchart.scheduletask;
 
 import com.pms.DashboardUI;
 import com.pms.component.ganttchart.GanttListener;
+import com.pms.dao.UserStoryDAO;
 import com.pms.domain.Project;
 import com.pms.domain.UserStory;
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -606,177 +607,53 @@ public class UserStoryGanntChart  {
     }
 
     private void openStepEditor(AbstractStep step) {
-        final Window win = new Window("Step Editor");
+        final Window win = new Window("More Info");
         win.setResizable(false);
         win.center();
 
-        final Collection<Component> hidden = new ArrayList<Component>();
-
-        BeanItem<AbstractStep> item = new BeanItem<AbstractStep>(step);
-
-
-        final FieldGroup group = new FieldGroup(item);
-        group.setBuffered(true);
-
-        TextField captionField = new TextField("Caption");
-        captionField.setNullRepresentation("");
-        group.bind(captionField, "caption");
-
-        TextField descriptionField = new TextField("Description");
-        descriptionField.setNullRepresentation("");
-        group.bind(descriptionField, "description");
-        descriptionField.setVisible(false);
-        hidden.add(descriptionField);
-
-        NativeSelect captionMode = new NativeSelect("Caption Mode");
-        captionMode.addItem(Step.CaptionMode.TEXT);
-        captionMode.addItem(Step.CaptionMode.HTML);
-        group.bind(captionMode, "captionMode");
-        captionMode.setVisible(false);
-        hidden.add(captionMode);
-
-        final NativeSelect parentStepSelect = new NativeSelect("Parent Step");
-        parentStepSelect.setEnabled(false);
-        if (!gantt.getSteps().contains(step)) {
-            // new step
-            parentStepSelect.setEnabled(true);
-            for (Step parentStepCanditate : gantt.getSteps()) {
-                parentStepSelect.addItem(parentStepCanditate);
-                parentStepSelect.setItemCaption(parentStepCanditate,
-                        parentStepCanditate.getCaption());
-                if (step instanceof SubStep) {
-                    if (parentStepCanditate.getSubSteps().contains(step)) {
-                        parentStepSelect.setValue(parentStepCanditate);
-                        parentStepSelect.setEnabled(false);
-                        break;
-                    }
-                }
-            }
-        }
-        parentStepSelect.setVisible(false);
-        hidden.add(parentStepSelect);
-
-        TextField bgField = new TextField("Background color");
-        bgField.setNullRepresentation("");
-        group.bind(bgField, "backgroundColor");
-        bgField.setVisible(false);
-        hidden.add(bgField);
-
-        DateField startDate = new DateField("Start date");
-        startDate.setLocale(gantt.getLocale());
-        startDate.setTimeZone(gantt.getTimeZone());
-        startDate.setResolution(Resolution.SECOND);
-        startDate.setConverter(new DateToLongConverter());
-        group.bind(startDate, "startDate");
-
-        DateField endDate = new DateField("End date");
-        endDate.setLocale(gantt.getLocale());
-        endDate.setTimeZone(gantt.getTimeZone());
-        endDate.setResolution(Resolution.SECOND);
-        endDate.setConverter(new DateToLongConverter());
-        group.bind(endDate, "endDate");
-
-        CheckBox showMore = new CheckBox("Show all settings");
-        showMore.addValueChangeListener(new ValueChangeListener() {
-
-            @Override
-            public void valueChange(ValueChangeEvent event) {
-                for (Component c : hidden) {
-                    c.setVisible((Boolean) event.getProperty().getValue());
-                }
-                win.center();
-            }
-        });
 
         VerticalLayout content = new VerticalLayout();
         content.setMargin(true);
         content.setSpacing(true);
         win.setContent(content);
 
-        content.addComponent(captionField);
-        content.addComponent(captionMode);
-        content.addComponent(descriptionField);
-        content.addComponent(parentStepSelect);
-        content.addComponent(bgField);
-        content.addComponent(startDate);
-        content.addComponent(endDate);
-        content.addComponent(showMore);
+        String userStoryName = step.getCaption();
+        UserStoryDAO userStoryDAO = (UserStoryDAO) DashboardUI.context.getBean("UserStory");
+        UserStory userStory = userStoryDAO.getUserStoryFormProjectNameAndUserStoryName(project.getName(),userStoryName);
 
-        HorizontalLayout buttons = new HorizontalLayout();
-        content.addComponent(buttons);
+
+        TextField userStoryNameField = new TextField("User Story Name");
+        userStoryNameField.setValue(userStory.getName());
+
+        TextField userStoryPriority = new TextField("Priority");
+        userStoryPriority.setValue(String.valueOf(userStory.getPriority()));
+
+        TextField userStoryState = new TextField("State");
+        userStoryState.setValue(userStory.getState());
+
+        TextField projectName = new TextField("Project Name");
+        projectName.setValue(project.getName());
+
+
+        content.addComponent(userStoryNameField);
+        content.addComponent(userStoryPriority);
+        content.addComponent(userStoryState);
+        content.addComponent(projectName);
+
+
+
 
         Button ok = new Button("Ok", new ClickListener() {
 
             @Override
             public void buttonClick(ClickEvent event) {
-                try {
-                    group.commit();
-                    AbstractStep step = ((BeanItem<AbstractStep>) group
-                            .getItemDataSource()).getBean();
-                    gantt.markStepDirty(step);
-                    if (parentStepSelect.isEnabled()
-                            && parentStepSelect.getValue() != null) {
-                        SubStep subStep = addSubStep(parentStepSelect, step);
-                        step = subStep;
-                    }
-                    if (step instanceof Step
-                            && !gantt.getSteps().contains(step)) {
-                        gantt.addStep((Step) step);
-                    }
-                    if (ganttListener != null && step instanceof Step) {
-                        ganttListener.stepModified((Step) step);
-                    }
-                    win.close();
-                } catch (CommitException e) {
-                    Notification.show("Commit failed", e.getMessage(),
-                            Type.ERROR_MESSAGE);
-                    e.printStackTrace();
-                }
-            }
 
-            private SubStep addSubStep(final NativeSelect parentStepSelect,
-                                       AbstractStep dataSource) {
-                SubStep subStep = new SubStep();
-                subStep.setCaption(dataSource.getCaption());
-                subStep.setCaptionMode(dataSource.getCaptionMode());
-                subStep.setStartDate(dataSource.getStartDate());
-                subStep.setEndDate(dataSource.getEndDate());
-                subStep.setBackgroundColor(dataSource.getBackgroundColor());
-                subStep.setDescription(dataSource.getDescription());
-                subStep.setStyleName(dataSource.getStyleName());
-                ((Step) parentStepSelect.getValue()).addSubStep(subStep);
-                return subStep;
-            }
-        });
-        Button cancel = new Button("Cancel", new ClickListener() {
-
-            @Override
-            public void buttonClick(ClickEvent event) {
-                group.discard();
                 win.close();
             }
-        });
-        Button delete = new Button("Delete", new ClickListener() {
 
-            @Override
-            public void buttonClick(ClickEvent event) {
-                AbstractStep step = ((BeanItem<AbstractStep>) group
-                        .getItemDataSource()).getBean();
-                if (step instanceof SubStep) {
-                    SubStep substep = (SubStep) step;
-                    substep.getOwner().removeSubStep(substep);
-                } else {
-                    gantt.removeStep((Step) step);
-                    if (ganttListener != null) {
-                        ganttListener.stepDeleted((Step) step);
-                    }
-                }
-                win.close();
-            }
         });
-        buttons.addComponent(ok);
-        buttons.addComponent(cancel);
-        buttons.addComponent(delete);
+
+        content.addComponent(ok);
         win.setClosable(true);
 
         DashboardUI.getCurrent().getUI().addWindow(win);
