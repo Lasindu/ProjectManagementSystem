@@ -22,10 +22,6 @@ import com.pms.domain.Project;
 import com.pms.domain.UserStory;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.data.fieldgroup.FieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.util.converter.DateToLongConverter;
 import com.vaadin.server.ClientConnector;
 import com.vaadin.server.Sizeable;
 import com.vaadin.shared.ui.datefield.Resolution;
@@ -40,7 +36,6 @@ import org.tltv.gantt.Gantt.MoveEvent;
 import org.tltv.gantt.Gantt.ResizeEvent;
 import org.tltv.gantt.client.shared.AbstractStep;
 import org.tltv.gantt.client.shared.Step;
-import org.tltv.gantt.client.shared.SubStep;
 import com.pms.component.ganttchart.util.UriFragmentWrapperFactory;
 import com.pms.component.ganttchart.util.Util;
 
@@ -234,7 +229,7 @@ public class UserStoryGanntChart  {
 
 
         PrioritizeUserStories prioritizeUserStories= new PrioritizeUserStories();
-        Map userStorieMap = prioritizeUserStories.getPrioritizeUserStoryList(project);
+        Map userStorieMap = prioritizeUserStories.getPrioritizeUserStoryMap(project);
 
         Step previosStep = null;
 

@@ -21,21 +21,11 @@ import com.pms.dao.TaskDAO;
 import com.pms.dao.UserStoryDAO;
 import com.pms.domain.Project;
 import com.pms.domain.Task;
-import com.pms.domain.User;
 import com.pms.domain.UserStory;
-import com.vaadin.annotations.Theme;
-import com.vaadin.annotations.Title;
-import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.data.fieldgroup.FieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.util.converter.DateToLongConverter;
 import com.vaadin.server.ClientConnector;
 import com.vaadin.server.Sizeable;
-import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
@@ -48,11 +38,9 @@ import org.tltv.gantt.Gantt.MoveEvent;
 import org.tltv.gantt.Gantt.ResizeEvent;
 import org.tltv.gantt.client.shared.AbstractStep;
 import org.tltv.gantt.client.shared.Step;
-import org.tltv.gantt.client.shared.SubStep;
 import com.pms.component.ganttchart.util.UriFragmentWrapperFactory;
 import com.pms.component.ganttchart.util.Util;
 
-import javax.servlet.annotation.WebServlet;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Calendar;
@@ -299,7 +287,7 @@ public class TaskGanntChart  {
 
         //this prioritize task because otherwise working userstory can be null
         PrioritizeUserStories prioritizeUserStories= new PrioritizeUserStories();
-        Map userStorieMap = prioritizeUserStories.getPrioritizeUserStoryList(project);
+        Map userStorieMap = prioritizeUserStories.getPrioritizeUserStoryMap(project);
 
         PrioritizeTasks prioritizeTasks = new PrioritizeTasks();
 

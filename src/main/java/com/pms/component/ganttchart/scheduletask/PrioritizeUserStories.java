@@ -22,7 +22,7 @@ public class PrioritizeUserStories {
     UserStoryDAO userStoryDAO;
 
     //This method return Prioritize UserStoryMap
-    public Map getPrioritizeUserStoryList(Project project)
+    public Map getPrioritizeUserStoryMap(Project project)
     {
         prioritize(project);
         return sortedUserStoryMap;
