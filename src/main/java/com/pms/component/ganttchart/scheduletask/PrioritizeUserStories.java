@@ -21,7 +21,14 @@ public class PrioritizeUserStories {
     int sortedUserStoryCount;
     UserStoryDAO userStoryDAO;
 
-    public Map prioritize(Project project) {
+    //This method return Prioritize UserStoryMap
+    public Map getPrioritizeUserStoryList(Project project)
+    {
+        prioritize(project);
+        return sortedUserStoryMap;
+    }
+
+    public void prioritize(Project project) {
 
         //final prioritize user story map
         sortedUserStoryMap = new HashMap<Integer, UserStory>();
@@ -139,7 +146,7 @@ public class PrioritizeUserStories {
         //this method used to update state initial to working
         stateUpdate();
 
-        return sortedUserStoryMap;
+
     }
 
 

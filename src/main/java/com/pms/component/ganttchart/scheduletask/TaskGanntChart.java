@@ -299,14 +299,14 @@ public class TaskGanntChart  {
 
         //this prioritize task because otherwise working userstory can be null
         PrioritizeUserStories prioritizeUserStories= new PrioritizeUserStories();
-        Map userStorieMap = prioritizeUserStories.prioritize(project);
+        Map userStorieMap = prioritizeUserStories.getPrioritizeUserStoryList(project);
 
         PrioritizeTasks prioritizeTasks = new PrioritizeTasks();
 
         UserStoryDAO userStoryDAO = (UserStoryDAO) DashboardUI.context.getBean("UserStory");
         UserStory userStory=userStoryDAO.getCurrentWorkingUserStory(project);
 
-        Map taskMap = prioritizeTasks.prioritize(userStory);
+        Map taskMap = prioritizeTasks.getPrioritizeTaskMap(userStory);
 
         Step previosStep=null;
 

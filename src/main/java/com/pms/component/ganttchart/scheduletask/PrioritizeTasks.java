@@ -22,7 +22,15 @@ public class PrioritizeTasks {
     TaskDAO taskDAO;
     UserStory userStory;
 
-    public Map prioritize(UserStory userStory) {
+
+    //this method return Map Sorted Tasks (initial tasks only not sort or prioritize done or working stage tasks)
+    public Map getPrioritizeTaskMap(UserStory userStory)
+    {
+        prioritize(userStory);
+        return  sortedTaskMap;
+    }
+
+    public void prioritize(UserStory userStory) {
 
         this.userStory = userStory;
 
@@ -64,7 +72,6 @@ public class PrioritizeTasks {
         prioritizeTasksHasPreRequisite(hasPreRequisite);
 
 
-        return  sortedTaskMap;
     }
 
     public void allocateMemberToTask(Task task) {

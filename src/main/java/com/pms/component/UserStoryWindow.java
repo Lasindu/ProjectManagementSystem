@@ -2,6 +2,7 @@ package com.pms.component;
 
 import com.google.gwt.aria.client.ComboboxRole;
 import com.pms.DashboardUI;
+import com.pms.component.ganttchart.scheduletask.PrioritizeUserStories;
 import com.pms.dao.ProjectDAO;
 import com.pms.dao.UserStoryDAO;
 import com.pms.domain.Project;
@@ -438,6 +439,14 @@ public class UserStoryWindow extends Window {
 
                     project.getProjectUserStories().add(newUserStory);
                     projectDAO.updateProject(project);
+
+
+                    //If userstory state changed to done need to find next working state userstory so need to run prioritize userstorys
+                    if(newUserStory.getState().equals("done") && !oldUserStoryState.equals("done"))
+                    {
+                        PrioritizeUserStories prioritizeUserStories= new PrioritizeUserStories();
+                        prioritizeUserStories.prioritize(project);
+                    }
 
                     if (editmode) {
                         Notification success = new Notification(

@@ -234,7 +234,7 @@ public class UserStoryGanntChart  {
 
 
         PrioritizeUserStories prioritizeUserStories= new PrioritizeUserStories();
-        Map userStorieMap = prioritizeUserStories.prioritize(project);
+        Map userStorieMap = prioritizeUserStories.getPrioritizeUserStoryList(project);
 
         Step previosStep = null;
 
