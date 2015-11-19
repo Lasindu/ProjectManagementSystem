@@ -128,12 +128,14 @@ public class ProjectWindow extends Window {
         projectStartDate = new PopupDateField  ("Start Date");
         projectStartDate.setValue(new Date());
         projectStartDate.setDateFormat("yyyy-MM-dd");
+        projectStartDate.setRangeStart(new Date());
         content.addComponent(projectStartDate);
 
 
         ProjectDeliveredDate = new PopupDateField  ("End Date");
         ProjectDeliveredDate.setValue(new Date());
         ProjectDeliveredDate.setDateFormat("yyyy-MM-dd");
+        ProjectDeliveredDate.setRangeStart(new Date());
         content.addComponent(ProjectDeliveredDate);
 
 
