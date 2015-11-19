@@ -74,7 +74,7 @@ public class ViewTask extends CustomComponent {
             viewTaskLayout.addComponent(assingedTo);
             Label completeTime = new Label("Complite Time : " +task.getCompleteTime());
             viewTaskLayout.addComponent(completeTime);
-            Label isCr= new Label("Is Cr :"+task.isCr());
+            Label isCr= new Label("Changed Request :"+task.isCr());
             viewTaskLayout.addComponent(isCr);
             Label state= new Label("Task State:"+task.getState());
             viewTaskLayout.addComponent(state);

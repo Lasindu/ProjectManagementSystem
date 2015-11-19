@@ -52,7 +52,7 @@ public class UserStoryWindow extends Window {
     private ComboBox priority;
     private OptionGroup preRequisitsList;
     @PropertyId("domain")
-    private TextField domain;
+    private ComboBox domain;
     @PropertyId("assignedSprint")
     private TextField assignedSprint;
     @PropertyId("releasedDate")
@@ -268,8 +268,11 @@ public class UserStoryWindow extends Window {
         }
 
 
-        domain = new TextField("Domain");
-        domain.setNullRepresentation("");
+        domain = new ComboBox("Domain");
+        domain.addItem("CRM");
+        domain.addItem("Health Care");
+        domain.addItem("Banking");
+        domain.addItem("Mobile Development");
         content.addComponent(domain);
 
         assignedSprint = new TextField("Assigned Sprint");
@@ -282,9 +285,10 @@ public class UserStoryWindow extends Window {
         //releasedDate.setNullRepresentation("");
         content.addComponent(releasedDate);
 
-        isCr = new OptionGroup("Is Cr");
+        isCr = new OptionGroup("Change Request");
         isCr.addItem(Boolean.TRUE);
         isCr.addItem(Boolean.FALSE);
+        isCr.setValue(Boolean.FALSE);
         isCr.addStyleName("horizontal");
         content.addComponent(isCr);
 

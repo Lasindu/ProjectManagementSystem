@@ -124,14 +124,6 @@ public class TaskWindow extends Window {
         name.setRequired(true);
         taskForm.addComponent(name);
 
-        description = new TextArea("Task Description");
-        description.setNullRepresentation("");
-        taskForm.addComponent(description);
-
-        skills =new TextField("Skills");
-        skills.setNullRepresentation("");
-        taskForm.addComponent(skills);
-
         priority = new ComboBox("Priority");
         priority.addItem(1);
         priority.addItem(2);
@@ -141,6 +133,15 @@ public class TaskWindow extends Window {
         priority.setRequired(true);
         taskForm.addComponent(priority);
 
+        estimateTime = new TextField("Estimate Time (Hours)");
+        estimateTime.setNullRepresentation("");
+        estimateTime.setRequired(true);
+        taskForm.addComponent(estimateTime);
+
+        completeTime = new TextField("Complete Time");
+        completeTime.setNullRepresentation("");
+        taskForm.addComponent(completeTime);
+
         severity = new ComboBox("Severity");
         severity.addItem(1);
         severity.addItem(2);
@@ -148,7 +149,6 @@ public class TaskWindow extends Window {
         severity.addItem(4);
         severity.addItem(5);
         taskForm.addComponent(severity);
-
 
         preRequisitsList = new OptionGroup("Pre Requisits");
         preRequisitsList.setWidth("400px");
@@ -159,7 +159,6 @@ public class TaskWindow extends Window {
 
         }
         preRequisitsList.setMultiSelect(true);
-
 
         Panel preRequestPanel = new Panel("");
         preRequestPanel.setHeight("100px");
@@ -184,27 +183,32 @@ public class TaskWindow extends Window {
         }
 
 
+        description = new TextArea("Task Description");
+        description.setNullRepresentation("");
+        taskForm.addComponent(description);
+
+
+
         memberType = new ComboBox("Member Type");
         memberType.addItem("Dev");
         memberType.addItem("QA");
-        memberType.addItem("System");
-       // memberType.setNullRepresentation("");
+        memberType.addItem("System Engineer");
         taskForm.addComponent(memberType);
-
-        estimateTime = new TextField("Estimate Time");
-        estimateTime.setNullRepresentation("");
-        estimateTime.setRequired(true);
-        taskForm.addComponent(estimateTime);
 
         assignedTo = new TextField("Assinged to");
         assignedTo.setNullRepresentation("");
         taskForm.addComponent(assignedTo);
 
-        completeTime = new TextField("Complete Time");
-        completeTime.setNullRepresentation("");
-        taskForm.addComponent(completeTime);
 
-        isCr = new OptionGroup("Is Cr");
+        //multipe imputs
+        skills =new TextField("Skills");
+        skills.setNullRepresentation("");
+        taskForm.addComponent(skills);
+
+
+
+
+        isCr = new OptionGroup("Change Request");
         isCr.addItem(Boolean.TRUE);
         isCr.addItem(Boolean.FALSE);
         isCr.setValue(Boolean.FALSE);

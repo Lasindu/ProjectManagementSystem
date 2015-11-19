@@ -75,19 +75,18 @@ public class ViewAllProjects {
         viewProjectTable.addContainerProperty("Index", Integer.class, null);
         viewProjectTable.addContainerProperty("Name",  String.class, null);
         viewProjectTable.addContainerProperty("Client Name", String.class, null);
-      //viewProjectTable.addContainerProperty("Description", String.class, null);
-        viewProjectTable.addContainerProperty("Created Date", String.class, null);
-      //viewProjectTable.addContainerProperty("Start Date", String.class, null);
-      //viewProjectTable.addContainerProperty("Delivered Date", String.class, null);
+        viewProjectTable.addContainerProperty("Start Date", String.class, null);
+
+        viewProjectTable.addContainerProperty("View Project", Button.class, null);
 
         if(userRole.equals("admin")||userRole.equals("pm"))
         {
-            viewProjectTable.addContainerProperty("Remove Project", Button.class, null);
             viewProjectTable.addContainerProperty("Edit Project", Button.class, null);
+            viewProjectTable.addContainerProperty("Remove Project", Button.class, null);
 
         }
 
-        viewProjectTable.addContainerProperty("View Project", Button.class, null);
+
         viewProjectTable.setSizeFull();
 
 
@@ -115,7 +114,7 @@ public class ViewAllProjects {
                 viewProjectButton.setData(projectList.get(x).getName());
 
                 //viewProjectTable.addItem(new Object[] {index,projectList.get(x).getName(),projectList.get(x).getClientName(),projectList.get(x).getDescription(),projectList.get(x).getDate(),projectList.get(x).getStartDate(),projectList.get(x).getDeliveredDate(),removeProjectButton,editProjectButton,viewProjectButton},index);
-                viewProjectTable.addItem(new Object[] {index,projectList.get(x).getName(),projectList.get(x).getClientName(),projectList.get(x).getDate(),removeProjectButton,editProjectButton,viewProjectButton},index);
+                viewProjectTable.addItem(new Object[] {index,projectList.get(x).getName(),projectList.get(x).getClientName(),projectList.get(x).getStartDate(),viewProjectButton,editProjectButton,removeProjectButton},index);
 
                 removeProjectButton.addClickListener(new Button.ClickListener() {
                     public void buttonClick(Button.ClickEvent event) {

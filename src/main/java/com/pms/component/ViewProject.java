@@ -106,18 +106,19 @@ public class ViewProject extends CustomComponent {
         userStoryTable.addContainerProperty("Index", Integer.class, null);
         userStoryTable.addContainerProperty("User Story Name",  String.class, null);
         userStoryTable.addContainerProperty("Priority",Integer.class, null);
-        userStoryTable.addContainerProperty("Description", String.class, null);
         userStoryTable.addContainerProperty("Domain", String.class, null);
         userStoryTable.addContainerProperty("Assigned Sprint", Integer.class, null);
 
+        userStoryTable.addContainerProperty("View User Story", Button.class, null);
+
         if (userRole.equals("admin")||userRole.equals("pm")||userRole.equals("architect"))
         {
-            userStoryTable.addContainerProperty("Remove User Story", Button.class, null);
             userStoryTable.addContainerProperty("Edit User Story", Button.class, null);
+            userStoryTable.addContainerProperty("Remove User Story", Button.class, null);
 
         }
 
-        userStoryTable.addContainerProperty("View User Story", Button.class, null);
+
         userStoryTable.setSizeFull();
 
         Collection<UserStory> projectUserStories=project.getProjectUserStories();
@@ -138,7 +139,7 @@ public class ViewProject extends CustomComponent {
                 viewUserStoryButton.setData(userStory.getProject().getName()+"/"+userStory.getName());
                 editUserStoryButton.setData(userStory);
 
-                userStoryTable.addItem(new Object[]{index, userStory.getName(), userStory.getPriority(), userStory.getDescription(), userStory.getDomain(), userStory.getAssignedSprint(),removeUserStoryButton, editUserStoryButton, viewUserStoryButton}, index);
+                userStoryTable.addItem(new Object[]{index, userStory.getName(), userStory.getPriority(), userStory.getDomain(), userStory.getAssignedSprint(),viewUserStoryButton,editUserStoryButton,removeUserStoryButton }, index);
 
 
                 removeUserStoryButton.addClickListener(new Button.ClickListener() {

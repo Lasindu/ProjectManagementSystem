@@ -85,22 +85,24 @@ public class ViewUserStory extends CustomComponent {
             viewUserStoryLayout.addComponent(name);
             Label description= new Label("Description :   "+userStory.getDescription());
             viewUserStoryLayout.addComponent(description);
+            Label domain= new Label("Domain :   "+userStory.getDomain());
+            viewUserStoryLayout.addComponent(domain);
             Label priority= new Label("Priority :   "+userStory.getPriority());
             viewUserStoryLayout.addComponent(priority);
-            Label date= new Label("Date :   "+userStory.getDate());
-            viewUserStoryLayout.addComponent(date);
+            Label assignedSprint= new Label("Assigned Sprint :   "+userStory.getAssignedSprint());
+            viewUserStoryLayout.addComponent(assignedSprint);
             Label preRequisits= new Label("Pre Requisits :   "+userStory.getPreRequisits());
             viewUserStoryLayout.addComponent(preRequisits);
             Label dependancy= new Label("Dependancy :   "+userStory.getDependancy());
             viewUserStoryLayout.addComponent(dependancy);
-            Label domain= new Label("Domain :   "+userStory.getDomain());
-            viewUserStoryLayout.addComponent(domain);
-            Label assignedSprint= new Label("Assigned Sprint :   "+userStory.getAssignedSprint());
-            viewUserStoryLayout.addComponent(assignedSprint);
-            Label releasedDate= new Label("Released Date :   "+userStory.getReleasedDate());
-            viewUserStoryLayout.addComponent(releasedDate);
             Label state= new Label("UserStory State :   "+userStory.getState());
             viewUserStoryLayout.addComponent(state);
+            Label releasedDate= new Label("Released Date :   "+userStory.getReleasedDate());
+            viewUserStoryLayout.addComponent(releasedDate);
+            Label date= new Label("Date :   "+userStory.getDate());
+            viewUserStoryLayout.addComponent(date);
+            Label changedRequest= new Label("Changed Request :   "+userStory.isCR());
+            viewUserStoryLayout.addComponent(changedRequest);
 
 
 
@@ -121,14 +123,17 @@ public class ViewUserStory extends CustomComponent {
             tasksTable.addContainerProperty("Assigned To", String.class, null);
             tasksTable.addContainerProperty("Complete Time", String.class, null);
 
+
+            tasksTable.addContainerProperty("View Task", Button.class, null);
+            tasksTable.addContainerProperty("Edit Task", Button.class, null);
             if (userRole.equals("admin")||userRole.equals("pm")||userRole.equals("architect"))
             {
                 tasksTable.addContainerProperty("Remove Task", Button.class, null);
 
             }
 
-            tasksTable.addContainerProperty("Edit Task", Button.class, null);
-            tasksTable.addContainerProperty("View Task", Button.class, null);
+
+
             tasksTable.setSizeFull();
 
             int index=0;
@@ -147,7 +152,7 @@ public class ViewUserStory extends CustomComponent {
                     editTaskButton.setData(task);
                     viewTaskButton.setData(userStory.getProject().getName()+"/"+userStory.getName()+"/"+task.getTaskId());
 
-                    tasksTable.addItem(new Object[] {index,task.getName(),task.getPriority(),task.getSeverity(),task.getMemberType(),task.getEstimateTime(),task.getAssignedTo(),task.getCompleteTime(),removeTaskButton,editTaskButton,viewTaskButton},index);
+                    tasksTable.addItem(new Object[] {index,task.getName(),task.getPriority(),task.getSeverity(),task.getMemberType(),task.getEstimateTime(),task.getAssignedTo(),task.getCompleteTime(),viewTaskButton,editTaskButton,removeTaskButton},index);
 
                     removeTaskButton.addClickListener(new Button.ClickListener() {
                         public void buttonClick(Button.ClickEvent event) {
