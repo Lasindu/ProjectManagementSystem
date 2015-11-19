@@ -269,7 +269,7 @@ public class PrioritizeTasks {
 
                         for(Task task:tempTaskList2)
                         {
-                            hasDependecnyWithTime.put(task,Integer.parseInt(task.getCompleteTime()));
+                            hasDependecnyWithTime.put(task,Integer.parseInt(task.getEstimateTime()));
 
                         }
 
