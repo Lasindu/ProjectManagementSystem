@@ -191,13 +191,14 @@ public class UserStoryWindow extends Window {
 
                                         public void onClose(ConfirmDialog dialog) {
                                             if (dialog.isConfirmed()) {
-                                                int doneUserStoryCount = 0;
+/*                                                int doneUserStoryCount = 0;
                                                 for (UserStory userStory1 : project.getProjectUserStories()) {
                                                     if (userStory1.getState().equals("done"))
                                                         doneUserStoryCount++;
 
                                                 }
-                                                userStory.setSequenceNo(doneUserStoryCount + 1);
+
+                                                userStory.setSequenceNo(doneUserStoryCount + 1);*/
 
                                             } else {
                                                 state.setValue(oldUserStoryState);

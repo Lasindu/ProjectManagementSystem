@@ -20,6 +20,7 @@ public class PrioritizeUserStories {
     int userStoryCount;
     int sortedUserStoryCount;
     UserStoryDAO userStoryDAO;
+    Project project;
 
     //This method return Prioritize UserStoryMap
     public Map getPrioritizeUserStoryMap(Project project)
@@ -30,6 +31,7 @@ public class PrioritizeUserStories {
 
     public void prioritize(Project project) {
 
+        this.project = project;
         //final prioritize user story map
         sortedUserStoryMap = new HashMap<Integer, UserStory>();
         sortedUserStoryCount = 0;
@@ -167,6 +169,18 @@ public class PrioritizeUserStories {
             }
             else if(userStory.getState().equals("initial"))
             {
+
+                int doneUserStoryCount = 0;
+                for (UserStory userStory1 : project.getProjectUserStories()) {
+                    if (userStory1.getState().equals("done"))
+                        doneUserStoryCount++;
+
+                }
+
+                userStory.setAssignedSprint(doneUserStoryCount+1);
+                userStory.setSequenceNo(doneUserStoryCount + 1);
+
+
                 userStory.setState("working");
                 userStoryDAO.updateUserStory(userStory);
                 sortedUserStoryMap.put(pair.getKey(),userStory);
@@ -324,17 +338,17 @@ public class PrioritizeUserStories {
         Map noDependency_WithTime = new HashMap<UserStory, Integer>();
 
         for (UserStory userStory : userStories) {
-            int totoalTime = 0;
+            int totalTime = 0;
 
             Collection<Task> userStoryTasks = new ArrayList<Task>();
             userStoryTasks.addAll(userStoryDAO.getUserStoryTaskList(userStory));
 
             if (userStoryTasks.size() > 0)
                 for (Task task : userStoryTasks) {
-                    totoalTime = totoalTime + Integer.parseInt(task.getEstimateTime());
+                    totalTime = totalTime + Integer.parseInt(task.getEstimateTime());
                 }
 
-            noDependency_WithTime.put(userStory, totoalTime);
+            noDependency_WithTime.put(userStory, totalTime);
 
 
         }

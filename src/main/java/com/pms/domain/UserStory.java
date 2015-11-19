@@ -22,7 +22,7 @@ public class UserStory {
     private String preRequisits;
     private String dependancy;
     private String domain;
-    private String assignedSprint;
+    private int assignedSprint;
     private String releasedDate;
     private String state;
     private boolean CR;
@@ -137,11 +137,11 @@ public class UserStory {
         this.domain = domain;
     }
 
-    public String getAssignedSprint() {
+    public int getAssignedSprint() {
         return assignedSprint;
     }
 
-    public void setAssignedSprint(String assignedSprint) {
+    public void setAssignedSprint(int assignedSprint) {
         this.assignedSprint = assignedSprint;
     }
 
