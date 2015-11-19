@@ -108,7 +108,7 @@ public class ViewProject extends CustomComponent {
         userStoryTable.addContainerProperty("Priority",Integer.class, null);
         userStoryTable.addContainerProperty("Description", String.class, null);
         userStoryTable.addContainerProperty("Domain", String.class, null);
-        userStoryTable.addContainerProperty("Assigned Sprint", String.class, null);
+        userStoryTable.addContainerProperty("Assigned Sprint", Integer.class, null);
 
         if (userRole.equals("admin")||userRole.equals("pm")||userRole.equals("architect"))
         {

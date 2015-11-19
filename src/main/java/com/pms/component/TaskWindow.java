@@ -8,6 +8,7 @@ import com.pms.domain.Project;
 import com.pms.domain.Task;
 import com.pms.domain.UserStory;
 import com.vaadin.data.Item;
+import com.vaadin.data.Property;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.fieldgroup.PropertyId;
@@ -61,6 +62,8 @@ public class TaskWindow extends Window {
     @PropertyId("isCr")
     private OptionGroup isCr;
 
+    private OptionGroup dependencyList;
+
 
     private TaskWindow(Task task) {
         this.userStory = task.getUserStory();
@@ -110,7 +113,7 @@ public class TaskWindow extends Window {
 
     private Component buildTask() {
 
-        FormLayout taskForm = new FormLayout();
+        final FormLayout taskForm = new FormLayout();
         taskForm.addStyleName(ValoTheme.FORMLAYOUT_LIGHT);
         taskForm.setCaption("Task");
         taskForm.setMargin(new MarginInfo(true, true, true, true));
@@ -204,8 +207,78 @@ public class TaskWindow extends Window {
         isCr = new OptionGroup("Is Cr");
         isCr.addItem(Boolean.TRUE);
         isCr.addItem(Boolean.FALSE);
+        isCr.setValue(Boolean.FALSE);
         isCr.addStyleName("horizontal");
         taskForm.addComponent(isCr);
+
+
+
+        dependencyList = new OptionGroup("Dependency");
+        dependencyList.setWidth("400px");
+        dependencyList.setNullSelectionAllowed(true);
+        for (Task task1 : userStoryTasks) {
+
+            dependencyList.addItem(task1.getName());
+
+        }
+        dependencyList.setMultiSelect(true);
+
+        Panel dependencyPanel = new Panel("");
+        dependencyPanel.setHeight("100px");
+        dependencyPanel.setContent(dependencyList);
+        final VerticalLayout dependencyLayout = new VerticalLayout();
+        dependencyLayout.setCaption("Dependency");
+        dependencyLayout.addComponent(dependencyPanel);
+        taskForm.addComponent(dependencyLayout);
+
+        dependencyLayout.setVisible(false);
+
+        if (editmode) {
+
+            if(isCr.getValue().toString().equals("true"))
+                dependencyLayout.setVisible(true);
+
+            dependencyList.removeItem(task.getName());
+
+            if( task.getDependancy() != null && ! task.getDependancy().isEmpty())
+            {
+                String[] dependencyList1 = task.getDependancy().split(",");
+
+                for (String dependency : dependencyList1) {
+                    dependencyList.select(dependency);
+                }
+
+            }
+
+
+            //task1.setReadOnly(true);
+
+        }
+
+
+
+
+        isCr.addListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(Property.ValueChangeEvent event) {
+
+                if(isCr.getValue().toString().equals("true"))
+                {
+                    dependencyLayout.setVisible(true);
+
+                }
+                else
+                {
+                    dependencyLayout.setVisible(false);
+
+                }
+
+                }
+            });
+
+
+
+
 
 
         return taskForm;
@@ -334,7 +407,7 @@ public class TaskWindow extends Window {
                         index2++;
 
 
-                        //following section manually set dependency in other user stories if this user story depend on them
+                        //following section manually set dependency in other user stories if this task depend on them
                         for (Task task1 : userStory.getUserStoryTasks()) {
                             if (task1.getName().equals(v.toString())) {
                                 if (task1.getDependancy() == null || task1.getDependancy().isEmpty()) {
@@ -357,6 +430,10 @@ public class TaskWindow extends Window {
 
                     }
                     newTask.setPreRequisits(preRequisitString.toString());
+
+
+
+
 
 
                     UserStoryDAO userStoryDAO = (UserStoryDAO) DashboardUI.context.getBean("UserStory");
