@@ -171,7 +171,7 @@ public class PrioritizeUserStories {
             {
 
                 int doneUserStoryCount = 0;
-                for (UserStory userStory1 : project.getProjectUserStories()) {
+                for (UserStory userStory1 :userStoryDAO.getAllUserSeriesOfProject(project)) {
                     if (userStory1.getState().equals("done"))
                         doneUserStoryCount++;
 

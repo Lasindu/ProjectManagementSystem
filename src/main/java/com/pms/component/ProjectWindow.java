@@ -129,6 +129,9 @@ public class ProjectWindow extends Window {
         projectStartDate.setValue(new Date());
         projectStartDate.setDateFormat("yyyy-MM-dd");
         projectStartDate.setRangeStart(new Date());
+        Date projectendDate = new Date();
+        projectendDate.setYear(2050);
+        projectStartDate.setRangeEnd(projectendDate);
         content.addComponent(projectStartDate);
 
 

@@ -249,7 +249,7 @@ public class UserStoryGanntChart  {
             cal.add(Calendar.DATE, 1);
             step1.setEndDate(cal.getTime());
 
-            if(userStory.getState().equals("#F5A9F2"))
+            if(userStory.getState().equals("initial"))
             {
                 step1.setBackgroundColor("#0040FF");
             }
