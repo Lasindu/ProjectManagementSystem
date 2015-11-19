@@ -42,6 +42,8 @@ public class TaskWindow extends Window {
     private TextField name;
     @PropertyId("description")
     private TextArea description;
+    @PropertyId("skills")
+    private TextField skills;
     @PropertyId("priority")
     private ComboBox priority;
     @PropertyId("severity")
@@ -49,7 +51,7 @@ public class TaskWindow extends Window {
     private OptionGroup preRequisitsList;
     //private ListSelect dependancyList;
     @PropertyId("memberType")
-    private TextField memberType;
+    private ComboBox memberType;
     @PropertyId("estimateTime")
     private TextField estimateTime;
     @PropertyId("assignedTo")
@@ -123,6 +125,10 @@ public class TaskWindow extends Window {
         description.setNullRepresentation("");
         taskForm.addComponent(description);
 
+        skills =new TextField("Skills");
+        skills.setNullRepresentation("");
+        taskForm.addComponent(skills);
+
         priority = new ComboBox("Priority");
         priority.addItem(1);
         priority.addItem(2);
@@ -175,8 +181,11 @@ public class TaskWindow extends Window {
         }
 
 
-        memberType = new TextField("Member Type");
-        memberType.setNullRepresentation("");
+        memberType = new ComboBox("Member Type");
+        memberType.addItem("Dev");
+        memberType.addItem("QA");
+        memberType.addItem("System");
+       // memberType.setNullRepresentation("");
         taskForm.addComponent(memberType);
 
         estimateTime = new TextField("Estimate Time");
