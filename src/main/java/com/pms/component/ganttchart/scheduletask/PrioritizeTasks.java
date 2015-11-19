@@ -344,7 +344,7 @@ public class PrioritizeTasks {
 
         for(Task task:taskList)
         {
-            noDependency_WithTime.put(task,Integer.parseInt(task.getCompleteTime()));
+            noDependency_WithTime.put(task,Integer.parseInt(task.getEstimateTime()));
 
         }
 
