@@ -43,13 +43,12 @@ public class PrioritizeTasks {
         List<Task> allTasksList = new ArrayList<Task>();
         allTasksList.addAll(allTasks);
 
-        //this NotDoneTaskList only Contains  tasks in initial state
+        //this NotDoneTaskList only Contains  tasks in initial state and also not cr, Cr tasks handle by cr module
         List<Task> notDoneTaskList = new ArrayList<Task>();
-       // notDoneTaskList.addAll(allTasks);
 
         for(Task task1:allTasksList)
         {
-            if(task1.getState().equals("initial"))
+            if(task1.getState().equals("initial") && !task1.isCr())
                  notDoneTaskList.add(task1);
         }
 
@@ -68,20 +67,21 @@ public class PrioritizeTasks {
         }
 
 
-        orderPriority(noPreRequisite);
+        prioritizeTasksNoPreRequisit(noPreRequisite);
         prioritizeTasksHasPreRequisite(hasPreRequisite);
 
 
     }
 
-    public void allocateMemberToTask(Task task) {
+    public void addTosortedTaskMap(Task task) {
 
         sortedTaskCount++;
         sortedTaskMap.put(sortedTaskCount,task);
 
     }
 
-    private void orderPriority(List<Task> taskList) {
+    //this method prioritize tasks that tasks dose not has prerequists or all pri requisites done tasks
+    private void prioritizeTasksNoPreRequisit(List<Task> taskList) {
 
         List<Task> priority1Tasks = new ArrayList<Task>();
         List<Task> priority2Tasks = new ArrayList<Task>();
@@ -113,33 +113,33 @@ public class PrioritizeTasks {
 
 
         if (priority1Tasks.size() == 1) {
-            allocateMemberToTask(priority1Tasks.get(0));
+            addTosortedTaskMap(priority1Tasks.get(0));
 
         } else if (priority1Tasks.size() > 1)
             checkDependency(priority1Tasks);
 
         if (priority2Tasks.size() == 1) {
-            allocateMemberToTask(priority2Tasks.get(0));
+            addTosortedTaskMap(priority2Tasks.get(0));
 
         } else if (priority2Tasks.size() > 1)
             checkDependency(priority2Tasks);
 
 
         if (priority3Tasks.size() == 1) {
-            allocateMemberToTask(priority3Tasks.get(0));
+            addTosortedTaskMap(priority3Tasks.get(0));
 
         } else if (priority3Tasks.size() > 1)
             checkDependency(priority3Tasks);
 
 
         if (priority4Tasks.size() == 1) {
-            allocateMemberToTask(priority4Tasks.get(0));
+            addTosortedTaskMap(priority4Tasks.get(0));
 
         } else if (priority4Tasks.size() > 1)
             checkDependency(priority4Tasks);
 
         if (priority5Tasks.size() == 1) {
-            allocateMemberToTask(priority5Tasks.get(0));
+            addTosortedTaskMap(priority5Tasks.get(0));
 
         } else if (priority5Tasks.size() > 1)
             checkDependency(priority5Tasks);
@@ -168,13 +168,15 @@ public class PrioritizeTasks {
     {
         if(taskList.size()==1)
         {
-            allocateMemberToTask(taskList.get(0));
-
-
+            addTosortedTaskMap(taskList.get(0));
         }
         else if (taskList.size()>1) {
+
+
+
+            //find tasks highest priority dependency and how many dependent tasks has that highest priority
             Map<Task, Integer> taskWithDependencyHighestPriority = new HashMap<Task, Integer>();
-            Map taskWithHighestPrioritycount = new HashMap<Task, Integer>();
+            Map taskWithHighestPriorityCount = new HashMap<Task, Integer>();
 
             for (Task task : taskList) {
                 int dependencyHighestPriority = 0;
@@ -206,55 +208,55 @@ public class PrioritizeTasks {
                 }
 
                 taskWithDependencyHighestPriority.put(task, dependencyHighestPriority);
-                taskWithHighestPrioritycount.put(task, highestPriorityCount);
+                taskWithHighestPriorityCount.put(task, highestPriorityCount);
 
 
             }
 
             taskWithDependencyHighestPriority= sortTaskMapAccendingOrder(taskWithDependencyHighestPriority);
 
-            Multimap<Integer, Task> multiMap = HashMultimap.create();
 
+
+
+
+
+
+
+
+            Multimap<Integer, Task> multiMap = HashMultimap.create();
             for (Map.Entry<Task, Integer> entry : taskWithDependencyHighestPriority.entrySet()) {
                 multiMap.put(entry.getValue(), entry.getKey());
             }
 
+            //this for loop in one iteration return task list that has same highest priority with acceding order
             for (Map.Entry<Integer, Collection<Task>> entry : multiMap.asMap().entrySet()) {
                 // System.out.println("Original value: " + entry.getKey() + " was mapped to keys: "
                 //         + entry.getValue());
 
-                //This tasks has same highet dependency prority
 
-                //this map only include tasks that come to for loop ittration
-                Map<Task, Integer> tempTaskWithHighestPrioritycount = new HashMap<Task, Integer>();
+                Map<Task, Integer> tempTaskWithHighestPriorityCount = new HashMap<Task, Integer>();
                 Collection<Task> tempTaskList = entry.getValue();
 
                 for(Task task: tempTaskList)
                 {
-                    tempTaskWithHighestPrioritycount.put(task,(Integer)taskWithHighestPrioritycount.get(task));
+                    tempTaskWithHighestPriorityCount.put(task, (Integer) taskWithHighestPriorityCount.get(task));
 
                 }
 
+                tempTaskWithHighestPriorityCount = sortTaskMapDesendingOrder(tempTaskWithHighestPriorityCount);
 
 
 
 
 
-
-
-
-
-
-
-                tempTaskWithHighestPrioritycount = sortTaskMapDesendingOrder(tempTaskWithHighestPrioritycount);
 
 
                 Multimap<Integer, Task> multiMap2 = HashMultimap.create();
-
-                for (Map.Entry<Task, Integer> entry2 : tempTaskWithHighestPrioritycount.entrySet()) {
+                for (Map.Entry<Task, Integer> entry2 : tempTaskWithHighestPriorityCount.entrySet()) {
                     multiMap2.put(entry2.getValue(), entry2.getKey());
                 }
 
+                //this for loop iteration return tasks that has same highest dependency priority and dependency tasks count
                 for (Map.Entry<Integer, Collection<Task>> entry2 : multiMap2.asMap().entrySet()) {
 
                     Collection<Task> tempTaskList2 = entry2.getValue();
@@ -262,53 +264,43 @@ public class PrioritizeTasks {
                     if(tempTaskList2.size()>1)
                     {
 
-
-
-
-                        Map hasDependecnyWithTime = new HashMap<Task, Integer>();
+///////////////////////////////////////////////////////////////////////////////////
+                        Map hasDependencyWithTime = new HashMap<Task, Integer>();
 
                         for(Task task:tempTaskList2)
                         {
-                            hasDependecnyWithTime.put(task,Integer.parseInt(task.getEstimateTime()));
+                            hasDependencyWithTime.put(task, Integer.parseInt(task.getEstimateTime()));
 
                         }
 
                         //sorting the task with time
-                        hasDependecnyWithTime= sortTaskMapAccendingOrder(hasDependecnyWithTime);
-
-
+                        hasDependencyWithTime= sortTaskMapAccendingOrder(hasDependencyWithTime);
 
                         //allocating tasks
-                        Iterator it = hasDependecnyWithTime.entrySet().iterator();
+                        Iterator it = hasDependencyWithTime.entrySet().iterator();
                         while (it.hasNext()) {
                             {
                                 Map.Entry pair = (Map.Entry) it.next();
                                 //System.out.println(pair.getKey() + " = " + pair.getValue());
 
-                                allocateMemberToTask((Task)pair.getKey());
+                                addTosortedTaskMap((Task) pair.getKey());
                                 //sortedUserStoryMap.put(sortedUserStoryCount, pair.getKey());
                                 it.remove();
 
                             }
                         }
-
-
-
-
+////////////////////////////////////////////////////////////////////////////////////////
 
 
                     }
                     else
                     {
                         //only one task come to inside this else condition for loop used to get first element of collection
-
                         for(Task task1: tempTaskList2)
                         {
-                            allocateMemberToTask(task1);
+                            addTosortedTaskMap(task1);
 
                         }
-
-
 
                     }
 
@@ -316,23 +308,7 @@ public class PrioritizeTasks {
                 }
 
 
-
-
-
-
-
-
-
             }
-
-
-
-
-
-
-
-
-
 
             }
 
@@ -360,15 +336,12 @@ public class PrioritizeTasks {
                 Map.Entry pair = (Map.Entry) it.next();
                 //System.out.println(pair.getKey() + " = " + pair.getValue());
 
-                allocateMemberToTask((Task)pair.getKey());
+                addTosortedTaskMap((Task) pair.getKey());
                 //sortedUserStoryMap.put(sortedUserStoryCount, pair.getKey());
                 it.remove();
 
             }
         }
-
-
-
 
 
     }
@@ -381,7 +354,7 @@ public class PrioritizeTasks {
 
         while (loopCount < count) {
             loopCount++;
-            System.out.println("Inside task prioriteze while loop");
+            System.out.println("Inside task prioritize while loop");
 
 
             for (Task task : taskList) {
@@ -416,7 +389,7 @@ public class PrioritizeTasks {
             }
 
 
-            orderPriority(allPreRequisiteAllocatedList);
+            prioritizeTasksNoPreRequisit(allPreRequisiteAllocatedList);
             allPreRequisiteAllocatedList = new ArrayList<Task>();
 
 
@@ -424,6 +397,13 @@ public class PrioritizeTasks {
 
 
     }
+
+
+
+
+
+
+
 
 
 
