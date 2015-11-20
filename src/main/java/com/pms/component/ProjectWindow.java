@@ -17,14 +17,17 @@ import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.MarginInfo;
+import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by Upulie on 6/2/2015.
@@ -44,14 +47,13 @@ public class ProjectWindow extends Window {
     private TextArea projectDescription;
     @PropertyId("date")
     private TextField projectCreatedDate;
-    @PropertyId("startDate")
+   // @PropertyId("startDate")
     private PopupDateField   projectStartDate;
-    @PropertyId("deliveredDate")
-    private PopupDateField   ProjectDeliveredDate;
+   // @PropertyId("deliveredDate")
+    private PopupDateField   projectDeliveredDate;
 
 
-    private ProjectWindow(Project project)
-    {
+    private ProjectWindow(Project project) throws ParseException {
         this.project=project;
 
         if(!project.getName().isEmpty())
@@ -97,8 +99,7 @@ public class ProjectWindow extends Window {
     }
 
 
-    private Component buildProject()
-    {
+    private Component buildProject() throws ParseException {
         FormLayout content = new FormLayout();
         content.addStyleName(ValoTheme.FORMLAYOUT_LIGHT);
         content.setCaption("Project");
@@ -111,8 +112,6 @@ public class ProjectWindow extends Window {
 
         projctName.setRequired(true);
         projctName.setRequiredError("Project Name is Required");
-        //projctName.addValidator(new StringLengthValidator("Length Error",2,100,false));
-        //projctName.setRequiredError("Please enter a Project Name");
         content.addComponent(projctName);
 
         projctClientName = new TextField("Client Name");
@@ -126,20 +125,32 @@ public class ProjectWindow extends Window {
         projectCreatedDate = new TextField("Created Date");
 
         projectStartDate = new PopupDateField  ("Start Date");
-        projectStartDate.setValue(new Date());
         projectStartDate.setDateFormat("yyyy-MM-dd");
+
+        projectStartDate.setValue(new Date());
         projectStartDate.setRangeStart(new Date());
-        Date projectendDate = new Date();
-        projectendDate.setYear(2050);
-        projectStartDate.setRangeEnd(projectendDate);
         content.addComponent(projectStartDate);
 
 
-        ProjectDeliveredDate = new PopupDateField  ("End Date");
-        ProjectDeliveredDate.setValue(new Date());
-        ProjectDeliveredDate.setDateFormat("yyyy-MM-dd");
-        ProjectDeliveredDate.setRangeStart(new Date());
-        content.addComponent(ProjectDeliveredDate);
+        projectDeliveredDate = new PopupDateField  ("End Date");
+        projectDeliveredDate.setDateFormat("yyyy-MM-dd");
+        projectDeliveredDate.setValue(new Date());
+        projectDeliveredDate.setRangeStart(new Date());
+        content.addComponent(projectDeliveredDate);
+
+        if(editmode)
+        {
+
+
+            DateFormat format = new SimpleDateFormat("EEE MMM d HH:mm:ss z yyyy");
+            Date startDate = format.parse(project.getStartDate());
+
+
+            projectStartDate.setValue(startDate);
+            Date deliveredDate = format.parse(project.getDeliveredDate());
+            projectDeliveredDate.setValue(deliveredDate);
+        }
+
 
 
         return content;
@@ -182,6 +193,14 @@ public class ProjectWindow extends Window {
                         fieldGroup.commit();
                         Project project;
                         project =fieldGroup.getItemDataSource().getBean();
+
+                        if(!projectStartDate.toString().isEmpty())
+                        {
+                            project.setStartDate(projectStartDate.getValue().toString());
+                        }
+                        if(!projectDeliveredDate.toString().isEmpty()) {
+                            project.setDeliveredDate(projectDeliveredDate.getValue().toString());
+                        }
 
                         if (editmode)
                         {
@@ -257,7 +276,7 @@ public class ProjectWindow extends Window {
 
 
 
-    public static void open(Project project) {
+    public static void open(Project project) throws ParseException {
         Window w = new ProjectWindow(project);
         UI.getCurrent().addWindow(w);
         w.focus();

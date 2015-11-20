@@ -18,6 +18,7 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.vaadin.dialogs.ConfirmDialog;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -168,7 +169,11 @@ public class ViewAllProjects {
                 editProjectButton.addClickListener(new Button.ClickListener() {
                     public void buttonClick(Button.ClickEvent event) {
 
-                        ProjectWindow.open((Project)event.getButton().getData());
+                        try {
+                            ProjectWindow.open((Project)event.getButton().getData());
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
 
 
                     }
@@ -262,7 +267,11 @@ public class ViewAllProjects {
             public void buttonClick(Button.ClickEvent event) {
                 Project project= new Project();
                 project.setName("");
-                ProjectWindow.open(project);
+                try {
+                    ProjectWindow.open(project);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
 
 
             }
