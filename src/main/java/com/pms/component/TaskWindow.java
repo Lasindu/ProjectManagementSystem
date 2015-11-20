@@ -211,7 +211,15 @@ public class TaskWindow extends Window {
         isCr = new OptionGroup("Change Request");
         isCr.addItem(Boolean.TRUE);
         isCr.addItem(Boolean.FALSE);
+        if(!editmode)
         isCr.setValue(Boolean.FALSE);
+        else
+        {
+            if(task.isCr())
+                isCr.setValue(Boolean.TRUE);
+            else
+                isCr.setValue(Boolean.FALSE);
+        }
         isCr.addStyleName("horizontal");
         taskForm.addComponent(isCr);
 
@@ -239,7 +247,7 @@ public class TaskWindow extends Window {
 
         if (editmode) {
 
-            if(isCr.getValue().toString().equals("true"))
+            if(task.isCr())
                 dependencyLayout.setVisible(true);
 
             dependencyList.removeItem(task.getName());
@@ -322,6 +330,11 @@ public class TaskWindow extends Window {
                     newTask = fieldGroup.getItemDataSource().getBean();
                     newTask.setUserStory(userStory);
 
+                    if(isCr.getValue().toString().equals("true"))
+                        newTask.setCr(true);
+
+
+
                     if (editmode) {
                         TaskDAO taskDAO = (TaskDAO) DashboardUI.context.getBean("Task");
                         String[] preRequistListBeforEdit = task.getPreRequisits().split(",");
@@ -358,6 +371,52 @@ public class TaskWindow extends Window {
 
                             }
                         }
+
+
+
+                        //handle if old task is cr
+                        if(task.isCr())
+                        {
+                            String[] dependencyBeforeEdit = task.getDependancy().split(",");
+                            for (String dependency : dependencyBeforeEdit) {
+                                if (!preRequisitsList.isSelected(dependency)) {
+                                    for (Task task1 : userStoryTasks) {
+                                        if (task1.getName().equals(dependency)) {
+                                            task1.setPreRequisits(task1.getPreRequisits().replace(task.getName(), ""));
+
+
+                                            if (task1.getPreRequisits() != null && !task1.getPreRequisits().isEmpty()) {
+                                                if (task1.getPreRequisits().startsWith(",")) {
+                                                    task1.setPreRequisits(task1.getPreRequisits().substring(1, task1.getPreRequisits().length()));
+                                                } else if (task1.getPreRequisits().contains(",,")) {
+                                                    task1.setPreRequisits(task1.getPreRequisits().replace(",,", ","));
+                                                } else if (task1.getPreRequisits().endsWith(",")) {
+                                                    task1.setPreRequisits(task1.getPreRequisits().substring(0, task1.getPreRequisits().length() - 1));
+                                                }
+
+                                                if (task1.getPreRequisits().isEmpty()) {
+                                                    task1.setPreRequisits(null);
+                                                }
+
+
+                                            }
+
+
+                                            taskDAO.updateTask(task1);
+                                            break;
+                                        }
+                                    }
+
+
+                                }
+                            }
+
+
+                        }
+
+
+
+
 
                     } else {
                         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -405,9 +464,10 @@ public class TaskWindow extends Window {
                     int index2 = 1;
                     for (Object v : preRequisitsValues) {
 
-                        preRequisitString.append(v.toString());
-                        if (index2 != size2)
+                        if (index2 != 1 && !v.toString().isEmpty())
                             preRequisitString.append(",");
+                        preRequisitString.append(v.toString());
+
                         index2++;
 
 
@@ -434,6 +494,59 @@ public class TaskWindow extends Window {
 
                     }
                     newTask.setPreRequisits(preRequisitString.toString());
+
+
+
+
+
+
+
+                    //handle cr dependency
+
+                    if(isCr.getValue().toString().equals("true"))
+                    {
+                        StringBuilder dependencyString = new StringBuilder();
+                        Set<Item> dependencyValues = (Set<Item>) dependencyList.getValue();
+                        int size = dependencyList.size();
+                        int index = 1;
+                        for(Object v : dependencyValues)
+                        {
+                            if (index != 1 && !v.toString().isEmpty())
+                                dependencyString.append(",");
+                            dependencyString.append(v.toString());
+
+                            index++;
+
+
+                            for (Task task1 : userStory.getUserStoryTasks()) {
+                                if (task1.getName().equals(v.toString())) {
+                                    if (task1.getPreRequisits() == null || task1.getPreRequisits().isEmpty()) {
+                                        task1.setPreRequisits(newTask.getName());
+                                    } else {
+                                        StringBuilder preReqisitStirng1 = new StringBuilder();
+                                        preReqisitStirng1.append(task1.getPreRequisits());
+                                        preReqisitStirng1.append(',' + newTask.getName());
+
+                                        task1.setDependancy(preReqisitStirng1.toString());
+
+                                    }
+
+                                    taskDAO.updateTask(task1);
+
+
+                                }
+                            }
+
+
+                        }
+
+                        newTask.setDependancy(dependencyString.toString());
+
+                    }
+
+
+
+
 
 
 

@@ -288,7 +288,15 @@ public class UserStoryWindow extends Window {
         isCr = new OptionGroup("Change Request");
         isCr.addItem(Boolean.TRUE);
         isCr.addItem(Boolean.FALSE);
+        if(!editmode)
         isCr.setValue(Boolean.FALSE);
+        else
+        {
+            if(userStory.isCR())
+                isCr.setValue(Boolean.TRUE);
+            else
+                isCr.setValue(Boolean.FALSE);
+        }
         isCr.addStyleName("horizontal");
         content.addComponent(isCr);
 
@@ -411,9 +419,10 @@ public class UserStoryWindow extends Window {
 
                     for (Object v : preRequisitsValues) {
 
-                        preRequisitString.append(v.toString());
-                        if (index2 != size2)
+                        if (index2 != 1 && !v.toString().isEmpty())
                             preRequisitString.append(",");
+                        preRequisitString.append(v.toString());
+
                         index2++;
 
 

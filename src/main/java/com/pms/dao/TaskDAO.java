@@ -22,7 +22,7 @@ public class TaskDAO {
     public Task getTaskByTaskId(int id)
     {
         Session session = getSessionFactory().openSession();
-        String HQL_QUERY = "from Task as task  where task.id=id ";
+        String HQL_QUERY = "from Task as task  where task.id=" + id  ;
         Query query = session.createQuery(HQL_QUERY);
         List<Task> list = ((org.hibernate.Query) query).list();
 
