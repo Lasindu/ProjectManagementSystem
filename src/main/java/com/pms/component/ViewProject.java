@@ -288,20 +288,7 @@ public class ViewProject extends CustomComponent {
 
 
 
-/*        Button newUserStoryButton= new Button("New User Story");
-        newUserStoryButton.addClickListener(new Button.ClickListener() {
-            public void buttonClick(Button.ClickEvent event) {
-                UserStoryWindow.open(project);
 
-
-            }
-        });*/
-
-        //viewProjectLayout.addComponent(newUserStoryButton);
-
-
-
-        //return  viewProjectLayout;
 
     }
 

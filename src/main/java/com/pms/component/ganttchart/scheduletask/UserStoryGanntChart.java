@@ -244,7 +244,7 @@ public class UserStoryGanntChart  {
 
 
             Step step1 = new Step(((UserStory)pair.getValue()).getName());
-            step1.setDescription("Description tooltip");
+            step1.setDescription(((UserStory) pair.getValue()).getName());
             step1.setStartDate(cal.getTime());
             cal.add(Calendar.DATE, 1);
             step1.setEndDate(cal.getTime());

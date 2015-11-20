@@ -50,7 +50,6 @@ public class TaskWindow extends Window {
     @PropertyId("severity")
     private ComboBox severity;
     private OptionGroup preRequisitsList;
-    //private ListSelect dependancyList;
     @PropertyId("memberType")
     private ComboBox memberType;
     @PropertyId("estimateTime")
@@ -61,7 +60,6 @@ public class TaskWindow extends Window {
     private TextField completeTime;
     @PropertyId("isCr")
     private OptionGroup isCr;
-
     private OptionGroup dependencyList;
 
 

@@ -140,11 +140,8 @@ public class ProjectWindow extends Window {
 
         if(editmode)
         {
-
-
             DateFormat format = new SimpleDateFormat("EEE MMM d HH:mm:ss z yyyy");
             Date startDate = format.parse(project.getStartDate());
-
 
             projectStartDate.setValue(startDate);
             Date deliveredDate = format.parse(project.getDeliveredDate());

@@ -309,13 +309,13 @@ public class TaskGanntChart  {
             Task task1 =(Task)pair.getValue();
 
             Step step1 = new Step(task1.getName());
-            step1.setDescription("Description tooltip");
+            step1.setDescription(task1.getName());
             step1.setStartDate(cal.getTime().getTime());
             cal.add(Calendar.MONTH, 1);
             step1.setEndDate(cal.getTime().getTime());
 
             //Change color of background according to state of task
-            if(task1.getState().equals("#F5A9F2"))
+            if(task1.getState().equals("initial"))
             {
                 step1.setBackgroundColor("#0040FF");
             }
@@ -346,88 +346,6 @@ public class TaskGanntChart  {
 
 
 
-
-
-
-
-
-/*        Step step1 = new Step("First step");
-        step1.setDescription("Description tooltip");
-        step1.setStartDate(cal.getTime().getTime());
-        cal.add(Calendar.MONTH, 2);
-        step1.setEndDate(cal.getTime().getTime());
-
-        Step step2 = new Step("Second step");
-        step2.setDescription("Description tooltip for second step");
-        cal.add(Calendar.DATE, 1);
-        step2.setStartDate(cal.getTime().getTime());
-        cal.add(Calendar.MONTH, 4);
-        step2.setEndDate(cal.getTime().getTime());
-        step2.setPredecessor(step1);
-
-        Step step3 = new Step("Third step");
-        step3.setDescription("<b>HTML</b> <i>content</i> is <u>supported</u> in tooltips.");
-        cal.add(Calendar.DATE, 1);
-        step3.setStartDate(cal.getTime().getTime());
-        cal.add(Calendar.MONTH, 12);
-        step3.setEndDate(cal.getTime().getTime());
-        step3.setPredecessor(step2);
-
-        Step step4 = new Step("Fourth step");
-        step4.setDescription("Tooltip is <b>VTooltip</b>. <p>Looks same for all Vaadin components.");
-        step4.setStartDate(step2.getStartDate());
-        step4.setEndDate(step2.getEndDate());
-        step4.setPredecessor(step1);
-
-        Step stepWithSubSteps = new Step("Step with sub-steps");
-        stepWithSubSteps.setDescription("Tooltip for Step with sub-steps");
-
-        cal.setTime(new Date(step1.getStartDate()));
-        cal.add(Calendar.DATE, 7);
-
-        SubStep subStep1 = new SubStep("Sub-step A");
-        subStep1.setDescription("Tooltip for Sub-step A");
-        subStep1.setBackgroundColor("A8D9DD");
-        subStep1.setStartDate(step1.getStartDate());
-        subStep1.setEndDate(cal.getTime());
-
-        SubStep subStep2 = new SubStep("Sub-step B");
-        subStep2.setDescription("Tooltip for Sub-step B");
-        subStep2.setBackgroundColor("A8D9BB");
-        subStep2.setStartDate(cal.getTime());
-        cal.add(Calendar.MONTH, 1);
-        subStep2.setEndDate(cal.getTime());
-
-        SubStep subStep3 = new SubStep("Sub-step C");
-        subStep3.setDescription("Tooltip for Sub-step C");
-        subStep3.setBackgroundColor("A8D999");
-        subStep3.setStartDate(cal.getTime());
-        cal.add(Calendar.MONTH, 1);
-        subStep3.setEndDate(step1.getEndDate());
-
-        stepWithSubSteps.addSubStep(subStep1);
-        stepWithSubSteps.addSubStep(subStep2);
-        stepWithSubSteps.addSubStep(subStep3);
-
-        gantt.addStep(step1);
-        gantt.addStep(step2);
-        gantt.addStep(step3);
-        gantt.addStep(step4);
-        gantt.addStep(stepWithSubSteps);*/
-
-
-     /*   String[] colors = new String[] { "11FF11", "33FF33", "55FF55",
-                "77FF77", "99FF99", "BBFFBB", "DDFFDD" };
-
-        cal.setTime(new Date());
-        for (int i = 0; i < 10; i++) {
-            Step step = new Step("Step " + i);
-            step.setStartDate(cal.getTime().getTime());
-            cal.add(Calendar.DATE, 14);
-            step.setEndDate(cal.getTime().getTime());
-            step.setBackgroundColor(colors[i % colors.length]);
-            gantt.addStep(step);
-        }*/
 
         gantt.addClickListener(new Gantt.ClickListener() {
 
