@@ -476,11 +476,17 @@ public class TaskWindow extends Window {
                                 if (task1.getDependancy() == null || task1.getDependancy().isEmpty()) {
                                     task1.setDependancy(newTask.getName());
                                 } else {
-                                    StringBuilder dependencyString1 = new StringBuilder();
-                                    dependencyString1.append(task1.getDependancy());
-                                    dependencyString1.append(',' + newTask.getName());
 
-                                    task1.setDependancy(dependencyString1.toString());
+                                    if(!task1.getDependancy().contains(newTask.getName()))
+                                    {
+                                        StringBuilder dependencyString1 = new StringBuilder();
+                                        dependencyString1.append(task1.getDependancy());
+                                        dependencyString1.append(',' + newTask.getName());
+
+                                        task1.setDependancy(dependencyString1.toString());
+
+                                    }
+
 
                                 }
 
@@ -522,11 +528,16 @@ public class TaskWindow extends Window {
                                     if (task1.getPreRequisits() == null || task1.getPreRequisits().isEmpty()) {
                                         task1.setPreRequisits(newTask.getName());
                                     } else {
-                                        StringBuilder preReqisitStirng1 = new StringBuilder();
-                                        preReqisitStirng1.append(task1.getPreRequisits());
-                                        preReqisitStirng1.append(',' + newTask.getName());
 
-                                        task1.setDependancy(preReqisitStirng1.toString());
+                                        if(!task1.getPreRequisits().contains( newTask.getName()))
+                                        {
+                                            StringBuilder preReqisitStirng1 = new StringBuilder();
+                                            preReqisitStirng1.append(task1.getPreRequisits());
+                                            preReqisitStirng1.append(',' + newTask.getName());
+
+                                            task1.setDependancy(preReqisitStirng1.toString());
+                                        }
+
 
                                     }
 

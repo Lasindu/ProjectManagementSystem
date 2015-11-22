@@ -433,12 +433,18 @@ public class UserStoryWindow extends Window {
                             if (userStory1.getName().equals(v.toString())) {
                                 if (userStory1.getDependancy() == null || userStory1.getDependancy().isEmpty()) {
                                     userStory1.setDependancy(newUserStory.getName());
-                                } else {
-                                    StringBuilder dependencyString1 = new StringBuilder();
-                                    dependencyString1.append(userStory1.getDependancy());
-                                    dependencyString1.append(',' + newUserStory.getName());
+                                }
+                                else {
 
-                                    userStory1.setDependancy(dependencyString1.toString());
+                                    if(!userStory1.getDependancy().contains(newUserStory.getName()))
+                                    {
+                                        StringBuilder dependencyString1 = new StringBuilder();
+                                        dependencyString1.append(userStory1.getDependancy());
+                                        dependencyString1.append(',' + newUserStory.getName());
+
+                                        userStory1.setDependancy(dependencyString1.toString());
+
+                                    }
 
                                 }
 
