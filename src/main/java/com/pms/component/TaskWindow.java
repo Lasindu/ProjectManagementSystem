@@ -191,6 +191,7 @@ public class TaskWindow extends Window {
         memberType.addItem("Dev");
         memberType.addItem("QA");
         memberType.addItem("System Engineer");
+        memberType.setRequired(true);
         taskForm.addComponent(memberType);
 
         assignedTo = new TextField("Assinged to");
