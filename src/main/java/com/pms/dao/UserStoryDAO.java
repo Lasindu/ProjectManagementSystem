@@ -104,7 +104,7 @@ public class UserStoryDAO {
         Session session = getSessionFactory().openSession();
         session.beginTransaction();
         Project project1=(Project)session.get(Project.class,project.getProjectId());
-        int x= project1.getProjectUserStories().size();
+        int x = project1.getProjectUserStories().size();
         session.getTransaction().commit();
         session.close();
 

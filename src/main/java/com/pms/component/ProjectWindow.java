@@ -51,6 +51,8 @@ public class ProjectWindow extends Window {
     private PopupDateField   projectStartDate;
    // @PropertyId("deliveredDate")
     private PopupDateField   projectDeliveredDate;
+    @PropertyId("sprintTime")
+    private TextField projectSprintTime;
 
 
     private ProjectWindow(Project project) throws ParseException {
@@ -124,17 +126,20 @@ public class ProjectWindow extends Window {
 
         projectCreatedDate = new TextField("Created Date");
 
+        projectSprintTime = new TextField("Sprint Time");
+        projectSprintTime.setNullRepresentation("");
+        projectSprintTime.setConverter(Integer.class);
+        content.addComponent(projectSprintTime);
+
+
         projectStartDate = new PopupDateField  ("Start Date");
         projectStartDate.setDateFormat("yyyy-MM-dd");
-
-        projectStartDate.setValue(new Date());
         projectStartDate.setRangeStart(new Date());
         content.addComponent(projectStartDate);
 
 
         projectDeliveredDate = new PopupDateField  ("End Date");
         projectDeliveredDate.setDateFormat("yyyy-MM-dd");
-        projectDeliveredDate.setValue(new Date());
         projectDeliveredDate.setRangeStart(new Date());
         content.addComponent(projectDeliveredDate);
 
@@ -197,13 +202,16 @@ public class ProjectWindow extends Window {
                         Project project;
                         project =fieldGroup.getItemDataSource().getBean();
 
-                        if(!projectStartDate.toString().isEmpty())
+                        if(projectStartDate.getValue() != null && !projectStartDate.getValue().toString().isEmpty())
                         {
                             project.setStartDate(projectStartDate.getValue().toString());
                         }
-                        if(!projectDeliveredDate.toString().isEmpty()) {
+                        if(projectDeliveredDate.getValue() != null && !projectDeliveredDate.getValue().toString().isEmpty()) {
                             project.setDeliveredDate(projectDeliveredDate.getValue().toString());
                         }
+
+
+
 
                         if (editmode)
                         {

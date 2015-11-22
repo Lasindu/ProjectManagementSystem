@@ -22,6 +22,7 @@ public class Project{
     private String date;
     private String startDate;
     private String deliveredDate;
+    private String sprintTime;
 
     @OneToMany(mappedBy="project",fetch=FetchType.LAZY,cascade=CascadeType.ALL,orphanRemoval=true)
     private Collection<UserStory> projectUserStories = new ArrayList<UserStory>();
@@ -40,6 +41,15 @@ public class Project{
 
 
     //getters and setters
+
+
+    public String getSprintTime() {
+        return sprintTime;
+    }
+
+    public void setSprintTime(String sprintTime) {
+        this.sprintTime = sprintTime;
+    }
 
     public Collection<User> getUsers() {
         return users;
