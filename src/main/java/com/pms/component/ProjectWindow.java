@@ -210,6 +210,23 @@ public class ProjectWindow extends Window {
                             project.setDeliveredDate(projectDeliveredDate.getValue().toString());
                         }
 
+                        if(projectStartDate.getValue() != null && !projectStartDate.getValue().toString().isEmpty() && projectDeliveredDate.getValue() != null && !projectDeliveredDate.getValue().toString().isEmpty())
+                        {
+                            DateFormat format = new SimpleDateFormat("EEE MMM d HH:mm:ss z yyyy");
+                            Date startDate = format.parse(project.getStartDate());
+                            Date deliveredDate = format.parse(project.getDeliveredDate());
+
+                            if(startDate.getTime() > deliveredDate.getTime())
+                            {
+                                Notification.show("Start Date > End date Please check dates ",
+                                        Notification.Type.ERROR_MESSAGE);
+                                return;
+                            }
+
+
+
+
+                        }
 
 
 
@@ -267,6 +284,8 @@ public class ProjectWindow extends Window {
                     } catch (FieldGroup.CommitException e) {
                         Notification.show("Error while creating project please check required fields",
                                 Notification.Type.ERROR_MESSAGE);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                     }
 
                 }
