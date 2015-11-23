@@ -1,12 +1,10 @@
 package com.pms.component;
 
-import com.google.gwt.aria.client.ComboboxRole;
 import com.pms.DashboardUI;
 import com.pms.component.ganttchart.scheduletask.PrioritizeUserStories;
 import com.pms.dao.ProjectDAO;
 import com.pms.dao.UserStoryDAO;
 import com.pms.domain.Project;
-import com.pms.domain.User;
 import com.pms.domain.UserStory;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
@@ -22,8 +20,6 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.vaadin.dialogs.ConfirmDialog;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
@@ -191,14 +187,6 @@ public class UserStoryWindow extends Window {
 
                                         public void onClose(ConfirmDialog dialog) {
                                             if (dialog.isConfirmed()) {
-/*                                                int doneUserStoryCount = 0;
-                                                for (UserStory userStory1 : project.getProjectUserStories()) {
-                                                    if (userStory1.getState().equals("done"))
-                                                        doneUserStoryCount++;
-
-                                                }
-
-                                                userStory.setSequenceNo(doneUserStoryCount + 1);*/
 
                                             } else {
                                                 state.setValue(oldUserStoryState);
@@ -248,19 +236,19 @@ public class UserStoryWindow extends Window {
         Panel preRequestPanel = new Panel("");
         preRequestPanel.setHeight("100px");
         preRequestPanel.setContent(preRequisitsList);
-        VerticalLayout preRequistLayout = new VerticalLayout();
-        preRequistLayout.setCaption("Pre Requisits");
-        preRequistLayout.addComponent(preRequestPanel);
-        content.addComponent(preRequistLayout);
+        VerticalLayout PreRequisiteLayout = new VerticalLayout();
+        PreRequisiteLayout.setCaption("Pre Requisits");
+        PreRequisiteLayout.addComponent(preRequestPanel);
+        content.addComponent(PreRequisiteLayout);
 
         if (editmode) {
             //remove current userStory name appier in the prerequist list
             preRequisitsList.removeItem(userStory.getName());
 
-            String[] preRquisitList = userStory.getPreRequisits().split(",");
+            String[] PreRequisiteList = userStory.getPreRequisits().split(",");
 
-            for (String preRequistit : preRquisitList) {
-                preRequisitsList.select(preRequistit);
+            for (String PreRequisite : PreRequisiteList) {
+                preRequisitsList.select(PreRequisite);
             }
 
             userStoryName.setReadOnly(true);
@@ -344,14 +332,14 @@ public class UserStoryWindow extends Window {
                     newUserStory.setProject(project);
 
 
-                    //when user edit prerequist need to update those edited prerquisit dependency
+                    //when user edit PreRequisite need to update those edited PreRequisite dependency
                     if (editmode) {
-                        String[] preRequistListBeforEdit = userStory.getPreRequisits().split(",");
+                        String[] PreRequisiteListBeforeEdit = userStory.getPreRequisits().split(",");
 
-                        for (String preReqsuist : preRequistListBeforEdit) {
-                            if (!preRequisitsList.isSelected(preReqsuist)) {
+                        for (String PreRequisite : PreRequisiteListBeforeEdit) {
+                            if (!preRequisitsList.isSelected(PreRequisite)) {
                                 for (UserStory userStory1 : project.getProjectUserStories()) {
-                                    if (userStory1.getName().equals(preReqsuist)) {
+                                    if (userStory1.getName().equals(PreRequisite)) {
                                         userStory1.setDependancy(userStory1.getDependancy().replace(newUserStory.getName(), ""));
 
 
@@ -392,16 +380,16 @@ public class UserStoryWindow extends Window {
                     //Check New UserStory Priority with Prerequisite Priority
                     int userStoryPriority = Integer.parseInt(priority.getValue().toString());
 
-                    Set<Item> preRequisitsValues1 = (Set<Item>) preRequisitsList.getValue();
+                    Set<Item> PreRequisiteValues1 = (Set<Item>) preRequisitsList.getValue();
 
-                    for (Object v : preRequisitsValues1) {
+                    for (Object v : PreRequisiteValues1) {
 
-                        String preRequistName = v.toString();
-                        UserStory preRequistuserStory = userStoryDAO.getUserStoryFormProjectNameAndUserStoryName(project.getName(), preRequistName);
+                        String PreRequisiteName = v.toString();
+                        UserStory PreRequisiteUserStory = userStoryDAO.getUserStoryFormProjectNameAndUserStoryName(project.getName(), PreRequisiteName);
 
-                        if (userStoryPriority < preRequistuserStory.getPriority()) {
+                        if (userStoryPriority < PreRequisiteUserStory.getPriority()) {
                             Notification notification = new Notification("Your Selected Priority is Incorrect ",
-                                    "<br/>You have Prerequisit that has low prority than this UserStory",
+                                    "<br/>You have PreRequisite that has lowpriorityy than this UserStory",
                                     Notification.Type.ERROR_MESSAGE, true);
 
                             notification.show(Page.getCurrent());
@@ -413,17 +401,17 @@ public class UserStoryWindow extends Window {
                     }
 
 
-                    //set pre requist for user story
-                    StringBuilder preRequisitString = new StringBuilder();
-                    Set<Item> preRequisitsValues = (Set<Item>) preRequisitsList.getValue();
-                    int size2 = preRequisitsValues.size();
+                    //set PreRequisite for user story
+                    StringBuilder PreRequisiteString = new StringBuilder();
+                    Set<Item> PreRequisiteValues = (Set<Item>) preRequisitsList.getValue();
+                    int size2 = PreRequisiteValues.size();
                     int index2 = 1;
 
-                    for (Object v : preRequisitsValues) {
+                    for (Object v : PreRequisiteValues) {
 
                         if (index2 != 1 && !v.toString().isEmpty())
-                            preRequisitString.append(",");
-                        preRequisitString.append(v.toString());
+                            PreRequisiteString.append(",");
+                        PreRequisiteString.append(v.toString());
 
                         index2++;
 
@@ -456,7 +444,7 @@ public class UserStoryWindow extends Window {
 
 
                     }
-                    newUserStory.setPreRequisits(preRequisitString.toString());
+                    newUserStory.setPreRequisits(PreRequisiteString.toString());
 
 
                     project.getProjectUserStories().add(newUserStory);
