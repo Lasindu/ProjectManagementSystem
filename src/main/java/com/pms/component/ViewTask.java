@@ -2,7 +2,6 @@ package com.pms.component;
 
 import com.pms.DashboardUI;
 import com.pms.dao.TaskDAO;
-import com.pms.dao.UserStoryDAO;
 import com.pms.domain.Task;
 import com.vaadin.server.Responsive;
 import com.vaadin.ui.*;
@@ -72,7 +71,7 @@ public class ViewTask extends CustomComponent {
             viewTaskLayout.addComponent(dependencies);
             Label memberType = new Label("Member Type : "+task.getMemberType());
             viewTaskLayout.addComponent(memberType);
-            Label technicalSkills = new Label("Technical Skills : "+task.getSkills());
+            Label technicalSkills = new Label("Technical Skills : "+task.getTechnicalSkills());
             viewTaskLayout.addComponent(technicalSkills);
             Label estimateTime = new Label("Estimate Time "+task.getEstimateTime());
             viewTaskLayout.addComponent(estimateTime);

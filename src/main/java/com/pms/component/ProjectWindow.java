@@ -96,6 +96,13 @@ public class ProjectWindow extends Window {
         fieldGroup.bindMemberFields(this);
         fieldGroup.setItemDataSource(project);
 
+        if(editmode)
+        {
+            fieldGroup.unbind(projctName);
+            projctName.setValue(project.getName());
+            projctName.setReadOnly(true);
+        }
+
 
 
     }
@@ -232,6 +239,8 @@ public class ProjectWindow extends Window {
 
                         if (editmode)
                         {
+                            project.setName(projctName.getValue().toString());
+
                             ProjectDAO projectDAO= (ProjectDAO) DashboardUI.context.getBean("Project");
                             projectDAO.updateProject(project);
 

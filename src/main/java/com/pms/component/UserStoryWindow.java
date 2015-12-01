@@ -101,6 +101,14 @@ public class UserStoryWindow extends Window {
         fieldGroup.bindMemberFields(this);
         fieldGroup.setItemDataSource(userStory);
 
+        //because of the bug in vaaadin cannot setreadonly to single filed when bind object so need to unbind userStoryName
+        if(editmode)
+        {
+            fieldGroup.unbind(userStoryName);
+            userStoryName.setValue(userStory.getName());
+            userStoryName.setReadOnly(true);
+        }
+
     }
 
     private Component buildUserStory() {
@@ -117,6 +125,8 @@ public class UserStoryWindow extends Window {
         content.addComponent(userStoryName);
 
         if (editmode) {
+
+
             state = new ComboBox("State");
             state.addItem("initial");
             state.addItem("working");
@@ -339,6 +349,11 @@ public class UserStoryWindow extends Window {
 
                     //when user edit PreRequisite need to update those edited PreRequisite dependency
                     if (editmode) {
+                        //because of the bug in vaaadin cannot set readonly to single filed so need to set name manually
+                        //when update the userstory
+                        newUserStory.setName(userStoryName.getValue().toString());
+
+
                         String[] PreRequisiteListBeforeEdit = userStory.getPreRequisits().split(",");
 
                         for (String PreRequisite : PreRequisiteListBeforeEdit) {

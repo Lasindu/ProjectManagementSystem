@@ -1,10 +1,8 @@
 package com.pms.component;
 
 import com.pms.DashboardUI;
-import com.pms.dao.ProjectDAO;
 import com.pms.dao.TaskDAO;
 import com.pms.dao.UserStoryDAO;
-import com.pms.domain.Project;
 import com.pms.domain.Task;
 import com.pms.domain.UserStory;
 import com.vaadin.data.Item;
@@ -43,8 +41,6 @@ public class TaskWindow extends Window {
     private TextField name;
     @PropertyId("description")
     private TextArea description;
-    @PropertyId("skills")
-    private ComboBox skills;
     @PropertyId("priority")
     private ComboBox priority;
     @PropertyId("severity")
@@ -63,6 +59,9 @@ public class TaskWindow extends Window {
     @PropertyId("isCr")
     private OptionGroup isCr;
     private OptionGroup dependencyList;
+
+    private OptionGroup technicalSkillsList;
+    private ComboBox domainSkill;
 
 
     private TaskWindow(Task task) {
@@ -106,6 +105,13 @@ public class TaskWindow extends Window {
         fieldGroup = new BeanFieldGroup<Task>(Task.class);
         fieldGroup.bindMemberFields(this);
         fieldGroup.setItemDataSource(task);
+
+        if(editmode)
+        {
+            fieldGroup.unbind(name);
+            name.setValue(task.getName());
+            name.setReadOnly(true);
+        }
 
 
     }
@@ -207,15 +213,6 @@ public class TaskWindow extends Window {
         taskForm.addComponent(assignedTo);
 
 
-        //multipe imputs
-        skills =new ComboBox("Technical Skills");
-        skills.addItem("Java");
-        skills.addItem("Mobile Development");
-        skills.addItem("Database Design");
-        skills.addItem("Spring");
-        skills.addItem("Hibernate");
-
-        taskForm.addComponent(skills);
 
 
 
@@ -301,7 +298,72 @@ public class TaskWindow extends Window {
             });
 
 
+        domainSkill = new ComboBox("Domain Skill");
 
+        TaskDAO taskDAO = (TaskDAO) DashboardUI.context.getBean("Task");
+        String domainSkillsList = taskDAO.getDomainSkillsOfTasks();
+
+        if(domainSkillsList != null && !domainSkillsList.isEmpty())
+        {
+            for(String domainSkillString : domainSkillsList.split(","))
+            {
+                domainSkill.addItem(domainSkillString);
+            }
+
+
+            if(editmode)
+            {
+                if(task.getDomainSkill() != null && !task.getDomainSkill().isEmpty())
+                if(domainSkillsList.contains(task.getDomainSkill()))
+                {
+                    domainSkill.setValue(task.getDomainSkill());
+                }
+            }
+        }
+
+        taskForm.addComponent(domainSkill);
+
+
+        technicalSkillsList = new OptionGroup("Technical Skills");
+        technicalSkillsList.setWidth("400px");
+        technicalSkillsList.setNullSelectionAllowed(true);
+
+        String technicalSkillsOfTasks = taskDAO.getTechnicalSkillsOfTasks();
+
+        if(technicalSkillsOfTasks != null && !technicalSkillsOfTasks.isEmpty())
+        {
+            for(String technicalSkillString : technicalSkillsOfTasks.split(","))
+            {
+                technicalSkillsList.addItem(technicalSkillString);
+            }
+
+        }
+
+        technicalSkillsList.setMultiSelect(true);
+
+        Panel technicalSkillsPanel = new Panel("");
+        technicalSkillsPanel.setHeight("100px");
+        technicalSkillsPanel.setContent(technicalSkillsList);
+        final VerticalLayout technicalSkillsLayout = new VerticalLayout();
+        technicalSkillsLayout.setCaption("Technical Skills");
+        technicalSkillsLayout.addComponent(technicalSkillsPanel);
+        taskForm.addComponent(technicalSkillsLayout);
+
+
+        if(editmode)
+        {
+            if(task.getTechnicalSkills()!= null && !task.getTechnicalSkills().isEmpty())
+            {
+                for(String taskTechnicalSkill : task.getTechnicalSkills().split(","))
+                {
+                    if(technicalSkillsOfTasks.contains(taskTechnicalSkill))
+                    {
+                        technicalSkillsList.select(taskTechnicalSkill);
+
+                    }
+                }
+            }
+        }
 
 
 
@@ -342,14 +404,44 @@ public class TaskWindow extends Window {
                     newTask = fieldGroup.getItemDataSource().getBean();
                     newTask.setUserStory(userStory);
 
+
+                    //bind fields manually that not bind to the feald grope
                     if(isCr.getValue().toString().equals("true"))
                         newTask.setCr(true);
                     else
                         newTask.setCr(false);
 
+                    if(domainSkill.getValue() != null)
+                    newTask.setDomainSkill(domainSkill.getValue().toString());
+
+
+
+                    StringBuilder technicalSkillsString = new StringBuilder();
+                    Set<Item> technicalSkillsValues = (Set<Item>) technicalSkillsList.getValue();
+                    int indexcount = 1;
+                    for (Object v : technicalSkillsValues) {
+
+                        if (indexcount != 1 && !v.toString().isEmpty())
+                            technicalSkillsString.append(",");
+                        technicalSkillsString.append(v.toString());
+
+                        ++indexcount;
+
+                    }
+
+                    newTask.setTechnicalSkills(technicalSkillsString.toString());
+
+
 
 
                     if (editmode) {
+
+                        //because of the bug in vaaadin cannot set readonly to single filed so need to set name manually
+                        //when update the task
+                        newTask.setName(name.getValue().toString());
+
+
+
                         TaskDAO taskDAO = (TaskDAO) DashboardUI.context.getBean("Task");
                         String[] preRequistListBeforEdit = task.getPreRequisits().split(",");
 
@@ -459,7 +551,7 @@ public class TaskWindow extends Window {
                         if(taskPriority < task1.getPriority())
                         {
                             Notification notification = new Notification("Your Selected Priority is Incorrect ",
-                                    "<br/>You have Prerequisit that has low prority than this Task",
+                                    "<br/>You have Prerequisite that has lowpriorityy than this Task",
                                     Notification.Type.ERROR_MESSAGE,true);
 
                             notification.show(Page.getCurrent());
