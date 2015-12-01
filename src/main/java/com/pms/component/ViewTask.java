@@ -72,6 +72,8 @@ public class ViewTask extends CustomComponent {
             viewTaskLayout.addComponent(dependencies);
             Label memberType = new Label("Member Type : "+task.getMemberType());
             viewTaskLayout.addComponent(memberType);
+            Label technicalSkills = new Label("Technical Skills : "+task.getSkills());
+            viewTaskLayout.addComponent(technicalSkills);
             Label estimateTime = new Label("Estimate Time "+task.getEstimateTime());
             viewTaskLayout.addComponent(estimateTime);
             Label assingedTo = new Label("Assigned To : "+task.getAssignedTo());

@@ -44,7 +44,7 @@ public class TaskWindow extends Window {
     @PropertyId("description")
     private TextArea description;
     @PropertyId("skills")
-    private TextField skills;
+    private ComboBox skills;
     @PropertyId("priority")
     private ComboBox priority;
     @PropertyId("severity")
@@ -58,6 +58,8 @@ public class TaskWindow extends Window {
     private TextField assignedTo;
     @PropertyId("completeTime")
     private TextField completeTime;
+    @PropertyId("state")
+    private ComboBox state;
     @PropertyId("isCr")
     private OptionGroup isCr;
     private OptionGroup dependencyList;
@@ -140,6 +142,12 @@ public class TaskWindow extends Window {
         completeTime.setNullRepresentation("");
         taskForm.addComponent(completeTime);
 
+        state = new ComboBox("State");
+        state.addItem("initial");
+        state.addItem("working");
+        state.addItem("done");
+        taskForm.addComponent(state);
+
         severity = new ComboBox("Severity");
         severity.addItem(1);
         severity.addItem(2);
@@ -200,8 +208,13 @@ public class TaskWindow extends Window {
 
 
         //multipe imputs
-        skills =new TextField("Skills");
-        skills.setNullRepresentation("");
+        skills =new ComboBox("Technical Skills");
+        skills.addItem("Java");
+        skills.addItem("Mobile Development");
+        skills.addItem("Database Design");
+        skills.addItem("Spring");
+        skills.addItem("Hibernate");
+
         taskForm.addComponent(skills);
 
 
@@ -331,6 +344,8 @@ public class TaskWindow extends Window {
 
                     if(isCr.getValue().toString().equals("true"))
                         newTask.setCr(true);
+                    else
+                        newTask.setCr(false);
 
 
 
