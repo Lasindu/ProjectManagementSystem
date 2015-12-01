@@ -331,6 +331,11 @@ public class UserStoryWindow extends Window {
                     newUserStory = fieldGroup.getItemDataSource().getBean();
                     newUserStory.setProject(project);
 
+                    if(isCr.getValue().toString().equals("true"))
+                        newUserStory.setCR(true);
+                    else
+                        newUserStory.setCR(false);
+
 
                     //when user edit PreRequisite need to update those edited PreRequisite dependency
                     if (editmode) {
