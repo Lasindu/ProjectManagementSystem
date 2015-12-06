@@ -184,13 +184,30 @@ public class TaskGanntChart  {
         gantt.setResizableSteps(true);
         gantt.setMovableSteps(true);
         gantt.addAttachListener(ganttAttachListener);
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        gantt.setStartDate(cal.getTime());
-        cal.add(Calendar.YEAR, 1);
-        gantt.setEndDate(cal.getTime());
-        cal.setTime(new Date());
 
+
+        Calendar cal = Calendar.getInstance();
+
+        Date date = new Date();
+        date.setYear(2015);
+        date.setMonth(1);
+        date.setDate(1);
+
+
+        // date.setTime(0);
+
+        cal.setTime(date);
+        cal.set(Calendar.HOUR,0);
+        gantt.setStartDate(cal.getTime());
+        cal.add(Calendar.DATE, 25);
+        gantt.setEndDate(cal.getTime());
+        cal.setTime(date);
+
+
+        gantt.setYearsVisible(false);
+        gantt.setMonthsVisible(false);
+        gantt.setResolution(org.tltv.gantt.client.shared.Resolution.Day);
+        gantt.setReadOnly(true);
 
 
 
@@ -312,7 +329,7 @@ public class TaskGanntChart  {
             Step step1 = new Step(task1.getName());
             step1.setDescription(task1.getName());
             step1.setStartDate(cal.getTime().getTime());
-            cal.add(Calendar.MONTH, 1);
+            cal.add(Calendar.DATE, Integer.parseInt(task1.getEstimateTime()));
             step1.setEndDate(cal.getTime().getTime());
 
             //Change color of background according to state of task
