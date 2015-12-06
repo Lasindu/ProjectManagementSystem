@@ -251,15 +251,15 @@ public class UserStoryGanntChart  {
 
             if(userStory.getState().equals("initial"))
             {
-                step1.setBackgroundColor("#0040FF");
+                step1.setBackgroundColor("#A9F5F2");
             }
             else if(userStory.getState().equals("working"))
             {
-                step1.setBackgroundColor("#00FF40");
+                step1.setBackgroundColor("#D0F5A9");
             }
             else if(userStory.getState().equals("done"))
             {
-                step1.setBackgroundColor("#FF00FF");
+                step1.setBackgroundColor("#F5D0A9");
             }
 
             if(previosStep == null)
