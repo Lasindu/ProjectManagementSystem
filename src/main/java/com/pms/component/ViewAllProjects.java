@@ -103,7 +103,7 @@ public class ViewAllProjects {
         {
             int index=x+1;
 
-            if (userRole.equals("admin")||userRole.equals("pm"))
+            if (userRole.equals("admin")||userRole.equals("pm")||userRole.equals("architect"))
             {
                 Button removeProjectButton=new Button("Remove Project");
                 Button editProjectButton=new Button("Edit Project");

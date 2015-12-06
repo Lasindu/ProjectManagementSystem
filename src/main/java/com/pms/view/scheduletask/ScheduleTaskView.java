@@ -98,7 +98,7 @@ public class ScheduleTaskView extends CssLayout implements View {
         //mainLayout.setSizeFull();
         mainPanel.setContent(mainLayout);
 
-        ViewAllProjects viewAllProjects=new ViewAllProjects();
+        ViewAllProjects viewAllProjects = new ViewAllProjects();
         mainLayout.addComponent(viewAllProjects.getAllProjects());
 
 
