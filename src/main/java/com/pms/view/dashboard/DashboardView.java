@@ -178,6 +178,10 @@ public class DashboardView  extends VerticalLayout implements View {
         controllersLayout.addComponent(selectProject);
         controllersLayout.addComponent(selectType);
 
+        if(projectList != null && !projectList.isEmpty())
+        selectProject.setValue(projectList.get(0).getName());
+        selectType.setValue("User Story");
+
         mainLayout.addComponent(controllersLayout);
 
 
