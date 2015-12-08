@@ -321,6 +321,7 @@ public class TaskWindow extends Window {
             }
         }
 
+        domainSkill.setRequired(true);
         taskForm.addComponent(domainSkill);
 
 
@@ -338,7 +339,6 @@ public class TaskWindow extends Window {
             }
 
         }
-
         technicalSkillsList.setMultiSelect(true);
 
         Panel technicalSkillsPanel = new Panel("");
