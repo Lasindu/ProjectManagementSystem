@@ -182,7 +182,7 @@ public class TaskGanntChart  {
 
         gantt = new Gantt();
         gantt.setWidth(100, Sizeable.Unit.PERCENTAGE);
-        gantt.setHeight(450, Sizeable.Unit.PIXELS);
+        gantt.setHeight(460, Sizeable.Unit.PIXELS);
         gantt.setResizableSteps(true);
         gantt.setMovableSteps(true);
         gantt.addAttachListener(ganttAttachListener);
