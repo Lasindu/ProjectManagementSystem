@@ -70,7 +70,8 @@ public final class DashboardMenu extends CustomComponent {
     }
 
     private Component buildTitle() {
-        Label logo = new Label("PMS <strong>Dashboard</strong>",
+        //Label logo = new Label("PMS <strong>Dashboard</strong>",
+        Label logo = new Label("Project Management System",
                 ContentMode.HTML);
         logo.setSizeUndefined();
         HorizontalLayout logoWrapper = new HorizontalLayout(logo);
@@ -91,19 +92,6 @@ public final class DashboardMenu extends CustomComponent {
         settingsItem = settings.addItem("", new ThemeResource(
                 "img/profile-pic-300px.jpg"), null);
         updateUserName(null);
-        settingsItem.addItem("Edit Profile", new Command() {
-            @Override
-            public void menuSelected(final MenuItem selectedItem) {
-                //ProfilePreferencesWindow.open(user, false);
-            }
-        });
-        settingsItem.addItem("Preferences", new Command() {
-            @Override
-            public void menuSelected(final MenuItem selectedItem) {
-               // ProfilePreferencesWindow.open(user, true);
-            }
-        });
-        settingsItem.addSeparator();
         settingsItem.addItem("Sign Out", new Command() {
             @Override
             public void menuSelected(final MenuItem selectedItem) {
@@ -221,9 +209,9 @@ public final class DashboardMenu extends CustomComponent {
     public void updateNotificationsCount(
             final NotificationsCountUpdatedEvent event) {
        //# int unreadNotificationsCount = DashboardUI.getDataProvider().getUnreadNotificationsCount();
-        int unreadNotificationsCount = 5;
-        notificationsBadge.setValue(String.valueOf(unreadNotificationsCount));
-        notificationsBadge.setVisible(unreadNotificationsCount > 0);
+       // int unreadNotificationsCount = 5;
+       // notificationsBadge.setValue(String.valueOf(unreadNotificationsCount));
+       // notificationsBadge.setVisible(unreadNotificationsCount > 0);
     }
 
     @Subscribe

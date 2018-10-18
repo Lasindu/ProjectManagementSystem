@@ -30,8 +30,19 @@ http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
 
+    <bean id="Project" class="com.pms.dao.ProjectDAO">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
 
-
+    <bean id="UserStory" class="com.pms.dao.UserStoryDAO">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    <bean id="Task" class="com.pms.dao.TaskDAO">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    <bean id="User" class="com.pms.dao.UserDAO">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
 
 
 </beans>

@@ -38,6 +38,9 @@
 		
 				<!-- Names the annotated entity class -->
 		<mapping class="com.pms.domain.User" />
+		<mapping class="com.pms.domain.Project" />
+		<mapping class="com.pms.domain.UserStory" />
+		<mapping class="com.pms.domain.Task" />
 
 
 

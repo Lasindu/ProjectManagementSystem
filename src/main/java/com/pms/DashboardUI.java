@@ -27,7 +27,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import java.util.Locale;
 
 @Theme("dashboard")
-/*@Widgetset("com.pms.DashboardWidgetSet")*/
+@Widgetset("com.pms.DashboardWidgetSet")
 @Title("Project Management System")
 @SuppressWarnings("serial")
 public final class DashboardUI extends UI {
@@ -38,13 +38,12 @@ public final class DashboardUI extends UI {
      * injection; and not in the UI but somewhere closer to where they're
      * actually accessed.
      */
-   // private final DataProvider dataProvider = new DummyDataProvider();
     private final DashboardEventBus dashboardEventbus = new DashboardEventBus();
     public static ApplicationContext context = WebApplicationContextUtils.getRequiredWebApplicationContext(VaadinServlet.getCurrent().getServletContext());
 
     @Override
     protected void init(final VaadinRequest request) {
-        setLocale(Locale.US);
+          setLocale(Locale.US);
 
         DashboardEventBus.register(this);
         Responsive.makeResponsive(this);
@@ -75,7 +74,8 @@ public final class DashboardUI extends UI {
         User user = (User) VaadinSession.getCurrent().getAttribute(
                User.class.getName());
 
-       if (user != null && "admin".equals(user.getRole())) {
+       //if (user != null && "admin".equals(user.getRole())) {
+        if (user != null ) {
 
             // Authenticated user
             setContent(new MainView());
@@ -95,8 +95,19 @@ public final class DashboardUI extends UI {
         LoginDAO loginDAO=(LoginDAO)DashboardUI.context.getBean("UserLogin");
         User user =loginDAO.authenticateUser(event.getUserName(),event.getPassword());
 
-        VaadinSession.getCurrent().setAttribute(User.class.getName(), user);
-        updateContent();
+        if(user!=null)
+        {
+            VaadinSession.getCurrent().setAttribute(User.class.getName(), user);
+            VaadinSession.getCurrent().setAttribute("role", user.getRole());
+            updateContent();
+
+        }
+        else
+        {
+            setContent(new LoginView());
+            addStyleName("loginview");
+        }
+
     }
 
     @Subscribe
@@ -118,9 +129,6 @@ public final class DashboardUI extends UI {
     /**
      * @return An instance for accessing the (dummy) services layer.
      */
- /*   public static DataProvider getDataProvider() {
-        return ((DashboardUI) getCurrent()).dataProvider;
-    }*/
 
     public static DashboardEventBus getDashboardEventbus() {
         return ((DashboardUI) getCurrent()).dashboardEventbus;

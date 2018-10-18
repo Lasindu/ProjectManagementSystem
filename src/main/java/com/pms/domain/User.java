@@ -1,8 +1,8 @@
 package com.pms.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 @Entity
 @org.hibernate.annotations.Entity(selectBeforeUpdate = true)
@@ -25,6 +25,29 @@ public final class User {
     private String website;
     private String bio;
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "user_project", catalog = "pms", joinColumns = {
+            @JoinColumn(name = "userName", nullable = false, updatable = false) },
+            inverseJoinColumns = { @JoinColumn(name = "projectId",
+                    nullable = false, updatable = false) })
+    private Collection<Project> projects = new ArrayList<Project>();
+
+
+
+
+
+
+
+
+    //getters and setters
+
+    public Collection<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(Collection<Project> projects) {
+        this.projects = projects;
+    }
     public String getEmail() {
         return email;
     }

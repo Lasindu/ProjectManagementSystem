@@ -10,10 +10,10 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 
 public enum DashboardViewType {
-    DASHBOARD("dashboard", DashboardView.class, FontAwesome.HOME, true), CRHANDLE(
-            "CR Handle", CrHandleView.class, FontAwesome.BAR_CHART_O, false), MEMBERASSIGN(
-            "Member Assign", MemberAssignView.class, FontAwesome.TABLE, false), SCHEDULETASK(
-            "Schedule Task", ScheduleTaskView.class, FontAwesome.FILE_TEXT_O, true);
+    DASHBOARD("Dashboard", DashboardView.class, FontAwesome.HOME, true), CRHANDLE(
+            "CR_Handle", CrHandleView.class, FontAwesome.BAR_CHART_O, false), MEMBERASSIGN(
+            "Member_Assign", MemberAssignView.class, FontAwesome.TABLE, false), SCHEDULETASK(
+            "Schedule_Task", ScheduleTaskView.class, FontAwesome.FILE_TEXT_O, true);
 
     private final String viewName;
     private final Class<? extends View> viewClass;
